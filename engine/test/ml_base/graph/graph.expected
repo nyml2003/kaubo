@@ -1,0 +1,11 @@
+测试添加节点到图中
+节点是否被添加到graph.nodes: True
+graph.nodes当前长度: 1
+测试清除所有节点的雅可比矩阵
+清除后节点的jacobi是否为None: True
+测试重置单个节点的值
+重置后节点的value是否为None: True
+重置后节点的value是否为None: True
+测试重置父节点时子节点也被重置
+父节点value是否为None True
+子节点value是否为None True

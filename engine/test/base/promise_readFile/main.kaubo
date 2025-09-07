@@ -1,0 +1,7 @@
+def cb(msg):
+    print(msg)
+
+def cb2(msg):
+    print(msg)
+
+readFile("engine\test\base\promise_readFile\test.txt").then(cb).catch(cb2)

@@ -1,0 +1,5 @@
+Computed loss: [[ 0.313262]]
+Actual Jacobian for logits: [[ -0.268941]
+ [ 0.268941]]
+Actual Jacobian for labels: [[ 0.313262]
+ [ 1.313262]]

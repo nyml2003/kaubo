@@ -1,0 +1,56 @@
+i = True
+bool(i) = True
+not i = False
+i = False
+bool(i) = False
+not i = True
+i = 1
+bool(i) = True
+not i = False
+i = 0
+bool(i) = False
+not i = True
+i = 0.100000
+bool(i) = True
+not i = False
+i = 0.000000
+bool(i) = False
+not i = True
+i = None
+bool(i) = False
+not i = True
+i = 
+bool(i) = False
+not i = True
+i = abc
+bool(i) = True
+not i = False
+i = []
+bool(i) = False
+not i = True
+i = [1, 2, 3]
+bool(i) = True
+not i = False
+i = A
+bool(i) = True
+not i = False
+i = True j = True
+i and j = True
+i or j = True
+i is j = True
+i is not j = False
+i = True j = False
+i and j = False
+i or j = True
+i is j = False
+i is not j = True
+i = False j = True
+i and j = False
+i or j = True
+i is j = False
+i is not j = True
+i = False j = False
+i and j = False
+i or j = False
+i is j = True
+i is not j = False

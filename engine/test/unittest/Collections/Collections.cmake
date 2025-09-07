@@ -1,0 +1,5 @@
+include(${kaubo_dir}/test/unittest/Collections/List.cmake)
+include(${kaubo_dir}/test/unittest/Collections/String.cmake)
+include(${kaubo_dir}/test/unittest/Collections/Integer.cmake)
+include(${kaubo_dir}/test/unittest/Collections/Decimal.cmake)
+include(${kaubo_dir}/test/unittest/Collections/Matrix.cmake)
