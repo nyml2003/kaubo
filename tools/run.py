@@ -63,10 +63,12 @@ if __name__ == "__main__":
         },
     )
 
-    subprocess_obj = factory.create_task_in_subprocess(
+    process = subprocess_obj = factory.create_task_in_subprocess(
         task_id="temp-run",
         config_id="temp-run",
         relative_lib_dirs=[lib_dir],
         event_callbacks=[("LOG_INFO", callback)],
     )
 
+    process.join()
+    print(f"耗时：{round(factory.get_task_duration(), 2)} 秒")

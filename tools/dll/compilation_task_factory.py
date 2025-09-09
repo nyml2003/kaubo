@@ -4,6 +4,7 @@ import sys
 import json
 import multiprocessing
 from abc import ABC
+import time
 from typing import Callable, Dict, Optional, List, Tuple, Type
 
 # 原有模块导入
@@ -22,9 +23,11 @@ def _subprocess_task_entry(
     task_id: str,
     relative_lib_dirs: List[str] = None,
     start_event=None,
+    duration_queue: multiprocessing.Queue = None,
 ) -> None:
     """子进程入口函数"""
     task_instance: CompilationTask = None
+    task_start_time = time.perf_counter()
     try:
         PlatformUtils.setup_console_encoding()
         task_instance = task_class()
@@ -50,6 +53,10 @@ def _subprocess_task_entry(
     finally:
         if task_instance:
             task_instance.cleanup()
+        task_end_time = time.perf_counter()
+        task_duration = round(task_end_time - task_start_time, 2)
+        if duration_queue:
+            duration_queue.put((task_id, task_duration))
 
 
 class CompilationTaskFactory:
@@ -59,6 +66,8 @@ class CompilationTaskFactory:
         self._task_processes: Dict[str, multiprocessing.Process] = {}  # 进程缓存
         self._task_class: Type[CompilationTask] = CompilationTask  # 任务类
         self._task_events: Dict = {}  # 事件缓存
+        self._duration_queue = multiprocessing.Queue()
+        self._task_durations: Dict[str, float] = {}
 
     def register_config(
         self, config_id: str, config: Dict, overwrite: bool = False
@@ -118,6 +127,7 @@ class CompilationTaskFactory:
                 task_id,  # 任务ID
                 relative_lib_dirs,
                 start_event,
+                self._duration_queue,
             ),
             name=f"CompilationTask-{task_id}",
         )
@@ -175,3 +185,17 @@ class CompilationTaskFactory:
             validated["file"] = file_path
 
         return validated
+
+    def fetch_task_durations(self) -> None:
+        """从队列中获取子进程传回的时长数据并存储"""
+        while not self._duration_queue.empty():
+            task_id, duration = self._duration_queue.get()
+            self._task_durations[task_id] = duration
+
+    def get_task_duration(self, task_id: Optional[str] = None) -> Optional[float]:
+        """获取任务时长（需先调用fetch_task_durations更新数据）"""
+        self.fetch_task_durations()  # 先同步最新数据
+        if task_id is None:
+            # 聚合所有任务的时长
+            return sum(self._task_durations.values())
+        return self._task_durations.get(task_id)

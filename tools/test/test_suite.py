@@ -141,7 +141,9 @@ class TestSuite:
             return self._compare_results(out_file, expect_file)
 
         except Exception as e:
-            print(f"[TestSuite {self.suite_name}] 错误：{case_name} 执行失败: {e.with_traceback()}")
+            print(
+                f"[TestSuite {self.suite_name}] 错误：{case_name} 执行失败: {e.with_traceback()}"
+            )
             return False
 
     def _compare_results(self, out_file: str, expect_file: str) -> bool:
@@ -213,6 +215,7 @@ class TestSuite:
         print(f"  总用例数：{self.total}")
         print(f"  通过数：{self.passed}")
         print(f"  通过率：{pass_rate:.2f}%")
+        print(f"  耗时：{round(self.factory.get_task_duration(), 2)} 秒")
         if self.failed_cases:
             print(f"  失败用例：{', '.join(self.failed_cases)}")
 
