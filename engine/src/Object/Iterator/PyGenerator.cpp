@@ -15,22 +15,22 @@ void GeneratorKlass::Initialize() {
   if (this->IsInitialized()) {
     return;
   }
-  InitKlass(CreatePyString("generator"), GeneratorKlass::Self());
+  InitKlass(PyString::Create("generator"), GeneratorKlass::Self());
   AddAttribute(
-    CreatePyString("__next__"),
+    PyString::Create("__next__"),
     CreatePyNativeFunction(
       CreateForwardFunction<GeneratorKlass>(&GeneratorKlass::next)
     )
   );
   AddAttribute(
-    CreatePyString("done"), CreatePyIife([](const PyObjPtr& args) {
-      return PyBoolean::create(
+    PyString::Create("done"), CreatePyIife([](const PyObjPtr& args) {
+      return PyBoolean::Create(
         args->as<PyList>()->GetItem(0)->as<PyGenerator>()->IsExhausted()
       );
     })
   );
   AddAttribute(
-    CreatePyString("send"), CreatePyNativeFunction([](const PyObjPtr& args) {
+    PyString::Create("send"), CreatePyNativeFunction([](const PyObjPtr& args) {
       auto argList = args->as<PyList>();
       auto generator = argList->GetItem(0)->as<PyGenerator>();
       auto value = argList->GetItem(1);

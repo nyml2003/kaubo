@@ -14,7 +14,7 @@ class NoneKlass : public KlassBase<NoneKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    LoadClass(CreatePyString("NoneType")->as<PyString>(), Self());
+    LoadClass(PyString::Create("NoneType")->as<PyString>(), Self());
     ConfigureBasicAttributes(Self());
     this->SetInitialized();
   }

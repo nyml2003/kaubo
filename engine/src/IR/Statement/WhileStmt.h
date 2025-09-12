@@ -13,7 +13,7 @@ class WhileStmtKlass : public INodeTrait,
     if (this->IsInitialized()) {
       return;
     }
-    InitKlass(Object::CreatePyString("ast_whilestmt"), Self());
+    InitKlass(Object::PyString::Create("ast_whilestmt"), Self());
     this->SetInitialized();
   }
 

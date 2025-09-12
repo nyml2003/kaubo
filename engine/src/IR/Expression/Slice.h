@@ -12,7 +12,7 @@ class SliceKlass : public INodeTrait, public Object::KlassBase<SliceKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    InitKlass(Object::CreatePyString("ast_slice"), Self());
+    InitKlass(Object::PyString::Create("ast_slice"), Self());
     this->SetInitialized();
   }
 

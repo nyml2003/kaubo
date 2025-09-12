@@ -7,7 +7,7 @@ template <typename T>
 class IObjectCreator {
  public:
   template <typename... Args>
-  static std::shared_ptr<T> create(Args&&... args) {
+  static std::shared_ptr<T> Create(Args&&... args) {
     return std::make_shared<T>(std::forward<Args>(args)...);
   }
 

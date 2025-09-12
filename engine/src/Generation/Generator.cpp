@@ -160,7 +160,7 @@ antlrcpp::Any Generator::visitAtom(Python3Parser::AtomContext* ctx) {
   if (ctx->name() != nullptr) {
     // 情况 4: name
     return IR::CreateIdentifier(
-      Object::CreatePyString(ctx->name()->getText().c_str()), context
+      Object::PyString::Create(ctx->name()->getText().c_str()), context
     );
     // visitName(ctx->name());
   }
@@ -185,11 +185,11 @@ antlrcpp::Any Generator::visitAtom(Python3Parser::AtomContext* ctx) {
   }
   if (!ctx->STRING().empty()) {
     // 情况 6: STRING+
-    Object::PyObjPtr str = Object::CreatePyString("");
+    Object::PyObjPtr str = Object::PyString::Create("");
     for (auto* string : ctx->STRING()) {
       auto rawString = string->getText();
       rawString = rawString.substr(1, rawString.size() - 2);
-      str = str->add(Object::CreatePyString(rawString));
+      str = str->add(Object::PyString::Create(rawString));
     }
     return IR::CreateAtom(str, context);
   }
@@ -202,10 +202,10 @@ antlrcpp::Any Generator::visitAtom(Python3Parser::AtomContext* ctx) {
     return IR::CreateAtom(Object::CreatePyNone(), context);
   } else if (ctx->TRUE() != nullptr) {
     // 情况 9: 'True'
-    return IR::CreateAtom(Object::PyBoolean::create(true), context);
+    return IR::CreateAtom(Object::PyBoolean::Create(true), context);
   } else if (ctx->FALSE() != nullptr) {
     // 情况 10: 'False'
-    return IR::CreateAtom(Object::PyBoolean::create(false), context);
+    return IR::CreateAtom(Object::PyBoolean::Create(false), context);
   } else {
     // 其他情况
     std::cout << "atom: Unknown type" << std::endl;
@@ -495,7 +495,7 @@ antlrcpp::Any Generator::visitAtom_expr(Python3Parser::Atom_exprContext* ctx) {
       result =
         IR::CreateBinary(IR::Binary::Operator::SUBSCR, result, args, context);
     } else if (trailer->DOT() != nullptr) {  // '.'
-      auto args = Object::CreatePyString(trailer->name()->getText().c_str());
+      auto args = Object::PyString::Create(trailer->name()->getText().c_str());
       result = IR::CreateMemberAccess(result, args, context);
     }
   }
@@ -645,7 +645,7 @@ antlrcpp::Any Generator::visitCompound_stmt(
 }
 
 antlrcpp::Any Generator::visitFuncdef(Python3Parser::FuncdefContext* ctx) {
-  auto funcName = Object::CreatePyString(ctx->name()->getText().c_str());
+  auto funcName = Object::PyString::Create(ctx->name()->getText().c_str());
   auto parameters =
     std::any_cast<Object::PyListPtr>(visitParameters(ctx->parameters()));
   auto funcDef =
@@ -741,13 +741,13 @@ antlrcpp::Any Generator::visitTypedargslist(
     static_cast<uint64_t>(tfpdef.size())
   );
   for (auto* def : tfpdef) {
-    args.Push(Object::CreatePyString(def->getText().c_str()));
+    args.Push(Object::PyString::Create(def->getText().c_str()));
   }
   return Object::CreatePyList(args);
 }
 
 antlrcpp::Any Generator::visitTfpdef(Python3Parser::TfpdefContext* ctx) {
-  return Object::CreatePyString(ctx->getText().c_str());
+  return Object::PyString::Create(ctx->getText().c_str());
 }
 
 antlrcpp::Any Generator::visitIf_stmt(Python3Parser::If_stmtContext* ctx) {
@@ -849,14 +849,14 @@ antlrcpp::Any Generator::visitExprlist(Python3Parser::ExprlistContext* ctx) {
 }
 
 antlrcpp::Any Generator::visitClassdef(Python3Parser::ClassdefContext* ctx) {
-  auto className = Object::CreatePyString(ctx->name()->getText().c_str());
+  auto className = Object::PyString::Create(ctx->name()->getText().c_str());
   auto bases = Object::CreatePyList();
   if (ctx->arglist() != nullptr) {
     bases = std::any_cast<Object::PyListPtr>(visitArglist(ctx->arglist()));
   }
   if (bases->Length() == 0) {
     bases->Append(
-      IR::CreateIdentifier(Object::CreatePyString("object"), context)
+      IR::CreateIdentifier(Object::PyString::Create("object"), context)
     );
   }
   auto classDef =

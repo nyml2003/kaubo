@@ -42,7 +42,7 @@ PyObjPtr InstKlass::_serialize_(const PyObjPtr& obj) {
     },
     inst->Operand()
   );
-  return CreatePyBytes(stringBuilder.ToString());
+  return PyBytes::Create(stringBuilder.ToString());
 }
 
 PyObjPtr InstKlass::repr(const PyObjPtr& obj) {
@@ -67,7 +67,7 @@ PyObjPtr InstKlass::repr(const PyObjPtr& obj) {
     },
     inst->Operand()
   );
-  return CreatePyString(stringBuilder.ToString(), false);
+  return PyString::Create(stringBuilder.ToString());
 }
 
 }  // namespace kaubo::Object

@@ -54,91 +54,95 @@ void ListKlass::Initialize() {
     return;
   }
   auto* instance = Self();
-  InitKlass(CreatePyString("list")->as<PyString>(), instance);
+  InitKlass(PyString::Create("list")->as<PyString>(), instance);
   instance->AddAttribute(
-    CreatePyString("append")->as<PyString>(), CreatePyNativeFunction(ListAppend)
+    PyString::Create("append")->as<PyString>(),
+    CreatePyNativeFunction(ListAppend)
   );
   instance->AddAttribute(
-    CreatePyString("extend")->as<PyString>(), CreatePyNativeFunction(ListExtend)
+    PyString::Create("extend")->as<PyString>(),
+    CreatePyNativeFunction(ListExtend)
   );
   instance->AddAttribute(
-    CreatePyString("index")->as<PyString>(), CreatePyNativeFunction(ListIndex)
+    PyString::Create("index")->as<PyString>(), CreatePyNativeFunction(ListIndex)
   );
   instance->AddAttribute(
-    CreatePyString("pop")->as<PyString>(), CreatePyNativeFunction(ListPop)
+    PyString::Create("pop")->as<PyString>(), CreatePyNativeFunction(ListPop)
   );
   instance->AddAttribute(
-    CreatePyString("remove")->as<PyString>(), CreatePyNativeFunction(ListRemove)
+    PyString::Create("remove")->as<PyString>(),
+    CreatePyNativeFunction(ListRemove)
   );
   instance->AddAttribute(
-    CreatePyString("reverse")->as<PyString>(),
+    PyString::Create("reverse")->as<PyString>(),
     CreatePyNativeFunction(ListReverse)
   );
   instance->AddAttribute(
-    CreatePyString("clear")->as<PyString>(), CreatePyNativeFunction(ListClear)
+    PyString::Create("clear")->as<PyString>(), CreatePyNativeFunction(ListClear)
   );
   instance->AddAttribute(
-    CreatePyString("copy")->as<PyString>(), CreatePyNativeFunction(ListCopy)
+    PyString::Create("copy")->as<PyString>(), CreatePyNativeFunction(ListCopy)
   );
   instance->AddAttribute(
-    CreatePyString("count")->as<PyString>(), CreatePyNativeFunction(ListCount)
+    PyString::Create("count")->as<PyString>(), CreatePyNativeFunction(ListCount)
   );
   instance->AddAttribute(
-    CreatePyString("insert")->as<PyString>(), CreatePyNativeFunction(ListInsert)
+    PyString::Create("insert")->as<PyString>(),
+    CreatePyNativeFunction(ListInsert)
   );
   // 注册重载函数
   instance->AddAttribute(
-    CreatePyString("__getitem__")->as<PyString>(),
+    PyString::Create("__getitem__")->as<PyString>(),
     CreatePyNativeFunction(
       CreateForwardFunction<ListKlass>(&ListKlass::getitem)
     )
   );
   instance->AddAttribute(
-    CreatePyString("__setitem__")->as<PyString>(),
+    PyString::Create("__setitem__")->as<PyString>(),
     CreatePyNativeFunction(
       CreateForwardFunction<ListKlass>(&ListKlass::setitem)
     )
   );
   instance->AddAttribute(
-    CreatePyString("__len__")->as<PyString>(),
+    PyString::Create("__len__")->as<PyString>(),
     CreatePyNativeFunction(CreateForwardFunction<ListKlass>(&ListKlass::len))
   );
   instance->AddAttribute(
-    CreatePyString("__contains__")->as<PyString>(),
+    PyString::Create("__contains__")->as<PyString>(),
     CreatePyNativeFunction(
       CreateForwardFunction<ListKlass>(&ListKlass ::contains)
     )
   );
   instance->AddAttribute(
-    CreatePyString("__iter__")->as<PyString>(),
+    PyString::Create("__iter__")->as<PyString>(),
     CreatePyNativeFunction(CreateForwardFunction<ListKlass>(&ListKlass::iter))
   );
   instance->AddAttribute(
-    CreatePyString("__add__")->as<PyString>(),
+    PyString::Create("__add__")->as<PyString>(),
     CreatePyNativeFunction(CreateForwardFunction<ListKlass>(&ListKlass::add))
   );
   instance->AddAttribute(
-    CreatePyString("__mul__")->as<PyString>(),
+    PyString::Create("__mul__")->as<PyString>(),
     CreatePyNativeFunction(CreateForwardFunction<ListKlass>(&ListKlass::mul))
   );
   instance->AddAttribute(
-    CreatePyString("__str__")->as<PyString>(),
+    PyString::Create("__str__")->as<PyString>(),
     CreatePyNativeFunction(CreateForwardFunction<ListKlass>(&ListKlass::str))
   );
   instance->AddAttribute(
-    CreatePyString("__repr__")->as<PyString>(),
+    PyString::Create("__repr__")->as<PyString>(),
     CreatePyNativeFunction(CreateForwardFunction<ListKlass>(&ListKlass::repr))
   );
   instance->AddAttribute(
-    CreatePyString("__eq__")->as<PyString>(),
+    PyString::Create("__eq__")->as<PyString>(),
     CreatePyNativeFunction(CreateForwardFunction<ListKlass>(&ListKlass::eq))
   );
   instance->AddAttribute(
-    CreatePyString("__init__")->as<PyString>(),
+    PyString::Create("__init__")->as<PyString>(),
     CreatePyNativeFunction(CreateForwardFunction<ListKlass>(&ListKlass::init))
   );
   instance->AddAttribute(
-    CreatePyString("__serialize__")->as<PyString>(),
+    PyString::Create("__serialize__")->as<PyString>(),
     CreatePyNativeFunction(
       CreateForwardFunction<ListKlass>(&ListKlass::_serialize_)
     )
@@ -196,9 +200,9 @@ PyObjPtr ListKlass::str(const PyObjPtr& obj) {
   auto list = obj->as<PyList>();
   auto strList = Map(list, [](const PyObjPtr& value) { return value->repr(); });
   return StringConcat(CreatePyList(
-    {CreatePyString("[")->as<PyString>(),
-     CreatePyString(", ")->as<PyString>()->Join(strList),
-     CreatePyString("]")->as<PyString>()}
+    {PyString::Create("[")->as<PyString>(),
+     PyString::Create(", ")->as<PyString>()->Join(strList),
+     PyString::Create("]")->as<PyString>()}
   ));
 }
 
@@ -207,33 +211,34 @@ PyObjPtr ListKlass::repr(const PyObjPtr& obj) {
   auto reprList =
     Map(list, [](const PyObjPtr& value) { return value->repr(); });
   return StringConcat(CreatePyList(
-    {CreatePyString("["), CreatePyString(", ")->as<PyString>()->Join(reprList),
-     CreatePyString("]")}
+    {PyString::Create("["),
+     PyString::Create(", ")->as<PyString>()->Join(reprList),
+     PyString::Create("]")}
   ));
 }
 
 PyObjPtr ListKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   if (!lhs->is(ListKlass::Self()) || !rhs->is(ListKlass::Self())) {
-    return PyBoolean::create(false);
+    return PyBoolean::Create(false);
   }
   auto left = lhs->as<PyList>();
   auto right = rhs->as<PyList>();
   if (left->Length() != right->Length()) {
-    return PyBoolean::create(false);
+    return PyBoolean::Create(false);
   }
   for (Index i = 0; i < left->Length(); i++) {
     if (left->GetItem(i) != right->GetItem(i)) {
-      return PyBoolean::create(false);
+      return PyBoolean::Create(false);
     }
   }
-  return PyBoolean::create(true);
+  return PyBoolean::Create(true);
 }
 
 PyObjPtr ListKlass::getitem(const PyObjPtr& obj, const PyObjPtr& key) {
   if (!obj->is(ListKlass::Self())) {
     auto errorMessage = StringConcat(CreatePyList(
-      {CreatePyString("AttributeError: '"), obj->Klass()->Name(),
-       CreatePyString("' object has no attribute '__getitem__'")}
+      {PyString::Create("AttributeError: '"), obj->Klass()->Name(),
+       PyString::Create("' object has no attribute '__getitem__'")}
     ));
     throw std::runtime_error(errorMessage->as<PyString>()->ToCppString());
   }
@@ -268,10 +273,10 @@ PyObjPtr ListKlass::getitem(const PyObjPtr& obj, const PyObjPtr& key) {
     return result;
   }
   auto errorMessage = StringConcat(CreatePyList(
-    {CreatePyString(
+    {PyString::Create(
        "TypeError: list indices must be integers or slices, not '"
      ),
-     key->Klass()->Name(), CreatePyString("'")}
+     key->Klass()->Name(), PyString::Create("'")}
   ));
   throw std::runtime_error(errorMessage->as<PyString>()->ToCppString());
 }
@@ -283,8 +288,8 @@ PyObjPtr ListKlass::setitem(
 ) {
   if (!obj->is(ListKlass::Self())) {
     auto errorMessage = StringConcat(CreatePyList(
-      {CreatePyString("AttributeError: '"), obj->Klass()->Name(),
-       CreatePyString("' object has no attribute '__setitem__'")}
+      {PyString::Create("AttributeError: '"), obj->Klass()->Name(),
+       PyString::Create("' object has no attribute '__setitem__'")}
     ));
     throw std::runtime_error(errorMessage->as<PyString>()->ToCppString());
   }
@@ -320,10 +325,10 @@ PyObjPtr ListKlass::setitem(
     return CreatePyNone();
   }
   auto errorMessage = StringConcat(CreatePyList(
-    {CreatePyString(
+    {PyString::Create(
        "TypeError: list indices must be integers or slices, not '"
      ),
-     key->Klass()->Name(), CreatePyString("'")}
+     key->Klass()->Name(), PyString::Create("'")}
   ));
   throw std::runtime_error(errorMessage->as<PyString>()->ToCppString());
 }
@@ -331,8 +336,9 @@ PyObjPtr ListKlass::setitem(
 PyObjPtr ListKlass::len(const PyObjPtr& obj) {
   if (!obj->is(ListKlass::Self())) {
     auto errorMessage = StringConcat(CreatePyList(
-      {CreatePyString("TypeError: unsupported operand type(s) for"),
-       CreatePyString(" len(): '"), obj->Klass()->Name(), CreatePyString("'")}
+      {PyString::Create("TypeError: unsupported operand type(s) for"),
+       PyString::Create(" len(): '"), obj->Klass()->Name(),
+       PyString::Create("'")}
     ));
     throw std::runtime_error(errorMessage->as<PyString>()->ToCppString());
   }
@@ -343,14 +349,14 @@ PyObjPtr ListKlass::contains(const PyObjPtr& obj, const PyObjPtr& key) {
   if (!obj->is(ListKlass::Self())) {
     throw std::runtime_error("List does not support contains operation");
   }
-  return PyBoolean::create(obj->as<PyList>()->Contains(key));
+  return PyBoolean::Create(obj->as<PyList>()->Contains(key));
 }
 
 PyObjPtr ListKlass::boolean(const PyObjPtr& obj) {
   if (!obj->is(ListKlass::Self())) {
     throw std::runtime_error("List does not support boolean operation");
   }
-  return PyBoolean::create(obj->as<PyList>()->Length() > 0);
+  return PyBoolean::Create(obj->as<PyList>()->Length() > 0);
 }
 
 PyObjPtr ListKlass::_serialize_(const PyObjPtr& obj) {
@@ -364,7 +370,7 @@ PyObjPtr ListKlass::_serialize_(const PyObjPtr& obj) {
     auto value = list->GetItem(i);
     bytes.Append(value->_serialize_()->as<PyBytes>()->Value());
   }
-  return CreatePyBytes(bytes.ToString());
+  return PyBytes::Create(bytes.ToString());
 }
 
 PyObjPtr ListKlass::iter(const PyObjPtr& obj) {
@@ -401,7 +407,7 @@ PyObjPtr ListExtend(const PyObjPtr& args) {
 
 PyObjPtr ListIndex(const PyObjPtr& args) {
   CheckNativeFunctionArgumentsWithExpectedLength(args, 2);
-  auto funcName = CreatePyString("list_index")->as<PyString>();
+  auto funcName = PyString::Create("list_index")->as<PyString>();
   CheckNativeFunctionArgumentsAtIndexWithType(
     funcName, args, 0, ListKlass::Self()
   );

@@ -15,7 +15,7 @@ PyObjPtr BytesKlass::_serialize_(const PyObjPtr& obj) {
   auto bytes = obj->as<PyBytes>();
   Collections::StringBuilder literal(Collections::Serialize(Literal::BYTES));
   literal.Append(Collections::Serialize(bytes->Value()));
-  return CreatePyBytes(literal.ToString());
+  return PyBytes::Create(literal.ToString());
 }
 
 PyObjPtr BytesKlass::repr(const PyObjPtr& obj) {
@@ -32,7 +32,7 @@ PyObjPtr BytesKlass::repr(const PyObjPtr& obj) {
     stringBuilder.Append(Collections::ReprByte(byte));
   }
   stringBuilder.Append(Collections::CreateStringWithCString("'"));
-  return CreatePyString(stringBuilder.ToString());
+  return PyString::Create(stringBuilder.ToString());
 }
 
 }  // namespace kaubo::Object

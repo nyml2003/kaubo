@@ -25,176 +25,181 @@ Object::PyDictPtr Genesis() {
   Object::LoadRuntimeSupportClasses();
   auto builtins = Object::CreatePyDict()->as<Object::PyDictionary>();
   // 注册内置函数和类型
-  builtins->Put(Object::CreatePyString("None"), Object::CreatePyNone());
+  builtins->Put(Object::PyString::Create("None"), Object::CreatePyNone());
   builtins->Put(
-    Object::CreatePyString("True"), Object::PyBoolean::create(true)
+    Object::PyString::Create("True"), Object::PyBoolean::Create(true)
   );
   builtins->Put(
-    Object::CreatePyString("False"), Object::PyBoolean::create(false)
+    Object::PyString::Create("False"), Object::PyBoolean::Create(false)
   );
 
   // 注册内置函数
   builtins->Put(
-    Object::CreatePyString("print"), CreatePyNativeFunction(Function::Print)
+    Object::PyString::Create("print"), CreatePyNativeFunction(Function::Print)
   );
   builtins->Put(
-    Object::CreatePyString("readFile"),
+    Object::PyString::Create("readFile"),
     CreatePyNativeFunction(Function::ReadFile)
   );
   builtins->Put(
-    Object::CreatePyString("len"), CreatePyNativeFunction(Function::Len)
+    Object::PyString::Create("len"), CreatePyNativeFunction(Function::Len)
   );
   builtins->Put(
-    Object::CreatePyString("next"), CreatePyNativeFunction(Function::Next)
+    Object::PyString::Create("next"), CreatePyNativeFunction(Function::Next)
   );
   builtins->Put(
-    Object::CreatePyString("iter"), CreatePyNativeFunction(Function::Iter)
+    Object::PyString::Create("iter"), CreatePyNativeFunction(Function::Iter)
   );
   builtins->Put(
-    Object::CreatePyString("str"), CreatePyNativeFunction(Object::Str)
+    Object::PyString::Create("str"), CreatePyNativeFunction(Object::Str)
   );
   builtins->Put(
-    Object::CreatePyString("repr"), CreatePyNativeFunction(Object::Repr)
+    Object::PyString::Create("repr"), CreatePyNativeFunction(Object::Repr)
   );
   builtins->Put(
-    Object::CreatePyString("bool"), CreatePyNativeFunction(Object::Bool)
+    Object::PyString::Create("bool"), CreatePyNativeFunction(Object::Bool)
   );
   builtins->Put(
-    Object::CreatePyString("id"), CreatePyNativeFunction(Function::Identity)
+    Object::PyString::Create("id"), CreatePyNativeFunction(Function::Identity)
   );
   builtins->Put(
-    Object::CreatePyString("hash"), CreatePyNativeFunction(Function::Hash)
+    Object::PyString::Create("hash"), CreatePyNativeFunction(Function::Hash)
   );
   builtins->Put(
-    Object::CreatePyString("time"), CreatePyNativeFunction(Function::Time)
+    Object::PyString::Create("time"), CreatePyNativeFunction(Function::Time)
   );
   builtins->Put(
-    Object::CreatePyString("range"), CreatePyNativeFunction(Function::Range)
+    Object::PyString::Create("range"), CreatePyNativeFunction(Function::Range)
   );
   builtins->Put(
-    Object::CreatePyString("__build_class__"),
+    Object::PyString::Create("__build_class__"),
     CreatePyNativeFunction(Function::BuildClass)
   );
   builtins->Put(
-    Object::CreatePyString("type"), CreatePyNativeFunction(Function::Type)
+    Object::PyString::Create("type"), CreatePyNativeFunction(Function::Type)
   );
   builtins->Put(
-    Object::CreatePyString("whoami"),
-    Object::CreatePyString("版权所有 © 2025 蒋钦禹. 保留所有权利。")
+    Object::PyString::Create("whoami"),
+    Object::PyString::Create("版权所有 © 2025 蒋钦禹. 保留所有权利。")
   );
   // builtins->Put(
-  //   Object::CreatePyString("co"),
+  //   Object::PyString::Create("co"),
   //   Object::CreatePyNativeFunction(Function::Coroutine)
   // );
 
   // 内置全局对象
   builtins->Put(
-    Object::CreatePyString("Array"),
+    Object::PyString::Create("Array"),
     Object::CreatePyNativeFunction(Object::Array)
   );
   builtins->Put(
-    Object::CreatePyString("Eye"), Object::CreatePyNativeFunction(Object::Eye)
+    Object::PyString::Create("Eye"), Object::CreatePyNativeFunction(Object::Eye)
   );
   builtins->Put(
-    Object::CreatePyString("Zeros"),
+    Object::PyString::Create("Zeros"),
     Object::CreatePyNativeFunction(Object::Zeros)
   );
   builtins->Put(
-    Object::CreatePyString("Ones"), Object::CreatePyNativeFunction(Object::Ones)
+    Object::PyString::Create("Ones"),
+    Object::CreatePyNativeFunction(Object::Ones)
   );
   builtins->Put(
-    Object::CreatePyString("Diag"),
+    Object::PyString::Create("Diag"),
     Object::CreatePyNativeFunction(Object::Diagnostic)
   );
   builtins->Put(
-    Object::CreatePyString("Transpose"),
+    Object::PyString::Create("Transpose"),
     Object::CreatePyNativeFunction(Object::Transpose)
   );
   builtins->Put(
-    Object::CreatePyString("Reshape"),
+    Object::PyString::Create("Reshape"),
     Object::CreatePyNativeFunction(Object::Reshape)
   );
   builtins->Put(
-    Object::CreatePyString("Shape"),
+    Object::PyString::Create("Shape"),
     Object::CreatePyNativeFunction(Object::Shape)
   );
   builtins->Put(
-    Object::CreatePyString("Concatenate"),
+    Object::PyString::Create("Concatenate"),
     Object::CreatePyNativeFunction(Object::Concatenate)
   );
   builtins->Put(
-    Object::CreatePyString("Ravel"),
+    Object::PyString::Create("Ravel"),
     Object::CreatePyNativeFunction(Object::Ravel)
   );
   builtins->Put(
-    Object::CreatePyString("Normal"),
+    Object::PyString::Create("Normal"),
     Object::CreatePyNativeFunction(Function::Normal)
   );
   builtins->Put(
-    Object::CreatePyString("Shuffle"),
+    Object::PyString::Create("Shuffle"),
     Object::CreatePyNativeFunction(Function::Shuffle)
   );
   builtins->Put(
-    Object::CreatePyString("LogisticLoss"),
+    Object::PyString::Create("LogisticLoss"),
     Object::CreatePyNativeFunction(Function::LogisticLoss)
   );
   builtins->Put(
-    Object::CreatePyString("LogisticLossDerivative"),
+    Object::PyString::Create("LogisticLossDerivative"),
     Object::CreatePyNativeFunction(Function::LogisticLossDerivative)
   );
   builtins->Put(
-    Object::CreatePyString("Sum"), Object::CreatePyNativeFunction(Function::Sum)
+    Object::PyString::Create("Sum"),
+    Object::CreatePyNativeFunction(Function::Sum)
   );
   builtins->Put(
-    Object::CreatePyString("Log"), Object::CreatePyNativeFunction(Function::Log)
+    Object::PyString::Create("Log"),
+    Object::CreatePyNativeFunction(Function::Log)
   );
   builtins->Put(
-    Object::CreatePyString("Softmax"),
+    Object::PyString::Create("Softmax"),
     Object::CreatePyNativeFunction(Function::SoftMax)
   );
   builtins->Put(
-    Object::CreatePyString("Max"), Object::CreatePyNativeFunction(Function::Max)
+    Object::PyString::Create("Max"),
+    Object::CreatePyNativeFunction(Function::Max)
   );
   builtins->Put(
-    Object::CreatePyString("ArgMax"),
+    Object::PyString::Create("ArgMax"),
     Object::CreatePyNativeFunction(Function::ArgMax)
   );
 
   // 系统相关函数
   builtins->Put(
-    Object::CreatePyString("input"), CreatePyNativeFunction(Function::Input)
+    Object::PyString::Create("input"), CreatePyNativeFunction(Function::Input)
   );
   builtins->Put(
-    Object::CreatePyString("sleep"), CreatePyNativeFunction(Function::Sleep)
+    Object::PyString::Create("sleep"), CreatePyNativeFunction(Function::Sleep)
   );
   builtins->Put(
-    Object::CreatePyString("randint"), CreatePyNativeFunction(Function::RandInt)
+    Object::PyString::Create("randint"),
+    CreatePyNativeFunction(Function::RandInt)
   );
 
   // 注册切片类型
   builtins->Put(
-    Object::CreatePyString("slice"), Object::SliceKlass::Self()->Type()
+    Object::PyString::Create("slice"), Object::SliceKlass::Self()->Type()
   );
 
   // 注册内置类型
   builtins->Put(
-    Object::CreatePyString("int"), Object::IntegerKlass::Self()->Type()
+    Object::PyString::Create("int"), Object::IntegerKlass::Self()->Type()
   );
   builtins->Put(
-    Object::CreatePyString("float"), Object::FloatKlass::Self()->Type()
+    Object::PyString::Create("float"), Object::FloatKlass::Self()->Type()
   );
   builtins->Put(
-    Object::CreatePyString("list"), Object::ListKlass::Self()->Type()
+    Object::PyString::Create("list"), Object::ListKlass::Self()->Type()
 
   );
   builtins->Put(
-    Object::CreatePyString("dict"), Object::DictionaryKlass::Self()->Type()
+    Object::PyString::Create("dict"), Object::DictionaryKlass::Self()->Type()
   );
   builtins->Put(
-    Object::CreatePyString("Promise"), Object::PromiseKlass::Self()->Type()
+    Object::PyString::Create("Promise"), Object::PromiseKlass::Self()->Type()
   );
   builtins->Put(
-    Object::CreatePyString("object"), Object::ObjectKlass::Self()->Type()
+    Object::PyString::Create("object"), Object::ObjectKlass::Self()->Type()
   );
   return builtins;
 }

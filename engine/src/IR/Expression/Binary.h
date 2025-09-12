@@ -13,7 +13,7 @@ class BinaryKlass : public INodeTrait, public Object::KlassBase<BinaryKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    InitKlass(Object::CreatePyString("ast_binary"), Self());
+    InitKlass(Object::PyString::Create("ast_binary"), Self());
     this->SetInitialized();
   }
 
@@ -88,55 +88,55 @@ inline INodePtr CreateBinary(
 inline Object::PyStrPtr Stringify(Binary::Operator oprt) {
   switch (oprt) {
     case Binary::Operator::IN_OP:
-      return Object::CreatePyString("in");
+      return Object::PyString::Create("in");
     case Binary::Operator::LT:
-      return Object::CreatePyString("<");
+      return Object::PyString::Create("<");
     case Binary::Operator::GT:
-      return Object::CreatePyString(">");
+      return Object::PyString::Create(">");
     case Binary::Operator::EQ:
-      return Object::CreatePyString("==");
+      return Object::PyString::Create("==");
     case Binary::Operator::GE:
-      return Object::CreatePyString(">=");
+      return Object::PyString::Create(">=");
     case Binary::Operator::LE:
-      return Object::CreatePyString("<=");
+      return Object::PyString::Create("<=");
     case Binary::Operator::NE:
-      return Object::CreatePyString("!=");
+      return Object::PyString::Create("!=");
     case Binary::Operator::NOT_IN:
-      return Object::CreatePyString("not in");
+      return Object::PyString::Create("not in");
     case Binary::Operator::IS:
-      return Object::CreatePyString("is");
+      return Object::PyString::Create("is");
     case Binary::Operator::IS_NOT:
-      return Object::CreatePyString("is not");
+      return Object::PyString::Create("is not");
     case Binary::Operator::ADD:
-      return Object::CreatePyString("+");
+      return Object::PyString::Create("+");
     case Binary::Operator::SUB:
-      return Object::CreatePyString("-");
+      return Object::PyString::Create("-");
     case Binary::Operator::MUL:
-      return Object::CreatePyString("*");
+      return Object::PyString::Create("*");
     case Binary::Operator::DIV:
-      return Object::CreatePyString("/");
+      return Object::PyString::Create("/");
     case Binary::Operator::MATMUL:
-      return Object::CreatePyString("@");
+      return Object::PyString::Create("@");
     case Binary::Operator::MOD:
-      return Object::CreatePyString("%");
+      return Object::PyString::Create("%");
     case Binary::Operator::FLOOR_DIV:
-      return Object::CreatePyString("//");
+      return Object::PyString::Create("//");
     case Binary::Operator::SUBSCR:
-      return Object::CreatePyString("[]");
+      return Object::PyString::Create("[]");
     case Binary::Operator::STORE_SUBSCR:
-      return Object::CreatePyString("[]=");
+      return Object::PyString::Create("[]=");
     case Binary::Operator::AND:
-      return Object::CreatePyString("and");
+      return Object::PyString::Create("and");
     case Binary::Operator::OR:
-      return Object::CreatePyString("or");
+      return Object::PyString::Create("or");
     case Binary::Operator::XOR:
-      return Object::CreatePyString("xor");
+      return Object::PyString::Create("xor");
     case Binary::Operator::LSHIFT:
-      return Object::CreatePyString("<<");
+      return Object::PyString::Create("<<");
     case Binary::Operator::RSHIFT:
-      return Object::CreatePyString(">>");
+      return Object::PyString::Create(">>");
     case Binary::Operator::POWER:
-      return Object::CreatePyString("**");
+      return Object::PyString::Create("**");
     default:
       throw std::runtime_error("Invalid binary operator");
   }

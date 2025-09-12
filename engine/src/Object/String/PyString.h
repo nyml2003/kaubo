@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Collections/String/String.h"
+#include "Collections/String/StringHelper.h"
+#include "Object/Core/IObjectCreator.h"
 #include "Object/Core/PyObject.h"
 #include "Object/Object.h"
 
@@ -26,18 +28,29 @@ class StringKlass : public KlassBase<StringKlass> {
   PyObjPtr _serialize_(const PyObjPtr& obj) override;
 };
 
-class PyString : public PyObject {
+class PyString : public PyObject, public IObjectCreator<PyString> {
   friend class StringKlass;
 
  private:
-  Collections::String value;
-  static std::unordered_map<size_t, std::shared_ptr<PyString>> stringPool;
+  Collections::String m_value;
+
+  static std::unordered_map<size_t, PyStrPtr>& GetStringPool() {
+    static std::unordered_map<size_t, PyStrPtr> pool;
+    return pool;
+  }
 
  public:
-  explicit PyString(Collections::String _value)
-    : PyObject(StringKlass::Self()), value(std::move(_value)) {}
+  explicit PyString(Collections::String value)
+    : PyObject(StringKlass::Self()), m_value(std::move(value)) {}
 
-  Index Length() { return value.GetCodePointCount(); }
+  explicit PyString(const char* value)
+    : PyObject(StringKlass::Self()),
+      m_value(Collections::CreateStringWithCString(value)) {}
+
+  explicit PyString(const std::string& value)
+    : PyObject(StringKlass::Self()),
+      m_value(Collections::CreateStringWithCString(value.c_str())) {}
+  Index Length() { return m_value.GetCodePointCount(); }
 
   PyStrPtr GetItem(Index index);
 
@@ -55,9 +68,16 @@ class PyString : public PyObject {
 
   PyStrPtr Upper();
 
-  Collections::String Value() const { return value.Copy(); }
-  static PyStrPtr Create(const Collections::String& value);
-  size_t Hash() { return value.HashValue(); }
+  Collections::String Value() const { return m_value.Copy(); }
+  static PyStrPtr Intern(const Collections::String& value);
+  size_t Hash() { return m_value.HashValue(); }
+
+  template <typename... Args>
+  static PyStrPtr Create(Args&&... args) {
+    auto tempStr =
+      IObjectCreator<PyString>::Create(std::forward<Args>(args)...);
+    return Intern(tempStr->m_value);
+  }
 };
 
 using PyStrPtr = std::shared_ptr<PyString>;
@@ -70,9 +90,4 @@ PyObjPtr StringJoin(const PyObjPtr& args);
 
 PyObjPtr StringConcat(const PyObjPtr& args);
 
-PyStrPtr CreatePyString(const Collections::String& value, bool pooling = true);
-PyStrPtr CreatePyString(const char* value);
-PyStrPtr CreatePyString(const std::string& value);
-
 }  // namespace kaubo::Object
-

@@ -20,9 +20,9 @@ PyObjPtr ListIteratorKlass::next(const PyObjPtr& obj) {
 PyObjPtr ListIteratorKlass::repr(const PyObjPtr& obj) {
   auto iterator = obj->as<ListIterator>();
   return StringConcat(CreatePyList(
-    {CreatePyString("<list_iterator object of "), iterator->List()->str(),
-     CreatePyString(" index: "),
-     CreatePyInteger(iterator->CurrentIndex())->str(), CreatePyString(">")}
+    {PyString::Create("<list_iterator object of "), iterator->List()->str(),
+     PyString::Create(" index: "),
+     CreatePyInteger(iterator->CurrentIndex())->str(), PyString::Create(">")}
   ));
 }
 
@@ -40,9 +40,9 @@ PyObjPtr ListReverseIteratorKlass::next(const PyObjPtr& obj) {
 PyObjPtr ListReverseIteratorKlass::repr(const PyObjPtr& obj) {
   auto iterator = obj->as<ListReverseIterator>();
   return StringConcat(CreatePyList(
-    {CreatePyString("<list_reversed_iterator object of "),
-     iterator->List()->str(), CreatePyString(" index: "),
-     CreatePyInteger(iterator->CurrentIndex())->str(), CreatePyString(">")}
+    {PyString::Create("<list_reversed_iterator object of "),
+     iterator->List()->str(), PyString::Create(" index: "),
+     CreatePyInteger(iterator->CurrentIndex())->str(), PyString::Create(">")}
   ));
 }
 
@@ -78,7 +78,7 @@ PyObjPtr DictItemIteratorKlass::str(const PyObjPtr& obj) {
   auto dict = iterator->Dict();
   auto value = dict->GetItem(iterator->CurrentIndex())->as<PyList>();
   auto result = StringConcat(CreatePyList(
-    {value->GetItem(0)->str(), CreatePyString(": ")->as<PyString>(),
+    {value->GetItem(0)->str(), PyString::Create(": ")->as<PyString>(),
      value->GetItem(1)->str()}
   ));
   return result;

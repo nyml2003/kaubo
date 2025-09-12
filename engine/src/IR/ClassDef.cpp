@@ -42,9 +42,9 @@ Object::PyObjPtr ClassDefKlass::visit(
   auto classDef = obj->as<ClassDef>();
   classDef->SetCodeIndex(codeList->as<Object::PyList>()->Length());
   auto code = Object::CreatePyCode(classDef->Name());
-  code->RegisterName(Object::CreatePyString("__name__"));
-  code->RegisterName(Object::CreatePyString("__module__"));
-  code->RegisterName(Object::CreatePyString("__qualname__"));
+  code->RegisterName(Object::PyString::Create("__name__"));
+  code->RegisterName(Object::PyString::Create("__module__"));
+  code->RegisterName(Object::PyString::Create("__qualname__"));
   code->RegisterConst(classDef->Name());
   code->SetScope(Object::Scope::GLOBAL);
   code->SetInstructions(Object::CreatePyList());
@@ -67,10 +67,10 @@ Object::PyObjPtr ClassDefKlass::emit(
 ) {
   auto classDef = obj->as<ClassDef>();
   auto selfCode = GetCodeFromList(codeList, classDef);
-  selfCode->LoadName(Object::CreatePyString("__name__"));
-  selfCode->StoreName(Object::CreatePyString("__module__"));
+  selfCode->LoadName(Object::PyString::Create("__name__"));
+  selfCode->StoreName(Object::PyString::Create("__module__"));
   selfCode->LoadConst(classDef->Name());
-  selfCode->StoreName(Object::CreatePyString("__qualname__"));
+  selfCode->StoreName(Object::PyString::Create("__qualname__"));
   Object::ForEach(classDef->Body(), [&codeList](const Object::PyObjPtr& stmt) {
     stmt->as<INode>()->emit(codeList);
   });
@@ -99,7 +99,7 @@ Object::PyObjPtr ClassDefKlass::print(const Object::PyObjPtr& obj) {
   PrintNode(
     classDef, Object::StringConcat(
                 Object::CreatePyList(
-                  {Object::CreatePyString("ClassDef "), classDef->Name()}
+                  {Object::PyString::Create("ClassDef "), classDef->Name()}
                 )
               )
                 ->as<Object::PyString>()

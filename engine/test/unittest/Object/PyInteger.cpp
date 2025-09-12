@@ -73,7 +73,7 @@ TEST_F(PyIntegerTest, TestFloorDiv) {
 TEST_F(PyIntegerTest, TestRepr) {
   auto result = IntegerKlass::Self()->repr(integer1);
   EXPECT_TRUE(
-    std::dynamic_pointer_cast<PyString>(result)->Equal(CreatePyString("10"))
+    std::dynamic_pointer_cast<PyString>(result)->Equal(PyString::Create("10"))
   );
 }
 

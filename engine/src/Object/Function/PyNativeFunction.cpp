@@ -18,8 +18,11 @@ void CheckNativeFunctionArgumentsWithExpectedLength(
   if (list->Length() != expected) {
     Function::DebugPrint(list);
     auto errorMessage = StringConcat(CreatePyList(
-      {CreatePyString("Check Native Function Arguments With Expected Length: "),
-       CreatePyInteger(expected)->str(), CreatePyString(" Expected, but got "),
+      {PyString::Create(
+         "Check Native Function Arguments With Expected Length: "
+       ),
+       CreatePyInteger(expected)->str(),
+       PyString::Create(" Expected, but got "),
        CreatePyInteger(list->Length())->str()}
     ));
     throw std::runtime_error(errorMessage->str()->as<PyString>()->ToCppString()
@@ -32,8 +35,8 @@ void CheckNativeFunctionArguments(const PyObjPtr& args) {
     return;
   }
   auto errorMessage = StringConcat(CreatePyList(
-    {CreatePyString("Check Native Function (Name: "), args->str(),
-     CreatePyString(") Arguments: Expected a list, but got "),
+    {PyString::Create("Check Native Function (Name: "), args->str(),
+     PyString::Create(") Arguments: Expected a list, but got "),
      args->Klass()->Name()}
   ));
   throw std::runtime_error(errorMessage->str()->as<PyString>()->ToCppString());
@@ -58,10 +61,10 @@ void CheckNativeFunctionArgumentWithType(
 ) {
   if (arg->Klass() != klass) {
     auto errorMessage = StringConcat(CreatePyList(
-      {CreatePyString("Check Native Function (Name: "), funcName,
-       CreatePyString(") Arguments With Type At Index: "),
-       CreatePyInteger(index)->str(), CreatePyString(" Expected Type: "),
-       klass->Name(), CreatePyString(" Got Type: "), arg->Klass()->Name()}
+      {PyString::Create("Check Native Function (Name: "), funcName,
+       PyString::Create(") Arguments With Type At Index: "),
+       CreatePyInteger(index)->str(), PyString::Create(" Expected Type: "),
+       klass->Name(), PyString::Create(" Got Type: "), arg->Klass()->Name()}
     ));
     throw std::runtime_error(errorMessage->str()->as<PyString>()->ToCppString()
     );
@@ -72,15 +75,15 @@ void NativeFunctionKlass::Initialize() {
   if (this->IsInitialized()) {
     return;
   }
-  InitKlass(CreatePyString("native_function")->as<PyString>(), Self());
+  InitKlass(PyString::Create("native_function")->as<PyString>(), Self());
   this->SetInitialized();
 }
 
 PyObjPtr NativeFunctionKlass::repr(const PyObjPtr& obj) {
   return StringConcat(CreatePyList(
-    {CreatePyString("<built-in function at "),
+    {PyString::Create("<built-in function at "),
      Function::Identity(CreatePyList({obj}))->as<PyString>(),
-     CreatePyString(">")}
+     PyString::Create(">")}
   ));
 }
 

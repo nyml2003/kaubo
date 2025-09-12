@@ -14,7 +14,7 @@ class MapKlass : public INodeTrait, public Object::KlassBase<MapKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    InitKlass(Object::CreatePyString("ast_map"), Self());
+    InitKlass(Object::PyString::Create("ast_map"), Self());
     this->SetInitialized();
   }
 
@@ -34,7 +34,9 @@ class Map : public INode {
     Object::PyListPtr values,
     const INodePtr& parent
   )
-    : INode(MapKlass::Self(), parent), keys(std::move(keys)), values(std::move(values)) {}
+    : INode(MapKlass::Self(), parent),
+      keys(std::move(keys)),
+      values(std::move(values)) {}
 
   Object::PyListPtr Keys() const { return keys; }
   Object::PyListPtr Values() const { return values; }

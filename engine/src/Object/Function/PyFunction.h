@@ -14,7 +14,7 @@ class FunctionKlass : public KlassBase<FunctionKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    LoadClass(CreatePyString("function")->as<PyString>(), Self());
+    LoadClass(PyString::Create("function")->as<PyString>(), Self());
     ConfigureBasicAttributes(Self());
     this->SetInitialized();
   }

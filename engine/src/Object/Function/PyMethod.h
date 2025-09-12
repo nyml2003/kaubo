@@ -12,7 +12,7 @@ class MethodKlass : public KlassBase<MethodKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    LoadClass(CreatePyString("method")->as<PyString>(), Self());
+    LoadClass(PyString::Create("method")->as<PyString>(), Self());
     ConfigureBasicAttributes(Self());
     this->SetInitialized();
   }

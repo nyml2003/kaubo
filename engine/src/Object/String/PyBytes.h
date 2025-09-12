@@ -13,7 +13,7 @@ class BytesKlass : public KlassBase<BytesKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    LoadClass(CreatePyString("bytes")->as<PyString>(), Self());
+    LoadClass(PyString::Create("bytes")->as<PyString>(), Self());
     ConfigureBasicAttributes(Self());
     this->SetInitialized();
   }
@@ -24,7 +24,7 @@ class BytesKlass : public KlassBase<BytesKlass> {
 };
 class PyBytes;
 using PyBytesPtr = std::shared_ptr<PyBytes>;
-class PyBytes : public PyObject {
+class PyBytes : public PyObject, public IObjectCreator<PyBytes> {
  private:
   Collections::String value;
 
@@ -35,9 +35,4 @@ class PyBytes : public PyObject {
   [[nodiscard]] const Collections::String& Value() { return value; }
 };
 
-inline PyBytesPtr CreatePyBytes(Collections::String&& value) {
-  return std::make_shared<PyBytes>(std::move(value));
-}
-
 }  // namespace kaubo::Object
-

@@ -67,7 +67,7 @@ PyPromisePtr CreatePyPromise(const PyObjPtr& executor) {
       executor, CreatePyList({resolve, reject})
     );
   } catch (const std::exception& e) {
-    reject->Call(CreatePyList({CreatePyString(e.what())}));
+    reject->Call(CreatePyList({PyString::Create(e.what())}));
   }
   return promise;
 }
@@ -89,7 +89,7 @@ PyPromisePtr PyPromise::Then(const PyObjPtr& onFulfilled) {
           return CreatePyNone();
         } catch (const std::exception& e) {
           Runtime::Evaluator::InvokeCallable(
-            reject, CreatePyList({CreatePyString(e.what())})
+            reject, CreatePyList({PyString::Create(e.what())})
           );
           return CreatePyNone();
         }
@@ -125,7 +125,7 @@ PyPromisePtr PyPromise::Catch(const PyObjPtr& onRejected) {
           return CreatePyNone();
         } catch (const std::exception& e) {
           Runtime::Evaluator::InvokeCallable(
-            reject, CreatePyList({CreatePyString(e.what())})
+            reject, CreatePyList({PyString::Create(e.what())})
           );
         }
         return CreatePyNone();
@@ -144,10 +144,10 @@ void PromiseKlass::Initialize() {
   if (IsInitialized()) {
     return;
   }
-  InitKlass(CreatePyString("Promise")->as<PyString>(), Self());
+  InitKlass(PyString::Create("Promise")->as<PyString>(), Self());
 
   AddAttribute(
-    CreatePyString("then"),
+    PyString::Create("then"),
     CreatePyNativeFunction([](const PyObjPtr& args) -> PyObjPtr {
       auto argList = args->as<PyList>();
       auto promise = argList->GetItem(0)->as<PyPromise>();
@@ -156,7 +156,7 @@ void PromiseKlass::Initialize() {
     })
   );
   AddAttribute(
-    CreatePyString("catch"),
+    PyString::Create("catch"),
     CreatePyNativeFunction([](const PyObjPtr& args) -> PyObjPtr {
       auto argList = args->as<PyList>();
       auto promise = argList->GetItem(0)->as<PyPromise>();
@@ -165,9 +165,11 @@ void PromiseKlass::Initialize() {
     })
   );
   AddAttribute(
-    CreatePyString("resolve"), CreatePyNativeFunction(PromiseResolve)
+    PyString::Create("resolve"), CreatePyNativeFunction(PromiseResolve)
   );
-  AddAttribute(CreatePyString("reject"), CreatePyNativeFunction(PromiseReject));
+  AddAttribute(
+    PyString::Create("reject"), CreatePyNativeFunction(PromiseReject)
+  );
 
   SetInitialized();
 }

@@ -11,7 +11,7 @@ class ForStmtKlass : public INodeTrait, public Object::KlassBase<ForStmtKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    InitKlass(Object::CreatePyString("ast_forstmt"), Self());
+    InitKlass(Object::PyString::Create("ast_forstmt"), Self());
     this->SetInitialized();
   }
 

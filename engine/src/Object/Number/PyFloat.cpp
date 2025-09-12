@@ -130,7 +130,7 @@ PyObjPtr FloatKlass::repr(const PyObjPtr& obj) {
     throw std::runtime_error("PyFloat::repr(): obj is not a float");
   }
   auto floatObj = obj->as<PyFloat>();
-  return CreatePyString(Collections::ToString(floatObj->Value()));
+  return PyString::Create(Collections::ToString(floatObj->Value()));
 }
 
 PyObjPtr FloatKlass::_serialize_(const PyObjPtr& obj) {
@@ -142,14 +142,14 @@ PyObjPtr FloatKlass::_serialize_(const PyObjPtr& obj) {
     Collections::Serialize(Literal::FLOAT)
   );
   stringBuilder.Append(Collections::Serialize(floatObj->Value()));
-  return CreatePyBytes(stringBuilder.ToString());
+  return PyBytes::Create(stringBuilder.ToString());
 }
 
 PyObjPtr FloatKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   if (!lhs->is(Self()) || !rhs->is(Self())) {
     throw std::runtime_error("PyFloat::eq(): lhs or rhs is not a float");
   }
-  return PyBoolean::create(
+  return PyBoolean::Create(
     lhs->as<PyFloat>()->Value() == rhs->as<PyFloat>()->Value()
   );
 }
@@ -158,7 +158,7 @@ PyObjPtr FloatKlass::lt(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   if (!lhs->is(Self()) || !rhs->is(Self())) {
     throw std::runtime_error("PyFloat::lt(): lhs or rhs is not a float");
   }
-  return PyBoolean::create(
+  return PyBoolean::Create(
     lhs->as<PyFloat>()->Value() < rhs->as<PyFloat>()->Value()
   );
 }
@@ -167,7 +167,7 @@ PyObjPtr FloatKlass::boolean(const PyObjPtr& obj) {
   if (!obj->is(Self())) {
     throw std::runtime_error("PyFloat::boolean(): obj is not a float");
   }
-  return PyBoolean::create(obj->as<PyFloat>()->Value() != 0.0);
+  return PyBoolean::Create(obj->as<PyFloat>()->Value() != 0.0);
 }
 
 }  // namespace kaubo::Object

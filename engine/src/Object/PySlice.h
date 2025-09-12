@@ -14,7 +14,7 @@ class SliceKlass : public KlassBase<SliceKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    LoadClass(CreatePyString("slice")->as<PyString>(), Self());
+    LoadClass(PyString::Create("slice")->as<PyString>(), Self());
     ConfigureBasicAttributes(Self());
     this->SetInitialized();
   }
@@ -58,4 +58,3 @@ inline PyObjPtr CreatePySlice(
 using PySlicePtr = std::shared_ptr<PySlice>;
 
 }  // namespace kaubo::Object
-

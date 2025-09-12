@@ -24,7 +24,7 @@ PyIntPtr CreatePyInteger(int64_t value) {
 }
 
 void IntegerKlass::Initialize() {
-  InitKlass(CreatePyString("int")->as<PyString>(), Self());
+  InitKlass(PyString::Create("int")->as<PyString>(), Self());
 }
 
 PyObjPtr IntegerKlass::init(const PyObjPtr& klass, const PyObjPtr& args) {
@@ -142,7 +142,7 @@ PyObjPtr IntegerKlass::boolean(const PyObjPtr& obj) {
     throw std::runtime_error("PyInteger::boolean(): obj is not an integer");
   }
   auto integer = obj->as<PyInteger>();
-  return PyBoolean::create(!integer->value.IsZero());
+  return PyBoolean::Create(!integer->value.IsZero());
 }
 
 PyObjPtr IntegerKlass::hash(const PyObjPtr& obj) {
@@ -210,7 +210,7 @@ PyObjPtr IntegerKlass::repr(const PyObjPtr& obj) {
     throw std::runtime_error("PyInteger::repr(): obj is not an integer");
   }
   auto integer = obj->as<PyInteger>();
-  return CreatePyString((integer->value).ToString());
+  return PyString::Create((integer->value).ToString());
 }
 PyObjPtr IntegerKlass::str(const PyObjPtr& obj) {
   return repr(obj);
@@ -222,7 +222,7 @@ PyObjPtr IntegerKlass::lt(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyInteger>();
   auto right = rhs->as<PyInteger>();
-  return PyBoolean::create(left->value.LessThan(right->value));
+  return PyBoolean::Create(left->value.LessThan(right->value));
 }
 
 PyObjPtr IntegerKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -231,7 +231,7 @@ PyObjPtr IntegerKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyInteger>();
   auto right = rhs->as<PyInteger>();
-  return PyBoolean::create(left->value.Equal(right->value));
+  return PyBoolean::Create(left->value.Equal(right->value));
 }
 
 PyObjPtr IntegerKlass::_serialize_(const PyObjPtr& obj) {
@@ -240,11 +240,11 @@ PyObjPtr IntegerKlass::_serialize_(const PyObjPtr& obj) {
   }
   auto integer = obj->as<PyInteger>();
   if (integer->value.IsZero()) {
-    return CreatePyBytes(Collections::Serialize(Literal::ZERO));
+    return PyBytes::Create(Collections::Serialize(Literal::ZERO));
   }
   Collections::StringBuilder bytes(Collections::Serialize(Literal::INTEGER));
   bytes.Append(Collections::Serialize(integer->value));
-  return CreatePyBytes(bytes.ToString());
+  return PyBytes::Create(bytes.ToString());
 }
 
 bool PyInteger::LessThan(const PyObjPtr& other) const {

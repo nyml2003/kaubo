@@ -10,28 +10,28 @@ PyObjPtr NoneKlass::_serialize_(const PyObjPtr& obj) {
   if (!obj->is(NoneKlass::Self())) {
     throw std::runtime_error("NoneType does not support serialization");
   }
-  return CreatePyBytes(Collections::Serialize(Literal::NONE));
+  return PyBytes::Create(Collections::Serialize(Literal::NONE));
 }
 
 PyObjPtr NoneKlass::repr(const PyObjPtr& obj) {
   if (!obj->is(NoneKlass::Self())) {
     throw std::runtime_error("NoneType does not support repr operation");
   }
-  return CreatePyString("None");
+  return PyString::Create("None");
 }
 
 PyObjPtr NoneKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   if (lhs->is(NoneKlass::Self()) && rhs->is(NoneKlass::Self())) {
-    return PyBoolean::create(true);
+    return PyBoolean::Create(true);
   }
-  return PyBoolean::create(false);
+  return PyBoolean::Create(false);
 }
 
 PyObjPtr NoneKlass::boolean(const PyObjPtr& obj) {
   if (!obj->is(NoneKlass::Self())) {
     throw std::runtime_error("NoneType does not support boolean operation");
   }
-  return PyBoolean::create(false);
+  return PyBoolean::Create(false);
 }
 
 PyNone::PyNone() : PyObject(NoneKlass::Self()) {}

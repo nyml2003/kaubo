@@ -88,7 +88,7 @@ class FrameKlass : public KlassBase<FrameKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    LoadClass(CreatePyString("frame")->as<PyString>(), Self());
+    LoadClass(PyString::Create("frame")->as<PyString>(), Self());
     ConfigureBasicAttributes(Self());
     this->SetInitialized();
   }

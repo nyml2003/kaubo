@@ -14,7 +14,7 @@ class FloatKlass : public KlassBase<FloatKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    LoadClass(CreatePyString("float")->as<PyString>(), Self());
+    LoadClass(PyString::Create("float")->as<PyString>(), Self());
     ConfigureBasicAttributes(Self());
     this->SetInitialized();
   }
@@ -53,4 +53,3 @@ inline PyFloatPtr CreatePyFloat(double value) {
 }
 
 }  // namespace kaubo::Object
-

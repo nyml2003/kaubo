@@ -43,7 +43,7 @@ PyFrame::PyFrame(
 PyFramePtr CreateModuleEntryFrame(const PyCodePtr& code) {
   auto locals = CreatePyDict()->as<PyDictionary>();
   auto globals = locals;
-  locals->Put(CreatePyString("__name__"), CreatePyString("__main__"));
+  locals->Put(PyString::Create("__name__"), PyString::Create("__main__"));
   auto fastLocals = CreatePyList(code->NLocals());
   auto caller = nullptr;
   auto frame =
@@ -321,9 +321,9 @@ PyObjPtr FrameKlass::repr(const PyObjPtr& obj) {
   }
   auto frame = obj->as<PyFrame>();
   return StringConcat(CreatePyList(
-    {CreatePyString("<frame object at ")->as<PyString>(),
+    {PyString::Create("<frame object at ")->as<PyString>(),
      Function::Identity(CreatePyList({obj}))->as<PyString>(),
-     CreatePyString(">")->as<PyString>()}
+     PyString::Create(">")->as<PyString>()}
   ));
 }
 
@@ -472,11 +472,11 @@ PyObjPtr PyFrame::Eval() {  // NOLINT(readability-function-cognitive-complexity)
             break;
           }
           case CompareOp::IS: {
-            stack.Push(PyBoolean::create(left.get() == right.get()));
+            stack.Push(PyBoolean::Create(left.get() == right.get()));
             break;
           }
           case CompareOp::IS_NOT: {
-            stack.Push(PyBoolean::create(left.get() != right.get()));
+            stack.Push(PyBoolean::Create(left.get() != right.get()));
             break;
           }
           default:
@@ -685,8 +685,8 @@ PyObjPtr PyFrame::Eval() {  // NOLINT(readability-function-cognitive-complexity)
         }
         if (!found) {
           auto errorMessage = StringConcat(CreatePyList(
-            {CreatePyString("NameError: name '"), key,
-             CreatePyString("' is not defined")}
+            {PyString::Create("NameError: name '"), key,
+             PyString::Create("' is not defined")}
           ));
           throw std::runtime_error(errorMessage->as<PyString>()->ToCppString());
         }
@@ -823,7 +823,7 @@ PyObjPtr PyFrame::Eval() {  // NOLINT(readability-function-cognitive-complexity)
       case ByteCode::LOAD_BUILD_CLASS: {
         stack.Push(
           Runtime::VirtualMachine::Instance().Builtins()->getitem(
-            CreatePyString("__build_class__")
+            PyString::Create("__build_class__")
           )
         );
         NextProgramCounter();

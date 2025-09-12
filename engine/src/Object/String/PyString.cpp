@@ -18,66 +18,60 @@
 
 namespace kaubo::Object {
 
-namespace {
-std::unordered_map<size_t, std::shared_ptr<PyString>>& GetStringPool() {
-  static std::unordered_map<size_t, std::shared_ptr<PyString>> stringPool;
-  return stringPool;
-}
-}  // namespace
 void StringKlass::Initialize() {
-  InitKlass(CreatePyString("str")->as<PyString>(), Self());
+  InitKlass(PyString::Create("str"), Self());
   Self()->AddAttribute(
-    CreatePyString("join")->as<PyString>(), CreatePyNativeFunction(StringJoin)
+    PyString::Create("join"), CreatePyNativeFunction(StringJoin)
   );
   //  Self()->AddAttribute(
-  //    CreatePyString("split")->as<PyString>(),
+  //    PyString::Create("split")->as<PyString>(),
   //    CreatePyNativeFunction(StringSplit)
   //  );
   Self()->AddAttribute(
-    CreatePyString("upper")->as<PyString>(), CreatePyNativeFunction(StringUpper)
+    PyString::Create("upper"), CreatePyNativeFunction(StringUpper)
   );
   Self()->AddAttribute(
-    CreatePyString("__add__")->as<PyString>(),
+    PyString::Create("__add__"),
     CreatePyNativeFunction(
       CreateForwardFunction<StringKlass>(&StringKlass::add)
     )
   );
   Self()->AddAttribute(
-    CreatePyString("__eq__")->as<PyString>(),
+    PyString::Create("__eq__"),
     CreatePyNativeFunction(CreateForwardFunction<StringKlass>(&StringKlass::eq))
   );
   Self()->AddAttribute(
-    CreatePyString("__len__")->as<PyString>(),
+    PyString::Create("__len__"),
     CreatePyNativeFunction(
       CreateForwardFunction<StringKlass>(&StringKlass::len)
     )
   );
   Self()->AddAttribute(
-    CreatePyString("__str__")->as<PyString>(),
+    PyString::Create("__str__"),
     CreatePyNativeFunction(
       CreateForwardFunction<StringKlass>(&StringKlass::str)
     )
   );
   Self()->AddAttribute(
-    CreatePyString("__repr__")->as<PyString>(),
+    PyString::Create("__repr__"),
     CreatePyNativeFunction(
       CreateForwardFunction<StringKlass>(&StringKlass::repr)
     )
   );
   Self()->AddAttribute(
-    CreatePyString("__iter__")->as<PyString>(),
+    PyString::Create("__iter__"),
     CreatePyNativeFunction(
       CreateForwardFunction<StringKlass>(&StringKlass::iter)
     )
   );
   Self()->AddAttribute(
-    CreatePyString("__serialize__")->as<PyString>(),
+    PyString::Create("__serialize__"),
     CreatePyNativeFunction(
       CreateForwardFunction<StringKlass>(&StringKlass::_serialize_)
     )
   );
   Self()->AddAttribute(
-    CreatePyString("__init__")->as<PyString>(),
+    PyString::Create("__init__"),
     CreatePyNativeFunction(
       CreateForwardFunction<StringKlass>(&StringKlass::init)
     )
@@ -90,7 +84,7 @@ PyObjPtr StringKlass::init(const PyObjPtr& klass, const PyObjPtr& args) {
   }
   auto argList = args->as<PyList>();
   if (argList->Length() == 0) {
-    return CreatePyString("");
+    return PyString::Create("");
   }
   if (argList->Length() != 1) {
     throw std::runtime_error("init(): args must be a list with one element");
@@ -109,11 +103,11 @@ PyObjPtr StringKlass::add(const PyObjPtr& lhs, const PyObjPtr& rhs) {
 
 PyObjPtr StringKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   if (!lhs->is(StringKlass::Self()) || !rhs->is(StringKlass::Self())) {
-    return PyBoolean::create(false);
+    return PyBoolean::Create(false);
   }
   auto left = lhs->as<PyString>();
   auto right = rhs->as<PyString>();
-  return PyBoolean::create(left->Equal(right));
+  return PyBoolean::Create(left->Equal(right));
 }
 
 PyObjPtr StringKlass::len(const PyObjPtr& obj) {
@@ -137,7 +131,7 @@ PyObjPtr StringKlass::repr(const PyObjPtr& obj) {
   }
   auto string = obj->as<PyString>();
   return StringConcat(
-    CreatePyList({CreatePyString("'"), string, CreatePyString("'")})
+    CreatePyList({PyString::Create("'"), string, PyString::Create("'")})
   );
 }
 
@@ -166,7 +160,7 @@ PyObjPtr StringKlass::boolean(const PyObjPtr& obj) {
     throw std::runtime_error("StringKlass::boolean(): obj is not a string");
   }
   auto string = obj->as<PyString>();
-  return PyBoolean::create(string->Length() > 0);
+  return PyBoolean::Create(string->Length() > 0);
 }
 
 PyObjPtr StringKlass::_serialize_(const PyObjPtr& obj) {
@@ -174,17 +168,15 @@ PyObjPtr StringKlass::_serialize_(const PyObjPtr& obj) {
     throw std::runtime_error("StringKlass::_serialize_(): obj is not a string");
   }
   Collections::StringBuilder bytes(Collections::Serialize(Literal::STRING));
-  bytes.Append(Collections::Serialize(obj->as<PyString>()->value));
-  return CreatePyBytes(bytes.ToString());
+  bytes.Append(Collections::Serialize(obj->as<PyString>()->m_value));
+  return PyBytes::Create(bytes.ToString());
 }
 
 PyStrPtr PyString::GetItem(Index index) {
-  if (index >= value.GetCodePointCount()) {
+  if (index >= m_value.GetCodePointCount()) {
     throw std::runtime_error("PyString::GetItem(): index out of range");
   }
-  return CreatePyString(
-    Collections::String(value.Slice(index, index + 1)), false
-  );
+  return PyString::Create(Collections::String(m_value.Slice(index, index + 1)));
 }
 
 PyStrPtr PyString::Join(const PyObjPtr& iterable) {
@@ -192,26 +184,26 @@ PyStrPtr PyString::Join(const PyObjPtr& iterable) {
   for (Index i = 0; i < iterable->as<PyList>()->Length(); i++) {
     auto item = iterable->as<PyList>()->GetItem(i);
     if (i == 0) {
-      stringBuilder.Append(item->as<PyString>()->value);
+      stringBuilder.Append(item->as<PyString>()->m_value);
     } else {
-      stringBuilder.Append(value);
-      stringBuilder.Append(item->as<PyString>()->value);
+      stringBuilder.Append(m_value);
+      stringBuilder.Append(item->as<PyString>()->m_value);
     }
   }
-  return CreatePyString(stringBuilder.ToString(), false)->as<PyString>();
+  return PyString::Create(stringBuilder.ToString())->as<PyString>();
 }
 
 // PyListPtr PyString::Split(const PyStrPtr& delimiter) {
 //   auto parts = value.Split(delimiter->value);
 //   auto result = CreatePyList(parts.Size())->as<PyList>();
 //   for (Index i = 0; i < parts.Size(); i++) {
-//     result->SetItem(i, CreatePyString(parts[i]));
+//     result->SetItem(i, PyString::Create(parts[i]));
 //   }
 //   return result;
 // }
 
 PyStrPtr PyString::Add(const PyStrPtr& other) {
-  return CreatePyString(value.Add(other->value), false)->as<PyString>();
+  return PyString::Create(m_value.Add(other->m_value));
 }
 
 void PyString::Print() const {
@@ -219,22 +211,22 @@ void PyString::Print() const {
 }
 
 std::string PyString::ToCppString() const {
-  return value.ToCppString();
+  return m_value.ToCppString();
 }
 
 bool PyString::Equal(const PyStrPtr& other) {
-  return value.Equal(other->value);
+  return m_value.Equal(other->m_value);
 }
 
 PyStrPtr PyString::Upper() {
-  return CreatePyString(value.Upper())->as<PyString>();
+  return PyString::Create(m_value.Upper());
 }
 
 PyObjPtr StringConcat(const PyObjPtr& args) {
   CheckNativeFunctionArguments(args);
   auto argList = args->as<PyList>();
-  auto funcName = CreatePyString("StringConcat")->as<PyString>();
-  auto result = CreatePyString("")->as<PyString>();
+  auto funcName = PyString::Create("StringConcat")->as<PyString>();
+  auto result = PyString::Create("")->as<PyString>();
   for (Index i = 0; i < argList->Length(); i++) {
     auto value = argList->GetItem(i);
     CheckNativeFunctionArgumentWithType(
@@ -247,7 +239,7 @@ PyObjPtr StringConcat(const PyObjPtr& args) {
 
 PyObjPtr StringUpper(const PyObjPtr& args) {
   CheckNativeFunctionArgumentsWithExpectedLength(args, 1);
-  auto funcName = CreatePyString("StringUpper")->as<PyString>();
+  auto funcName = PyString::Create("StringUpper")->as<PyString>();
   CheckNativeFunctionArgumentsAtIndexWithType(
     funcName, args, 0, StringKlass::Self()
   );
@@ -273,7 +265,7 @@ PyObjPtr StringJoin(const PyObjPtr& args) {
 //   return value->Split(delimiter);
 // }
 
-PyStrPtr PyString::Create(const Collections::String& value) {
+PyStrPtr PyString::Intern(const Collections::String& value) {
   auto& poolInstance = GetStringPool();
   auto hash = value.HashValue();
   auto iter = poolInstance.find(hash);
@@ -283,21 +275,6 @@ PyStrPtr PyString::Create(const Collections::String& value) {
   auto result = std::make_shared<PyString>(value);
   poolInstance[hash] = result;
   return result;
-}
-
-PyStrPtr CreatePyString(const Collections::String& value, bool pooling) {
-  if (pooling) {
-    return PyString::Create(value);
-  }
-  return std::make_shared<PyString>(value);
-}
-
-PyStrPtr CreatePyString(const std::string& value) {
-  return PyString::Create(Collections::CreateStringWithCString(value.c_str()));
-}
-
-PyStrPtr CreatePyString(const char* value) {
-  return PyString::Create(Collections::CreateStringWithCString(value));
 }
 
 }  // namespace kaubo::Object

@@ -91,7 +91,7 @@ Object::PyCodePtr compile(InputStreamPtr input_stream) {
     }
     return std::string("unreached");
   }();
-  Generation::Generator visitor(kaubo::Object::CreatePyString(moduleName));
+  Generation::Generator visitor(kaubo::Object::PyString::Create(moduleName));
 
   visitor.visit(tree);
   visitor.Visit();

@@ -45,7 +45,7 @@ Object::PyObjPtr WhileStmtKlass::print(const Object::PyObjPtr& obj) {
   auto whileStmt = obj->as<WhileStmt>();
   auto condition = whileStmt->Condition();
   auto body = whileStmt->Body();
-  PrintNode(whileStmt, Object::CreatePyString("WhileStmt"));
+  PrintNode(whileStmt, Object::PyString::Create("WhileStmt"));
   condition->print();
   PrintEdge(whileStmt, condition);
   Object::ForEach(body, [&whileStmt](const Object::PyObjPtr& stmt) {

@@ -15,7 +15,7 @@ class ListKlass : public INodeTrait, public Object::KlassBase<ListKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    InitKlass(Object::CreatePyString("ast_list"), Self());
+    InitKlass(Object::PyString::Create("ast_list"), Self());
     this->SetInitialized();
   }
 

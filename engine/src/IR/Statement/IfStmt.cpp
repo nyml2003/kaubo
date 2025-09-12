@@ -126,27 +126,27 @@ Object::PyObjPtr IfStmtKlass::print(const Object::PyObjPtr& obj) {
   auto elseStmts = ifStmt->ElseStmts();
   auto elifs = ifStmt->Elifs();
   auto elifConditions = ifStmt->ElifConditions();
-  PrintNode(ifStmt, Object::CreatePyString("IfStmt"));
+  PrintNode(ifStmt, Object::PyString::Create("IfStmt"));
   condition->print();
-  PrintEdge(ifStmt, condition, Object::CreatePyString("condition"));
+  PrintEdge(ifStmt, condition, Object::PyString::Create("condition"));
   Object::ForEach(thenStmts, [&](const Object::PyObjPtr& stmt) {
     stmt->as<INode>()->print();
-    PrintEdge(ifStmt, stmt, Object::CreatePyString("thenStmt"));
+    PrintEdge(ifStmt, stmt, Object::PyString::Create("thenStmt"));
   });
   Object::ForEach(elifConditions, [&](const Object::PyObjPtr& elif) {
     elif->as<INode>()->print();
-    PrintEdge(ifStmt, elif, Object::CreatePyString("elifCondition"));
+    PrintEdge(ifStmt, elif, Object::PyString::Create("elifCondition"));
   });
   Object::ForEach(elifs, [&](const Object::PyObjPtr& elif) {
     const auto& elifStms = elif;
     Object::ForEach(elifStms, [&](const Object::PyObjPtr& stmt) {
       stmt->as<INode>()->print();
-      PrintEdge(ifStmt, stmt, Object::CreatePyString("elif"));
+      PrintEdge(ifStmt, stmt, Object::PyString::Create("elif"));
     });
   });
   Object::ForEach(elseStmts, [&](const Object::PyObjPtr& stmt) {
     stmt->as<INode>()->print();
-    PrintEdge(ifStmt, stmt, Object::CreatePyString("else"));
+    PrintEdge(ifStmt, stmt, Object::PyString::Create("else"));
   });
   return Object::CreatePyNone();
 }

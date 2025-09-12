@@ -13,7 +13,7 @@ class FunctionCallKlass : public INodeTrait,
     if (this->IsInitialized()) {
       return;
     }
-    InitKlass(Object::CreatePyString("ast_functioncall"), Self());
+    InitKlass(Object::PyString::Create("ast_functioncall"), Self());
     this->SetInitialized();
   }
 

@@ -32,7 +32,7 @@ Object::PyObjPtr ListKlass::visit(
 Object::PyObjPtr ListKlass::print(const Object::PyObjPtr& obj) {
   auto list = obj->as<List>();
   auto elements = list->Elements();
-  PrintNode(list, Object::CreatePyString("List"));
+  PrintNode(list, Object::PyString::Create("List"));
   Object::ForEach(elements, [&](const Object::PyObjPtr& element) {
     element->as<INode>()->print();
     PrintEdge(list, element);

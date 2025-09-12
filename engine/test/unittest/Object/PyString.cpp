@@ -15,13 +15,13 @@ class PyStringTest : public ::testing::Test {
  protected:
   void SetUp() override {
     str1 = std::dynamic_pointer_cast<PyString>(
-      CreatePyString(Collections::CreateStringWithCString("hello"))
+      PyString::Create(Collections::CreateStringWithCString("hello"))
     );
     str2 = std::dynamic_pointer_cast<PyString>(
-      CreatePyString(Collections::CreateStringWithCString("world"))
+      PyString::Create(Collections::CreateStringWithCString("world"))
     );
     str3 = std::dynamic_pointer_cast<PyString>(
-      CreatePyString(Collections::CreateStringWithCString("hello"))
+      PyString::Create(Collections::CreateStringWithCString("hello"))
     );
   }
 
@@ -32,7 +32,7 @@ class PyStringTest : public ::testing::Test {
 
 TEST_F(PyStringTest, Constructor) {
   PyStrPtr str = std::dynamic_pointer_cast<PyString>(
-    CreatePyString(Collections::CreateStringWithCString("test"))
+    PyString::Create(Collections::CreateStringWithCString("test"))
   );
   EXPECT_EQ(str->ToCppString(), "test");
 }
@@ -63,11 +63,11 @@ TEST_F(PyStringTest, Eq) {
 }
 
 TEST_F(PyStringTest, Boolean) {
-  auto result = CreatePyString("hello");
+  auto result = PyString::Create("hello");
   auto resultId =
     Collections::CreateIntegerWithU64(reinterpret_cast<uint64_t>(result.get()))
       .ToHexString();
-  auto resultIdString = CreatePyString(resultId);
+  auto resultIdString = PyString::Create(resultId);
   resultIdString->Print();
 }
 

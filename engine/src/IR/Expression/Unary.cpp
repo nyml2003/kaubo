@@ -47,8 +47,8 @@ Object::PyObjPtr UnaryKlass::emit(
 Object::PyObjPtr UnaryKlass::print(const Object::PyObjPtr& obj) {
   auto unary = obj->as<Unary>();
   auto operand = unary->Operand();
-  auto text = Object::CreatePyString("Unary");
-  auto oprt = Object::CreatePyString(
+  auto text = Object::PyString::Create("Unary");
+  auto oprt = Object::PyString::Create(
     unary->Oprt() == Unary::Operator::PLUS
       ? "+"
       : (unary->Oprt() == Unary::Operator::MINUS

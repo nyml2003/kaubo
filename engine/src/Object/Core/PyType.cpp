@@ -7,7 +7,7 @@ void TypeKlass::Initialize() {
   if (this->IsInitialized()) {
     return;
   }
-  InitKlass(CreatePyString("type")->as<PyString>(), Self());
+  InitKlass(PyString::Create("type")->as<PyString>(), Self());
   this->SetInitialized();
 }
 
@@ -20,9 +20,9 @@ PyObjPtr TypeKlass::repr(const PyObjPtr& obj) {
     throw std::runtime_error("PyType::repr(): obj is not a type object");
   }
   auto type = obj->as<PyType>();
-  return CreatePyString("<class '")
+  return PyString::Create("<class '")
     ->add(type->Owner()->Name())
-    ->add(CreatePyString("'>"));
+    ->add(PyString::Create("'>"));
 }
 
 PyObjPtr TypeKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -31,7 +31,7 @@ PyObjPtr TypeKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto lhsType = lhs->as<PyType>();
   auto rhsType = rhs->as<PyType>();
-  return PyBoolean::create(lhsType->Owner() == rhsType->Owner());
+  return PyBoolean::Create(lhsType->Owner() == rhsType->Owner());
 }
 
 }  // namespace kaubo::Object

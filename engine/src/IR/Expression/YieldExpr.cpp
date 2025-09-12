@@ -29,7 +29,7 @@ Object::PyObjPtr YieldExprKlass::emit(
 Object::PyObjPtr YieldExprKlass::print(const Object::PyObjPtr& obj) {
   auto stmt = obj->as<YieldExpr>();
   auto content = stmt->Content();
-  PrintNode(stmt, Object::CreatePyString("YieldExpr"));
+  PrintNode(stmt, Object::PyString::Create("YieldExpr"));
   content->print();
   PrintEdge(stmt, content);
   return Object::CreatePyNone();

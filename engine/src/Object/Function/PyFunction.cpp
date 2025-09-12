@@ -5,10 +5,10 @@ namespace kaubo::Object {
 
 PyObjPtr FunctionKlass::repr(const PyObjPtr& obj) {
   return StringConcat(CreatePyList(
-    {CreatePyString("<function ")->as<PyString>(),
-     obj->as<PyFunction>()->Name(), CreatePyString(" at ")->as<PyString>(),
+    {PyString::Create("<function ")->as<PyString>(),
+     obj->as<PyFunction>()->Name(), PyString::Create(" at ")->as<PyString>(),
      Function::Identity(CreatePyList({obj}))->as<PyString>(),
-     CreatePyString(">")->as<PyString>()}
+     PyString::Create(">")->as<PyString>()}
   ));
 }
 

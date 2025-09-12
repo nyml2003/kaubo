@@ -60,7 +60,7 @@ class BinaryFileParser {
     fileStream.read(
       reinterpret_cast<char*>(buffer.get()), static_cast<std::streamsize>(size)
     );
-    return Object::CreatePyString(
+    return Object::PyString::Create(
       Collections::CreateStringWithCString(buffer.get())
     );
   }
@@ -72,7 +72,7 @@ class BinaryFileParser {
     return Collections::List<Byte>(size, std::move(buffer));
   }
   Object::PyBytesPtr ReadBytes() {
-    return Object::CreatePyBytes(Collections::String(ReadBytes(ReadU64())));
+    return Object::PyBytes::Create(Collections::String(ReadBytes(ReadU64())));
   }
   Object::PyIntPtr ReadInteger() {
     uint64_t size = ReadSize();
@@ -113,9 +113,9 @@ class BinaryFileParser {
       case Object::Literal::LIST:
         return ReadList();
       case Object::Literal::TRUE_LITERAL:
-        return Object::PyBoolean::create(true);
+        return Object::PyBoolean::Create(true);
       case Object::Literal::FALSE_LITERAL:
-        return Object::PyBoolean::create(false);
+        return Object::PyBoolean::Create(false);
       case Object::Literal::NONE:
         return Object::CreatePyNone();
       case Object::Literal::ZERO:

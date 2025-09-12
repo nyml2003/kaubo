@@ -15,7 +15,7 @@ class IterDoneKlass : public KlassBase<IterDoneKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    LoadClass(CreatePyString("StopIteration")->as<PyString>(), Self());
+    LoadClass(PyString::Create("StopIteration")->as<PyString>(), Self());
     ConfigureBasicAttributes(Self());
     this->SetInitialized();
   }
@@ -39,7 +39,7 @@ class ListIteratorKlass : public KlassBase<ListIteratorKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    LoadClass(CreatePyString("ListIterator")->as<PyString>(), Self());
+    LoadClass(PyString::Create("ListIterator")->as<PyString>(), Self());
     ConfigureBasicAttributes(Self());
     this->SetInitialized();
   }
@@ -58,7 +58,7 @@ class ListReverseIteratorKlass : public KlassBase<ListReverseIteratorKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    LoadClass(CreatePyString("ListReverseIterator")->as<PyString>(), Self());
+    LoadClass(PyString::Create("ListReverseIterator")->as<PyString>(), Self());
     ConfigureBasicAttributes(Self());
     this->SetInitialized();
   }
@@ -111,7 +111,7 @@ class StringIteratorKlass : public KlassBase<StringIteratorKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    LoadClass(CreatePyString("StringIterator")->as<PyString>(), Self());
+    LoadClass(PyString::Create("StringIterator")->as<PyString>(), Self());
     ConfigureBasicAttributes(Self());
     this->SetInitialized();
   }
@@ -151,7 +151,7 @@ class DictItemIteratorKlass : public KlassBase<DictItemIteratorKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    LoadClass(CreatePyString("DictItemIterator")->as<PyString>(), Self());
+    LoadClass(PyString::Create("DictItemIterator")->as<PyString>(), Self());
     ConfigureBasicAttributes(Self());
     this->SetInitialized();
   }

@@ -12,7 +12,7 @@ class IfStmtKlass : public INodeTrait, public Object::KlassBase<IfStmtKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    InitKlass(Object::CreatePyString("ast_ifstmt"), Self());
+    InitKlass(Object::PyString::Create("ast_ifstmt"), Self());
     this->SetInitialized();
   }
 

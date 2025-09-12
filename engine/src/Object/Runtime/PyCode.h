@@ -238,7 +238,7 @@ class CodeKlass : public KlassBase<CodeKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    LoadClass(CreatePyString("code")->as<PyString>(), Self());
+    LoadClass(PyString::Create("code")->as<PyString>(), Self());
     ConfigureBasicAttributes(Self());
     this->SetInitialized();
   }

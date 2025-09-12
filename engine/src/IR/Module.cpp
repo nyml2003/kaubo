@@ -44,7 +44,8 @@ Object::PyObjPtr ModuleKlass::print(const Object::PyObjPtr& obj) {
   PrintNode(
     module,
     Object::StringConcat(
-      Object::CreatePyList({Object::CreatePyString("Module "), module->Name()})
+      Object::CreatePyList({Object::PyString::Create("Module "), module->Name()}
+      )
     )
       ->as<Object::PyString>()
   );

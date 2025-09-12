@@ -40,92 +40,92 @@ PyObjPtr Klass::init(const PyObjPtr& typeObj, const PyObjPtr& args) {
   if (instanceType->IsNative()) {
     return instance;
   }
-  Invoke(instance, CreatePyString("__init__"), args->as<PyList>());
+  Invoke(instance, PyString::Create("__init__"), args->as<PyList>());
   return instance;
 }
 
 PyObjPtr Klass::add(const PyObjPtr& lhs, const PyObjPtr& rhs) {
-  return Invoke(lhs, CreatePyString("__add__"), CreatePyList({rhs}));
+  return Invoke(lhs, PyString::Create("__add__"), CreatePyList({rhs}));
 }
 
 PyObjPtr Klass::sub(const PyObjPtr& lhs, const PyObjPtr& rhs) {
-  return Invoke(lhs, CreatePyString("__sub__"), CreatePyList({rhs}));
+  return Invoke(lhs, PyString::Create("__sub__"), CreatePyList({rhs}));
 }
 
 PyObjPtr Klass::mul(const PyObjPtr& lhs, const PyObjPtr& rhs) {
-  return Invoke(lhs, CreatePyString("__mul__"), CreatePyList({rhs}));
+  return Invoke(lhs, PyString::Create("__mul__"), CreatePyList({rhs}));
 }
 
 PyObjPtr Klass::floordiv(const PyObjPtr& lhs, const PyObjPtr& rhs) {
-  return Invoke(lhs, CreatePyString("__floordiv__"), CreatePyList({rhs}));
+  return Invoke(lhs, PyString::Create("__floordiv__"), CreatePyList({rhs}));
 }
 
 PyObjPtr Klass::truediv(const PyObjPtr& lhs, const PyObjPtr& rhs) {
-  return Invoke(lhs, CreatePyString("__truediv__"), CreatePyList({rhs}));
+  return Invoke(lhs, PyString::Create("__truediv__"), CreatePyList({rhs}));
 }
 
 PyObjPtr Klass::pos(const PyObjPtr& obj) {
-  return Invoke(obj, CreatePyString("__pos__"), {});
+  return Invoke(obj, PyString::Create("__pos__"), {});
 }
 
 PyObjPtr Klass::neg(const PyObjPtr& obj) {
-  return Invoke(obj, CreatePyString("__neg__"), {});
+  return Invoke(obj, PyString::Create("__neg__"), {});
 }
 
 PyObjPtr Klass::invert(const PyObjPtr& obj) {
-  return Invoke(obj, CreatePyString("__invert__"), {});
+  return Invoke(obj, PyString::Create("__invert__"), {});
 }
 
 PyObjPtr Klass::_and_(const PyObjPtr& lhs, const PyObjPtr& rhs) {
-  return Invoke(lhs, CreatePyString("__and__"), CreatePyList({rhs}));
+  return Invoke(lhs, PyString::Create("__and__"), CreatePyList({rhs}));
 }
 
 PyObjPtr Klass::_or_(const PyObjPtr& lhs, const PyObjPtr& rhs) {
-  return Invoke(lhs, CreatePyString("__or__"), CreatePyList({rhs}));
+  return Invoke(lhs, PyString::Create("__or__"), CreatePyList({rhs}));
 }
 
 PyObjPtr Klass::_xor_(const PyObjPtr& lhs, const PyObjPtr& rhs) {
-  return Invoke(lhs, CreatePyString("__xor__"), CreatePyList({rhs}));
+  return Invoke(lhs, PyString::Create("__xor__"), CreatePyList({rhs}));
 }
 
 PyObjPtr Klass::lshift(const PyObjPtr& lhs, const PyObjPtr& rhs) {
-  return Invoke(lhs, CreatePyString("__lshift__"), CreatePyList({rhs}));
+  return Invoke(lhs, PyString::Create("__lshift__"), CreatePyList({rhs}));
 }
 
 PyObjPtr Klass::rshift(const PyObjPtr& lhs, const PyObjPtr& rhs) {
-  return Invoke(lhs, CreatePyString("__rshift__"), CreatePyList({rhs}));
+  return Invoke(lhs, PyString::Create("__rshift__"), CreatePyList({rhs}));
 }
 
 PyObjPtr Klass::mod(const PyObjPtr& lhs, const PyObjPtr& rhs) {
-  return Invoke(lhs, CreatePyString("__mod__"), CreatePyList({rhs}));
+  return Invoke(lhs, PyString::Create("__mod__"), CreatePyList({rhs}));
 }
 
 PyObjPtr Klass::divmod(const PyObjPtr& lhs, const PyObjPtr& rhs) {
-  return Invoke(lhs, CreatePyString("__divmod__"), CreatePyList({rhs}));
+  return Invoke(lhs, PyString::Create("__divmod__"), CreatePyList({rhs}));
 }
 
 PyObjPtr Klass::pow(const PyObjPtr& lhs, const PyObjPtr& rhs) {
-  return Invoke(lhs, CreatePyString("__pow__"), CreatePyList({rhs}));
+  return Invoke(lhs, PyString::Create("__pow__"), CreatePyList({rhs}));
 }
 
 PyObjPtr Klass::repr(const PyObjPtr& self) {
   if (isNative) {
     return StringConcat(CreatePyList(
-      {CreatePyString("<"),
-       self->getattr(CreatePyString("__name__")->as<PyString>()),
-       CreatePyString(" object at "), Function::Identity(CreatePyList({self})),
-       CreatePyString(">")}
+      {PyString::Create("<"),
+       self->getattr(PyString::Create("__name__")->as<PyString>()),
+       PyString::Create(" object at "),
+       Function::Identity(CreatePyList({self})), PyString::Create(">")}
     ));
   }
-  auto reprFunc = GetAttr(self, CreatePyString("__repr__")->as<PyString>());
+  auto reprFunc = GetAttr(self, PyString::Create("__repr__")->as<PyString>());
   if (reprFunc != nullptr) {
     return Runtime::Evaluator::InvokeCallable(reprFunc, CreatePyList({self}));
   }
   return StringConcat(CreatePyList(
-    {CreatePyString("<"),
-     self->getattr(CreatePyString("__name__")->as<PyString>()),
-     CreatePyString(" object at "), Function::Identity(CreatePyList({self})),
-     CreatePyString(">")}
+    {PyString::Create("<"),
+     self->getattr(PyString::Create("__name__")->as<PyString>()),
+     PyString::Create(" object at "), Function::Identity(CreatePyList({self})),
+     PyString::Create(">")}
   ));
 }
 
@@ -133,7 +133,7 @@ PyObjPtr Klass::hash(const PyObjPtr& obj) {
   if (obj->Hashed()) {
     return CreatePyInteger(obj->HashValue());
   }
-  auto hashFunc = obj->getattr(CreatePyString("__hash__")->as<PyString>());
+  auto hashFunc = obj->getattr(PyString::Create("__hash__")->as<PyString>());
   if (hashFunc != nullptr) {
     auto pyHashValue =
       Runtime::Evaluator::InvokeCallable(hashFunc, CreatePyList());
@@ -154,11 +154,11 @@ PyObjPtr Klass::gt(const PyObjPtr& lhs, const PyObjPtr& rhs) {
 }
 
 PyObjPtr Klass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
-  return Invoke(lhs, CreatePyString("__eq__"), CreatePyList({rhs}));
+  return Invoke(lhs, PyString::Create("__eq__"), CreatePyList({rhs}));
 }
 
 PyObjPtr Klass::lt(const PyObjPtr& lhs, const PyObjPtr& rhs) {
-  return Invoke(lhs, CreatePyString("__lt__"), CreatePyList({rhs}));
+  return Invoke(lhs, PyString::Create("__lt__"), CreatePyList({rhs}));
 }
 
 PyObjPtr Klass::ge(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -174,20 +174,20 @@ PyObjPtr Klass::ne(const PyObjPtr& lhs, const PyObjPtr& rhs) {
 }
 
 PyObjPtr Klass::boolean(const PyObjPtr& obj) {
-  auto boolFunc = obj->getattr(CreatePyString("__bool__")->as<PyString>());
+  auto boolFunc = obj->getattr(PyString::Create("__bool__")->as<PyString>());
   if (boolFunc != nullptr) {
     return Runtime::Evaluator::InvokeCallable(boolFunc, CreatePyList());
   }
-  auto lenFunc = obj->getattr(CreatePyString("__len__")->as<PyString>());
+  auto lenFunc = obj->getattr(PyString::Create("__len__")->as<PyString>());
   if (lenFunc != nullptr) {
     auto len = Runtime::Evaluator::InvokeCallable(lenFunc, CreatePyList());
     return len->ne(CreatePyInteger(0ULL));
   }
-  return PyBoolean::create(true);
+  return PyBoolean::Create(true);
 }
 
 PyObjPtr Klass::getitem(const PyObjPtr& obj, const PyObjPtr& key) {
-  return Invoke(obj, CreatePyString("__getitem__"), CreatePyList({key}));
+  return Invoke(obj, PyString::Create("__getitem__"), CreatePyList({key}));
 }
 
 PyObjPtr Klass::setitem(
@@ -195,24 +195,26 @@ PyObjPtr Klass::setitem(
   const PyObjPtr& key,
   const PyObjPtr& value
 ) {
-  return Invoke(obj, CreatePyString("__setitem__"), CreatePyList({key, value}));
+  return Invoke(
+    obj, PyString::Create("__setitem__"), CreatePyList({key, value})
+  );
 }
 
 PyObjPtr Klass::delitem(const PyObjPtr& obj, const PyObjPtr& key) {
-  return Invoke(obj, CreatePyString("__delitem__"), CreatePyList({key}));
+  return Invoke(obj, PyString::Create("__delitem__"), CreatePyList({key}));
 }
 
 PyObjPtr Klass::contains(const PyObjPtr& obj, const PyObjPtr& key) {
-  return Invoke(obj, CreatePyString("__contains__"), CreatePyList({key}));
+  return Invoke(obj, PyString::Create("__contains__"), CreatePyList({key}));
 }
 
 PyObjPtr Klass::len(const PyObjPtr& obj) {
-  return Invoke(obj, CreatePyString("__len__"), {});
+  return Invoke(obj, PyString::Create("__len__"), {});
 }
 
 PyObjPtr Klass::getattr(const PyObjPtr& obj, const PyObjPtr& key) {
   if (!isNative) {
-    auto attr = GetAttr(obj, CreatePyString("__getattr__")->as<PyString>());
+    auto attr = GetAttr(obj, PyString::Create("__getattr__")->as<PyString>());
     if (attr != nullptr) {
       return Runtime::Evaluator::InvokeCallable(attr, CreatePyList({key}));
     }
@@ -230,7 +232,7 @@ PyObjPtr Klass::getattr(const PyObjPtr& obj, const PyObjPtr& key) {
     return BindSelf(obj, obj->Methods()->Get(keyStr));
   }
   // 如果getattr被重载，那么调用重载的函数
-  auto attr = GetAttr(obj, CreatePyString("__getattr__")->as<PyString>());
+  auto attr = GetAttr(obj, PyString::Create("__getattr__")->as<PyString>());
   if (attr != nullptr) {
     return Runtime::Evaluator::InvokeCallable(attr, CreatePyList({key}));
   }
@@ -249,7 +251,7 @@ PyObjPtr Klass::setattr(
   const PyObjPtr& value
 ) {
   if (!isNative) {
-    auto attr = GetAttr(obj, CreatePyString("__setattr__")->as<PyString>());
+    auto attr = GetAttr(obj, PyString::Create("__setattr__")->as<PyString>());
     if (attr != nullptr) {
       return Runtime::Evaluator::InvokeCallable(
         attr, CreatePyList({key, value})
@@ -264,11 +266,11 @@ PyObjPtr Klass::str(const PyObjPtr& self) {
   if (isNative) {
     return repr(self);
   }
-  auto strFunc = self->getattr(CreatePyString("__str__")->as<PyString>());
+  auto strFunc = self->getattr(PyString::Create("__str__")->as<PyString>());
   if (strFunc != nullptr) {
     return Runtime::Evaluator::InvokeCallable(strFunc, CreatePyList());
   }
-  auto reprFunc = self->getattr(CreatePyString("__repr__")->as<PyString>());
+  auto reprFunc = self->getattr(PyString::Create("__repr__")->as<PyString>());
   if (reprFunc != nullptr) {
     return Runtime::Evaluator::InvokeCallable(reprFunc, CreatePyList());
   }
@@ -276,23 +278,23 @@ PyObjPtr Klass::str(const PyObjPtr& self) {
 }
 
 PyObjPtr Klass::matmul(const PyObjPtr& lhs, const PyObjPtr& rhs) {
-  return Invoke(lhs, CreatePyString("__"), CreatePyList({rhs}));
+  return Invoke(lhs, PyString::Create("__"), CreatePyList({rhs}));
 }
 
 PyObjPtr Klass::iter(const PyObjPtr& obj) {
-  return Invoke(obj, CreatePyString("__iter__"), CreatePyList());
+  return Invoke(obj, PyString::Create("__iter__"), CreatePyList());
 }
 
 PyObjPtr Klass::next(const PyObjPtr& obj) {
-  return Invoke(obj, CreatePyString("__next__"), CreatePyList());
+  return Invoke(obj, PyString::Create("__next__"), CreatePyList());
 }
 
 PyObjPtr Klass::reversed(const PyObjPtr& obj) {
-  return Invoke(obj, CreatePyString("__reversed__"), CreatePyList());
+  return Invoke(obj, PyString::Create("__reversed__"), CreatePyList());
 }
 
 PyObjPtr Klass::_serialize_(const PyObjPtr& obj) {
-  return Invoke(obj, CreatePyString("_serialize_"), CreatePyList());
+  return Invoke(obj, PyString::Create("_serialize_"), CreatePyList());
 }
 
 void Klass::AddAttribute(const PyStrPtr& key, const PyObjPtr& value) {

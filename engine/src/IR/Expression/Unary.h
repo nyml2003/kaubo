@@ -13,7 +13,7 @@ class UnaryKlass : public INodeTrait, public Object::KlassBase<UnaryKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    InitKlass(Object::CreatePyString("ast_unary"), Self());
+    InitKlass(Object::PyString::Create("ast_unary"), Self());
     this->SetInitialized();
   }
 

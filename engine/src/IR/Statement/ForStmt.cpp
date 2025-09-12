@@ -77,14 +77,14 @@ Object::PyObjPtr ForStmtKlass::print(const Object::PyObjPtr& obj) {
   auto iter = forStmt->Iter();
   auto target = forStmt->Target();
   auto body = forStmt->Body();
-  PrintNode(forStmt, Object::CreatePyString("ForStmt"));
+  PrintNode(forStmt, Object::PyString::Create("ForStmt"));
   iter->print();
-  PrintEdge(forStmt, iter, Object::CreatePyString("iter"));
+  PrintEdge(forStmt, iter, Object::PyString::Create("iter"));
   target->print();
-  PrintEdge(forStmt, target, Object::CreatePyString("target"));
+  PrintEdge(forStmt, target, Object::PyString::Create("target"));
   Object::ForEach(body, [&forStmt](const Object::PyObjPtr& stmt) {
     stmt->as<INode>()->print();
-    PrintEdge(forStmt, stmt, Object::CreatePyString("stmt"));
+    PrintEdge(forStmt, stmt, Object::PyString::Create("stmt"));
   });
   return Object::CreatePyNone();
 }

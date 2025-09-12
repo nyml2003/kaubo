@@ -35,14 +35,14 @@ Object::PyObjPtr MapKlass::print(const Object::PyObjPtr& obj) {
   auto map = obj->as<Map>();
   auto keys = map->Keys();
   auto values = map->Values();
-  PrintNode(map, Object::CreatePyString("Map"));
+  PrintNode(map, Object::PyString::Create("Map"));
   Object::ForEach(keys, [&](const Object::PyObjPtr& element) {
     element->as<INode>()->print();
-    PrintEdge(map, element, Object::CreatePyString("key"));
+    PrintEdge(map, element, Object::PyString::Create("key"));
   });
   Object::ForEach(values, [&](const Object::PyObjPtr& element) {
     element->as<INode>()->print();
-    PrintEdge(map, element, Object::CreatePyString("value"));
+    PrintEdge(map, element, Object::PyString::Create("value"));
   });
   return Object::CreatePyNone();
 }

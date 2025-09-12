@@ -13,7 +13,7 @@ class YieldExprKlass : public INodeTrait,
     if (this->IsInitialized()) {
       return;
     }
-    InitKlass(Object::CreatePyString("ast_YieldExpr"), Self());
+    InitKlass(Object::PyString::Create("ast_YieldExpr"), Self());
     this->SetInitialized();
   }
 

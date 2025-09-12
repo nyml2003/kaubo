@@ -14,7 +14,7 @@ Object::PyObjPtr PassStmtKlass::emit(
 
 Object::PyObjPtr PassStmtKlass::print(const Object::PyObjPtr& obj) {
   auto stmt = obj->as<PassStmt>();
-  PrintNode(stmt, Object::CreatePyString("PassStmt"));
+  PrintNode(stmt, Object::PyString::Create("PassStmt"));
   return Object::CreatePyNone();
 }
 

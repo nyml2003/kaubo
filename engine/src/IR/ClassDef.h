@@ -12,7 +12,7 @@ class ClassDefKlass : public INodeTrait,
     if (this->IsInitialized()) {
       return;
     }
-    InitKlass(Object::CreatePyString("ast_classdef"), Self());
+    InitKlass(Object::PyString::Create("ast_classdef"), Self());
     this->SetInitialized();
   }
 

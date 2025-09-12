@@ -11,7 +11,7 @@ class FuncDefKlass : public INodeTrait, public Object::KlassBase<FuncDefKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    InitKlass(Object::CreatePyString("ast_funcdef"), Self());
+    InitKlass(Object::PyString::Create("ast_funcdef"), Self());
     this->SetInitialized();
   }
 

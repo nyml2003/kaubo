@@ -95,12 +95,12 @@ Object::PyObjPtr FuncDefKlass::emit(
 Object::PyObjPtr FuncDefKlass::print(const Object::PyObjPtr& obj) {
   auto funcDef = obj->as<FuncDef>();
   PrintNode(
-    funcDef,
-    Object::StringConcat(
-      Object::CreatePyList({Object::CreatePyString("FuncDef "), funcDef->Name()}
-      )
-    )
-      ->as<Object::PyString>()
+    funcDef, Object::StringConcat(
+               Object::CreatePyList(
+                 {Object::PyString::Create("FuncDef "), funcDef->Name()}
+               )
+             )
+               ->as<Object::PyString>()
   );
   Object::ForEach(funcDef->Body(), [&funcDef](const Object::PyObjPtr& stmt) {
     stmt->as<INode>()->print();

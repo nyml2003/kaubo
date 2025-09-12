@@ -12,7 +12,7 @@ class ModuleKlass : public INodeTrait, public Object::KlassBase<ModuleKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    InitKlass(Object::CreatePyString("ast_module"), Self());
+    InitKlass(Object::PyString::Create("ast_module"), Self());
     this->SetInitialized();
   }
   Object::PyObjPtr

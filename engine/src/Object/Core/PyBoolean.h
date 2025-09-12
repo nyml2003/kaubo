@@ -17,7 +17,7 @@ class BooleanKlass : public KlassBase<BooleanKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    LoadClass(CreatePyString("bool")->as<PyString>(), Self());
+    LoadClass(PyString::Create("bool")->as<PyString>(), Self());
     ConfigureBasicAttributes(Self());
     this->SetInitialized();
   }
@@ -50,7 +50,7 @@ class PyBoolean : public PyObject, public IObjectCreator<PyBoolean> {
   bool Value() const { return value; }
 };
 
-// inline PyObjPtrPyBoolean::create(bool value) {
+// inline PyObjPtrPyBoolean::Create(bool value) {
 //   return value ? PyBoolean::True() : PyBoolean::False();
 // }
 inline bool IsTrue(const PyObjPtr& obj) {

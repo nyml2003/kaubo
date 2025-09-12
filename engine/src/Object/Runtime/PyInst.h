@@ -30,7 +30,7 @@ class InstKlass : public KlassBase<InstKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    LoadClass(CreatePyString("inst")->as<PyString>(), Self());
+    LoadClass(PyString::Create("inst")->as<PyString>(), Self());
     ConfigureBasicAttributes(Self());
     this->SetInitialized();
   }

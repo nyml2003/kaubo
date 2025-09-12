@@ -77,9 +77,9 @@ PyObjPtr SliceKlass::str(const PyObjPtr& obj) {
   }
   auto slice = obj->as<PySlice>();
   return StringConcat(CreatePyList(
-    {CreatePyString("slice("), slice->GetStart()->str(), CreatePyString(", "),
-     slice->GetStop()->str(), CreatePyString(", "), slice->GetStep()->str(),
-     CreatePyString(")")}
+    {PyString::Create("slice("), slice->GetStart()->str(),
+     PyString::Create(", "), slice->GetStop()->str(), PyString::Create(", "),
+     slice->GetStep()->str(), PyString::Create(")")}
   ));
 }
 

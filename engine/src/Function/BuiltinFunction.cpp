@@ -28,10 +28,9 @@ namespace kaubo::Function {
 Object::PyObjPtr Identity(const Object::PyObjPtr& args) {
   CheckNativeFunctionArgumentsWithExpectedLength(args, 1);
   auto obj = args->as<Object::PyList>()->GetItem(0);
-  return Object::CreatePyString(
+  return Object::PyString::Create(
     Collections::CreateIntegerWithU64(reinterpret_cast<uint64_t>(obj.get()))
-      .ToHexString(),
-    false
+      .ToHexString()
   );
 }
 
@@ -189,7 +188,7 @@ Object::PyObjPtr Input(const Object::PyObjPtr& args) {
         [resolve, reject](const std::string& input) {
           try {
             // 将输入内容转换为Python字符串对象
-            auto pyInput = Object::CreatePyString(input);
+            auto pyInput = Object::PyString::Create(input);
 
             // 调用resolve回调，传递输入内容
             Runtime::Evaluator::InvokeCallable(
@@ -198,7 +197,7 @@ Object::PyObjPtr Input(const Object::PyObjPtr& args) {
           } catch (const std::exception& e) {
             // 处理可能的异常
             Runtime::Evaluator::InvokeCallable(
-              reject, Object::CreatePyList({Object::CreatePyString(e.what())})
+              reject, Object::CreatePyList({Object::PyString::Create(e.what())})
             );
           }
 
@@ -229,13 +228,13 @@ auto ReadFile(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
         std::stringstream buffer;
         buffer << file.rdbuf();
         file.close();
-        auto content = Object::CreatePyString(buffer.str());
+        auto content = Object::PyString::Create(buffer.str());
         Runtime::Evaluator::InvokeCallable(
           resolve, Object::CreatePyList({content})
         );
       } catch (const std::exception& e) {
         Runtime::Evaluator::InvokeCallable(
-          reject, Object::CreatePyList({Object::CreatePyString(e.what())})
+          reject, Object::CreatePyList({Object::PyString::Create(e.what())})
         );
       }
       return Object::CreatePyNone();
@@ -270,7 +269,7 @@ auto ReadFile(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
 //           } catch (const std::exception& e) {
 //             return Runtime::Evaluator::InvokeCallable(
 //               reject,
-//               Object::CreatePyList({Object::CreatePyString(e.what())})
+//               Object::CreatePyList({Object::PyString::Create(e.what())})
 //             );
 //           }
 //           if (ret->Klass() == Object::GeneratorKlass::Self()) {
@@ -402,7 +401,7 @@ Object::PyObjPtr BuildClass(const Object::PyObjPtr& args) {
   // 创建执行环境
   auto globals = function->Globals();
   auto preFrame = Runtime::VirtualMachine::Instance().CurrentFrame();
-  auto _name_ = globals->getitem(Object::CreatePyString("__name__"));
+  auto _name_ = globals->getitem(Object::PyString::Create("__name__"));
   // 保存当前帧
   // 创建新帧并执行类定义函数
   auto frame =
@@ -417,7 +416,7 @@ Object::PyObjPtr BuildClass(const Object::PyObjPtr& args) {
   // 创建新的类型对象
   auto typeName =
     StringConcat(
-      Object::CreatePyList({_name_, Object::CreatePyString("."), name})
+      Object::CreatePyList({_name_, Object::PyString::Create("."), name})
     )
       ->as<Object::PyString>();
   auto* klass = Object::CreatePyKlass(typeName, classDict, bases);

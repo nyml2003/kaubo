@@ -65,18 +65,18 @@ void DictionaryKlass::Initialize() {
   if (this->IsInitialized()) {
     return;
   }
-  InitKlass(CreatePyString("dict")->as<PyString>(), Self());
+  InitKlass(PyString::Create("dict")->as<PyString>(), Self());
   ConfigureBasicAttributes(Self());
   Self()->AddAttribute(
-    CreatePyString("clear")->as<PyString>(),
+    PyString::Create("clear")->as<PyString>(),
     CreatePyNativeFunction(DictClear)->as<PyNativeFunction>()
   );
   Self()->AddAttribute(
-    CreatePyString("items")->as<PyString>(),
+    PyString::Create("items")->as<PyString>(),
     CreatePyNativeFunction(DictItems)->as<PyNativeFunction>()
   );
   Self()->AddAttribute(
-    CreatePyString("get")->as<PyString>(),
+    PyString::Create("get")->as<PyString>(),
     CreatePyNativeFunction(DictGet)->as<PyNativeFunction>()
   );
 
@@ -139,13 +139,13 @@ PyObjPtr DictionaryKlass::repr(const PyObjPtr& obj) {
     auto key = item->as<PyList>()->GetItem(0);
     auto value = item->as<PyList>()->GetItem(1);
     return StringConcat(CreatePyList(
-      {key->repr(), CreatePyString(": ")->as<PyString>(), value->repr()}
+      {key->repr(), PyString::Create(": ")->as<PyString>(), value->repr()}
     ));
   });
-  auto repr = CreatePyString(", ")->as<PyString>()->Join(dictItemReprList);
+  auto repr = PyString::Create(", ")->as<PyString>()->Join(dictItemReprList);
   return StringConcat(CreatePyList(
-    {CreatePyString("{")->as<PyString>(), repr,
-     CreatePyString("}")->as<PyString>()}
+    {PyString::Create("{")->as<PyString>(), repr,
+     PyString::Create("}")->as<PyString>()}
   ));
 }
 
@@ -157,13 +157,13 @@ PyObjPtr DictionaryKlass::str(const PyObjPtr& obj) {
     auto key = item->as<PyList>()->GetItem(0);
     auto value = item->as<PyList>()->GetItem(1);
     return StringConcat(CreatePyList(
-      {key->str()->repr(), CreatePyString(": ")->as<PyString>(), value->str()}
+      {key->str()->repr(), PyString::Create(": ")->as<PyString>(), value->str()}
     ));
   });
-  auto repr = CreatePyString(", ")->as<PyString>()->Join(dictItemStrList);
+  auto repr = PyString::Create(", ")->as<PyString>()->Join(dictItemStrList);
   return StringConcat(CreatePyList(
-    {CreatePyString("{")->as<PyString>(), repr,
-     CreatePyString("}")->as<PyString>()}
+    {PyString::Create("{")->as<PyString>(), repr,
+     PyString::Create("}")->as<PyString>()}
   ));
 }
 
@@ -180,7 +180,7 @@ PyObjPtr DictionaryKlass::contains(const PyObjPtr& obj, const PyObjPtr& key) {
     throw std::runtime_error("PyDictionary::contains(): obj is not a dict");
   }
   auto dict = obj->as<PyDictionary>();
-  return PyBoolean::create(dict->Contains(key));
+  return PyBoolean::Create(dict->Contains(key));
 }
 
 // bool KeyCompare(const PyObjPtr& lhs, const PyObjPtr& rhs) {

@@ -39,11 +39,11 @@ Object::PyObjPtr MemberAccessKlass::print(const Object::PyObjPtr& obj) {
   auto memberAccess = obj->as<MemberAccess>();
   auto object = memberAccess->Obj();
   auto member = CreateAtom(memberAccess->Member(), nullptr);
-  PrintNode(memberAccess, Object::CreatePyString("MemberAccess"));
+  PrintNode(memberAccess, Object::PyString::Create("MemberAccess"));
   object->print();
   member->print();
-  PrintEdge(memberAccess, object, Object::CreatePyString("object"));
-  PrintEdge(memberAccess, member, Object::CreatePyString("member"));
+  PrintEdge(memberAccess, object, Object::PyString::Create("object"));
+  PrintEdge(memberAccess, member, Object::PyString::Create("member"));
   return Object::CreatePyNone();
 }
 

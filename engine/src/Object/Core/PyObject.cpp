@@ -37,21 +37,22 @@ void ObjectKlass::Initialize() {
     return;
   }
   auto* instance = Self();
-  instance->SetName(CreatePyString("object")->as<PyString>());
+  instance->SetName(PyString::Create("object")->as<PyString>());
   instance->SetAttributes(CreatePyDict()->as<PyDictionary>());
   instance->AddAttribute(
-    CreatePyString("__init__")->as<PyString>(),
+    PyString::Create("__init__")->as<PyString>(),
     CreatePyNativeFunction(ObjectInit)
   );
   instance->AddAttribute(
-    CreatePyString("__str__")->as<PyString>(), CreatePyNativeFunction(KlassStr)
+    PyString::Create("__str__")->as<PyString>(),
+    CreatePyNativeFunction(KlassStr)
   );
   instance->AddAttribute(
-    CreatePyString("__repr__")->as<PyString>(),
+    PyString::Create("__repr__")->as<PyString>(),
     CreatePyNativeFunction(KlassRepr)
   );
   instance->AddAttribute(
-    CreatePyString("__bool__")->as<PyString>(),
+    PyString::Create("__bool__")->as<PyString>(),
     CreatePyNativeFunction(KlassBool)
   );
   instance->SetType(CreatePyType(instance)->as<PyType>());
@@ -80,7 +81,7 @@ bool operator!=(const PyObjPtr& lhs, const PyObjPtr& rhs) {
 }
 
 bool operator<(const PyObjPtr& lhs, const PyObjPtr& rhs) {
-  auto ltFunc = lhs->getattr(CreatePyString("__lt__")->as<PyString>());
+  auto ltFunc = lhs->getattr(PyString::Create("__lt__")->as<PyString>());
   if (ltFunc != nullptr) {
     return Runtime::Evaluator::InvokeCallable(
              ltFunc, CreatePyList({rhs})->as<PyList>()

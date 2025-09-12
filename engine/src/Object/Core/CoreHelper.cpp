@@ -29,19 +29,19 @@ void LoadClass(const PyStrPtr& name, const KlassPtr& klass) {
 
 void ConfigureBasicAttributes(const KlassPtr& klass) {
   klass->AddAttribute(
-    CreatePyString("__name__")->as<PyString>(), klass->Name()
+    PyString::Create("__name__")->as<PyString>(), klass->Name()
   );
   klass->AddAttribute(
-    CreatePyString("__class__")->as<PyString>(), klass->Type()
+    PyString::Create("__class__")->as<PyString>(), klass->Type()
   );
   klass->AddAttribute(
-    CreatePyString("__bases__")->as<PyString>(), CreatePyIife(GetBases)
+    PyString::Create("__bases__")->as<PyString>(), CreatePyIife(GetBases)
   );
   klass->AddAttribute(
-    CreatePyString("__mro__")->as<PyString>(), CreatePyIife(GetMro)
+    PyString::Create("__mro__")->as<PyString>(), CreatePyIife(GetMro)
   );
   klass->AddAttribute(
-    CreatePyString("__dict__")->as<PyString>(), CreatePyIife(GetDict)
+    PyString::Create("__dict__")->as<PyString>(), CreatePyIife(GetDict)
   );
 }
 
@@ -54,9 +54,9 @@ PyObjPtr
 Invoke(const PyObjPtr& obj, const PyObjPtr& methodName, const PyListPtr& args) {
   auto func = obj->getattr(methodName);
   if (func == nullptr) {
-    auto errorMessge = CreatePyString("AttributeError: ")
+    auto errorMessge = PyString::Create("AttributeError: ")
                          ->add(obj->str())
-                         ->add(CreatePyString(" has no attribute "))
+                         ->add(PyString::Create(" has no attribute "))
                          ->add(methodName->str())
                          ->as<PyString>();
     throw std::runtime_error(errorMessge->ToCppString());
@@ -137,14 +137,14 @@ PyListPtr ComputeMro(const PyTypePtr& type) {
   auto oldMro = type->Owner()->Mro();
   if (oldMro) {
     //    Function::DebugPrint(StringConcat(CreatePyList(
-    //      {CreatePyString("Mro for "), type->Owner()->Name(),
-    //       CreatePyString(" already computed: "), oldMro->str()}
+    //      {PyString::Create("Mro for "), type->Owner()->Name(),
+    //       PyString::Create(" already computed: "), oldMro->str()}
     //    )));
     return oldMro;
   }
   //  Function::DebugPrint(StringConcat(CreatePyList(
-  //    {CreatePyString("Computing Mro for "), type->Owner()->Name(),
-  //     CreatePyString(" with super: "), type->Owner()->Super()->str()}
+  //    {PyString::Create("Computing Mro for "), type->Owner()->Name(),
+  //     PyString::Create(" with super: "), type->Owner()->Super()->str()}
   //  )));
   auto bases = type->Owner()->Super();
   PyListPtr mros = CreatePyList();
@@ -154,23 +154,25 @@ PyListPtr ComputeMro(const PyTypePtr& type) {
     mros->Append(mro->Copy());
   }
   //  Function::DebugPrint(StringConcat(
-  //    CreatePyList({CreatePyString("Mros needed to merge: "), mros->str()})
+  //    CreatePyList({PyString::Create("Mros needed to merge: "), mros->str()})
   //  ));
   //  ForEach(mros, [&](const PyObjPtr& mro) {
   //    mro->str()->as<PyString>()->Print();
   //  });
-  //  CreatePyString("")->as<PyString>()->PrintLine();
+  //  PyString::Create("")->as<PyString>()->PrintLine();
   auto mro = MergeMro(mros);
   //  Function::DebugPrint(
-  //    StringConcat(CreatePyList({CreatePyString("Merged Mro: "), mro->str()}))
+  //    StringConcat(CreatePyList({PyString::Create("Merged Mro: "),
+  //    mro->str()}))
   //  );
   //  ForEach(mros, [&](const PyObjPtr& mro) {
   //    mro->str()->as<PyString>()->Print();
   //  });
-  //  CreatePyString("")->as<PyString>()->PrintLine();
+  //  PyString::Create("")->as<PyString>()->PrintLine();
   mro = CreatePyList({type})->as<PyList>()->Add(mro)->as<PyList>();
   //  Function::DebugPrint(StringConcat(CreatePyList(
-  //    {CreatePyString("Mro for "), type->Owner()->Name(), CreatePyString(":"),
+  //    {PyString::Create("Mro for "), type->Owner()->Name(),
+  //    PyString::Create(":"),
   //     mro->str()}
   //  )));
   return mro;
@@ -225,7 +227,7 @@ PyListPtr MergeMro(const PyListPtr& mros) {
   PyListPtr result = CreatePyList();
   while (mros->Length() > 1) {
     //    Function::DebugPrint(StringConcat(
-    //      CreatePyList({CreatePyString("Mros to merge: "), mros->str()})
+    //      CreatePyList({PyString::Create("Mros to merge: "), mros->str()})
     //    ));
     CleanMros(mros);
     auto candidate = FindCandidateBase(mros);
@@ -242,12 +244,12 @@ PyListPtr MergeMro(const PyListPtr& mros) {
     }
 
     //    Function::DebugPrint(StringConcat(
-    //      CreatePyList({CreatePyString("Mros after merge: "), mros->str()})
+    //      CreatePyList({PyString::Create("Mros after merge: "), mros->str()})
     //    ));
   }
   if (mros->Length() == 0) {
     //    Function::DebugPrint(StringConcat(
-    //      CreatePyList({CreatePyString("the mro is: "), result->str()})
+    //      CreatePyList({PyString::Create("the mro is: "), result->str()})
     //    ));
     return result;
   }
@@ -256,7 +258,7 @@ PyListPtr MergeMro(const PyListPtr& mros) {
     result->Append(last_mro->GetItem(i));
   }
   //  Function::DebugPrint(
-  //    StringConcat(CreatePyList({CreatePyString("the mro is: "),
+  //    StringConcat(CreatePyList({PyString::Create("the mro is: "),
   //    result->str()}))
   //  );
   return result;
@@ -293,9 +295,9 @@ bool CouldTypePlaceAhead(
 
 PyObjPtr KlassStr(const PyObjPtr& args) {
   return StringConcat(CreatePyList(
-    {CreatePyString("<"), args->as<PyList>()->GetItem(0)->Klass()->Name(),
-     CreatePyString(" object at "), Function::Identity(args),
-     CreatePyString(">")}
+    {PyString::Create("<"), args->as<PyList>()->GetItem(0)->Klass()->Name(),
+     PyString::Create(" object at "), Function::Identity(args),
+     PyString::Create(">")}
   ));
 }
 
@@ -306,9 +308,9 @@ PyObjPtr Repr(const PyObjPtr& args) {
 
 PyObjPtr KlassRepr(const PyObjPtr& args) {
   return StringConcat(CreatePyList(
-    {CreatePyString("<"), args->as<PyList>()->GetItem(0)->Klass()->Name(),
-     CreatePyString(" object at "), Function::Identity(args),
-     CreatePyString(">")}
+    {PyString::Create("<"), args->as<PyList>()->GetItem(0)->Klass()->Name(),
+     PyString::Create(" object at "), Function::Identity(args),
+     PyString::Create(">")}
   ));
 }
 
@@ -319,7 +321,7 @@ PyObjPtr Bool(const PyObjPtr& args) {
 
 PyObjPtr KlassBool(const PyObjPtr& args) {
   CheckNativeFunctionArgumentsWithExpectedLength(args, 1);
-  return PyBoolean::create(true);
+  return PyBoolean::Create(true);
 }
 
 KlassPtr CreatePyKlass(
@@ -343,7 +345,7 @@ PyObjPtr Str(const PyObjPtr& args) {
   CheckNativeFunctionArguments(args);
   auto argList = args->as<PyList>();
   if (argList->Length() == 0) {
-    return CreatePyString("");
+    return PyString::Create("");
   }
   if (argList->Length() != 1) {
     throw std::runtime_error("str() takes at most 1 argument");

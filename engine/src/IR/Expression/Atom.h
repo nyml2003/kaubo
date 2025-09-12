@@ -12,7 +12,7 @@ class AtomKlass : public INodeTrait, public Object::KlassBase<AtomKlass> {
     if (this->IsInitialized()) {
       return;
     }
-    InitKlass(Object::CreatePyString("ast_atom"), Self());
+    InitKlass(Object::PyString::Create("ast_atom"), Self());
     this->SetInitialized();
   }
 

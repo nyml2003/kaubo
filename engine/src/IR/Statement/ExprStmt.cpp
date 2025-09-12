@@ -28,7 +28,7 @@ Object::PyObjPtr ExprStmtKlass::emit(
 Object::PyObjPtr ExprStmtKlass::print(const Object::PyObjPtr& obj) {
   auto stmt = obj->as<ExprStmt>();
   auto content = stmt->Content();
-  PrintNode(stmt, Object::CreatePyString("ExprStmt"));
+  PrintNode(stmt, Object::PyString::Create("ExprStmt"));
   content->print();
   PrintEdge(stmt, content);
   return Object::CreatePyNone();

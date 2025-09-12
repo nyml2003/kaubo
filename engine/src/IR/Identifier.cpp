@@ -204,12 +204,13 @@ IdentifierRegistry GetIdentifierRegistry(
 Object::PyObjPtr IdentifierKlass::print(const Object::PyObjPtr& obj) {
   auto identifier = obj->as<Identifier>();
   PrintNode(
-    identifier, Object::StringConcat(
-                  Object::CreatePyList(
-                    {Object::CreatePyString("Identifier "), identifier->Name()}
-                  )
-                )
-                  ->as<Object::PyString>()
+    identifier,
+    Object::StringConcat(
+      Object::CreatePyList(
+        {Object::PyString::Create("Identifier "), identifier->Name()}
+      )
+    )
+      ->as<Object::PyString>()
   );
   return Object::CreatePyNone();
 }

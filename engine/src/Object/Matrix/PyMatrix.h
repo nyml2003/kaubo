@@ -83,7 +83,7 @@ class PyMatrix : public PyObject {
     return CreatePyMatrix(matrix.Add(other->matrix.Multiply(-1)));
   }
   PyStrPtr ToString() const {
-    return CreatePyString(matrix.ToString())->as<PyString>();
+    return PyString::Create(matrix.ToString())->as<PyString>();
   }
   PyListPtr Shape() const {
     return CreatePyList({CreatePyInteger(matrix.Shape()[0]),

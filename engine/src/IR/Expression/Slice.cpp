@@ -31,7 +31,7 @@ Object::PyObjPtr SliceKlass::visit(
 Object::PyObjPtr SliceKlass::print(const Object::PyObjPtr& obj) {
   auto list = obj->as<IR::Slice>();
   auto elements = list->Elements();
-  PrintNode(list, Object::CreatePyString("Slice"));
+  PrintNode(list, Object::PyString::Create("Slice"));
   Object::ForEach(elements, [&](const Object::PyObjPtr& element) {
     element->as<INode>()->print();
     PrintEdge(list, element);

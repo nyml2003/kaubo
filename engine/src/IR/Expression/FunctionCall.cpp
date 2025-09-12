@@ -37,12 +37,12 @@ Object::PyObjPtr FunctionCallKlass::print(const Object::PyObjPtr& obj) {
   auto functionCall = obj->as<FunctionCall>();
   auto func = functionCall->Func();
   auto args = functionCall->Args();
-  PrintNode(functionCall, Object::CreatePyString("FunctionCall"));
+  PrintNode(functionCall, Object::PyString::Create("FunctionCall"));
   func->print();
-  PrintEdge(functionCall, func, Object::CreatePyString("function"));
+  PrintEdge(functionCall, func, Object::PyString::Create("function"));
   Object::ForEach(args, [&](const Object::PyObjPtr& arg) {
     arg->as<INode>()->print();
-    PrintEdge(functionCall, arg, Object::CreatePyString("argument"));
+    PrintEdge(functionCall, arg, Object::PyString::Create("argument"));
   });
   return Object::CreatePyNone();
 }

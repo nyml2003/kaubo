@@ -12,7 +12,7 @@ class MemberAccessKlass : public INodeTrait,
     if (this->IsInitialized()) {
       return;
     }
-    InitKlass(Object::CreatePyString("ast_memberaccess"), Self());
+    InitKlass(Object::PyString::Create("ast_memberaccess"), Self());
     this->SetInitialized();
   }
 

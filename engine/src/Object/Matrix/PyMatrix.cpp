@@ -24,22 +24,22 @@ PyObjPtr MatrixKlass::str(const PyObjPtr& obj) {
   auto shape = matrix->Shape();
   auto rows = shape->GetItem(0)->as<PyInteger>()->ToU64();
   auto cols = shape->GetItem(1)->as<PyInteger>()->ToU64();
-  auto repr = CreatePyString("[")->as<PyString>();
+  auto repr = PyString::Create("[")->as<PyString>();
   for (Index i = 0; i < rows; i++) {
-    repr = repr->Add(CreatePyString("[")->as<PyString>());
+    repr = repr->Add(PyString::Create("[")->as<PyString>());
     for (Index j = 0; j < cols; j++) {
-      repr = repr->Add(CreatePyString(" ")->as<PyString>());
+      repr = repr->Add(PyString::Create(" ")->as<PyString>());
       repr = repr->Add(CreatePyFloat(matrix->At(i, j))->repr()->as<PyString>());
       if (j != cols - 1) {
-        repr = repr->Add(CreatePyString(", ")->as<PyString>());
+        repr = repr->Add(PyString::Create(", ")->as<PyString>());
       }
     }
-    repr = repr->Add(CreatePyString("]")->as<PyString>());
+    repr = repr->Add(PyString::Create("]")->as<PyString>());
     if (i != rows - 1) {
-      repr = repr->Add(CreatePyString("\n ")->as<PyString>());
+      repr = repr->Add(PyString::Create("\n ")->as<PyString>());
     }
   }
-  repr = repr->Add(CreatePyString("]")->as<PyString>());
+  repr = repr->Add(PyString::Create("]")->as<PyString>());
   return repr;
 }
 
@@ -70,8 +70,8 @@ PyObjPtr MatrixKlass::gt(const PyObjPtr& lhs, const PyObjPtr& rhs) {
     Collections::List<PyObjPtr> row;
     for (Index j = 0; j < cols; j++) {
       row.Push(
-        matrix->At(i, j) > compareObj ? PyBoolean::create(true)
-                                      : PyBoolean::create(false)
+        matrix->At(i, j) > compareObj ? PyBoolean::Create(true)
+                                      : PyBoolean::Create(false)
       );
     }
     data.Push(CreatePyList(row));
@@ -93,8 +93,8 @@ PyObjPtr MatrixKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
     Collections::List<PyObjPtr> row;
     for (Index j = 0; j < cols; j++) {
       row.Push(
-        matrix->At(i, j) == compareObj ? PyBoolean::create(true)
-                                       : PyBoolean::create(false)
+        matrix->At(i, j) == compareObj ? PyBoolean::Create(true)
+                                       : PyBoolean::Create(false)
       );
     }
     data.Push(CreatePyList(row));
@@ -336,18 +336,18 @@ void MatrixKlass::Initialize() {
     return;
   }
   auto* instance = Self();
-  InitKlass(CreatePyString("matrix")->as<PyString>(), instance);
+  InitKlass(PyString::Create("matrix")->as<PyString>(), instance);
   instance->AddAttribute(
-    CreatePyString("T")->as<PyString>(), CreatePyIife(Transpose)
+    PyString::Create("T")->as<PyString>(), CreatePyIife(Transpose)
   );
   instance->AddAttribute(
-    CreatePyString("shape")->as<PyString>(), CreatePyIife(Shape)
+    PyString::Create("shape")->as<PyString>(), CreatePyIife(Shape)
   );
   instance->AddAttribute(
-    CreatePyString("reshape")->as<PyString>(), CreatePyNativeFunction(Reshape)
+    PyString::Create("reshape")->as<PyString>(), CreatePyNativeFunction(Reshape)
   );
   instance->AddAttribute(
-    CreatePyString("ravel")->as<PyString>(), CreatePyNativeFunction(Ravel)
+    PyString::Create("ravel")->as<PyString>(), CreatePyNativeFunction(Ravel)
   );
   this->SetInitialized();
 }

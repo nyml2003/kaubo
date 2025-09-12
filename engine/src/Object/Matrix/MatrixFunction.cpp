@@ -195,7 +195,7 @@ PyObjPtr Concatenate(const PyObjPtr& args) {
 PyObjPtr Transpose(const PyObjPtr& args) {
   CheckNativeFunctionArgumentsWithExpectedLength(args, 1);
   CheckNativeFunctionArgumentsAtIndexWithType(
-    CreatePyString("Transpose")->as<PyString>(), args, 0, MatrixKlass::Self()
+    PyString::Create("Transpose")->as<PyString>(), args, 0, MatrixKlass::Self()
   );
   return args->as<PyList>()->GetItem(0)->as<PyMatrix>()->Transpose();
 }

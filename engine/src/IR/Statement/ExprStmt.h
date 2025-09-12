@@ -13,7 +13,7 @@ class ExprStmtKlass : public INodeTrait,
     if (this->IsInitialized()) {
       return;
     }
-    InitKlass(Object::CreatePyString("ast_exprstmt"), Self());
+    InitKlass(Object::PyString::Create("ast_exprstmt"), Self());
     this->SetInitialized();
   }
 

@@ -7,13 +7,13 @@ void IifeKlass::Initialize() {
   if (this->IsInitialized()) {
     return;
   }
-  InitKlass(CreatePyString("iife")->as<PyString>(), IifeKlass::Self());
+  InitKlass(PyString::Create("iife")->as<PyString>(), IifeKlass::Self());
   ConfigureBasicAttributes(IifeKlass::Self());
   this->SetInitialized();
 }
 
 PyObjPtr IifeKlass::str(const PyObjPtr& /*self*/) {
-  return CreatePyString("<iife>");
+  return PyString::Create("<iife>");
 }
 
 }  // namespace kaubo::Object

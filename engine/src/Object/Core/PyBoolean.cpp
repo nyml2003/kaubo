@@ -9,14 +9,14 @@ namespace kaubo::Object {
 PyObjPtr BooleanKlass::repr(const PyObjPtr& obj) {
   if (!obj->is(BooleanKlass::Self())) {
     auto errorMessage = StringConcat(CreatePyList(
-      {CreatePyString("AttributeError: '"), obj->Klass()->Name(),
-       CreatePyString("' object has no attribute '__repr__'")}
+      {PyString::Create("AttributeError: '"), obj->Klass()->Name(),
+       PyString::Create("' object has no attribute '__repr__'")}
     ));
     throw std::runtime_error(errorMessage->as<PyString>()->ToCppString());
   }
   auto boolean = obj->as<PyBoolean>();
-  return boolean->Value() ? CreatePyString("True")->as<PyString>()
-                          : CreatePyString("False")->as<PyString>();
+  return boolean->Value() ? PyString::Create("True")
+                          : PyString::Create("False");
 }
 
 PyObjPtr BooleanKlass::str(const PyObjPtr& obj) {
@@ -29,7 +29,7 @@ PyObjPtr BooleanKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyBoolean>();
   auto right = rhs->as<PyBoolean>();
-  return PyBoolean::create(left->Value() == right->Value());
+  return PyBoolean::Create(left->Value() == right->Value());
 }
 
 PyObjPtr BooleanKlass::_and_(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -38,7 +38,7 @@ PyObjPtr BooleanKlass::_and_(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyBoolean>();
   auto right = rhs->boolean()->as<PyBoolean>();
-  return PyBoolean::create(left->Value() && right->Value());
+  return PyBoolean::Create(left->Value() && right->Value());
 }
 
 PyObjPtr BooleanKlass::_or_(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -47,7 +47,7 @@ PyObjPtr BooleanKlass::_or_(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyBoolean>();
   auto right = rhs->boolean()->as<PyBoolean>();
-  return PyBoolean::create(left->Value() || right->Value());
+  return PyBoolean::Create(left->Value() || right->Value());
 }
 
 PyObjPtr BooleanKlass::_serialize_(const PyObjPtr& obj) {
@@ -56,9 +56,9 @@ PyObjPtr BooleanKlass::_serialize_(const PyObjPtr& obj) {
   }
   auto boolean = obj->as<PyBoolean>();
   if (boolean->Value()) {
-    return CreatePyBytes(Collections::Serialize(Literal::TRUE_LITERAL));
+    return PyBytes::Create(Collections::Serialize(Literal::TRUE_LITERAL));
   }
-  return CreatePyBytes(Collections::Serialize(Literal::FALSE_LITERAL));
+  return PyBytes::Create(Collections::Serialize(Literal::FALSE_LITERAL));
 }
 
 }  // namespace kaubo::Object

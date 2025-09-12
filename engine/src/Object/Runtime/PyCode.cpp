@@ -81,36 +81,36 @@ Index PyCode::NLocals() const {
 
 PyObjPtr CodeKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   if (!lhs->is(CodeKlass::Self()) || !rhs->is(CodeKlass::Self())) {
-    return PyBoolean::create(false);
+    return PyBoolean::Create(false);
   }
   auto lhsc = lhs->as<PyCode>();
   auto rhsc = rhs->as<PyCode>();
   if (!IsTrue(lhsc->Name()->eq(rhsc->Name()))) {
-    return PyBoolean::create(false);
+    return PyBoolean::Create(false);
   }
   if (!IsTrue(lhsc->Consts()->eq(rhsc->Consts()))) {
-    return PyBoolean::create(false);
+    return PyBoolean::Create(false);
   }
   if (!IsTrue(lhsc->Names()->eq(rhsc->Names()))) {
-    return PyBoolean::create(false);
+    return PyBoolean::Create(false);
   }
   if (!IsTrue(lhsc->VarNames()->eq(rhsc->VarNames()))) {
-    return PyBoolean::create(false);
+    return PyBoolean::Create(false);
   }
   if (lhsc->NLocals() != rhsc->NLocals()) {
-    return PyBoolean::create(false);
+    return PyBoolean::Create(false);
   }
   if (!IsTrue(lhsc->Instructions()->eq(rhsc->Instructions()))) {
-    return PyBoolean::create(false);
+    return PyBoolean::Create(false);
   }
-  return PyBoolean::create(true);
+  return PyBoolean::Create(true);
 }
 
 PyObjPtr CodeKlass::repr(const PyObjPtr& self) {
   return StringConcat(CreatePyList(
-    {CreatePyString("<code object at ")->as<PyString>(),
+    {PyString::Create("<code object at ")->as<PyString>(),
      Function::Identity(CreatePyList({self}))->as<PyString>(),
-     CreatePyString(">")->as<PyString>()}
+     PyString::Create(">")->as<PyString>()}
   ));
 }
 
@@ -133,7 +133,7 @@ PyObjPtr CodeKlass::_serialize_(const PyObjPtr& self) {
   result.Append(
     code->Instructions()->_serialize_()->_serialize_()->as<PyBytes>()->Value()
   );
-  return CreatePyBytes(result.ToString());
+  return PyBytes::Create(result.ToString());
 }
 
 Index PyCode::IndexOfConst(const PyObjPtr& obj) {
@@ -178,7 +178,7 @@ void PyCode::RegisterVarName(const PyObjPtr& _name) {
 }
 
 PyCodePtr CreatePyCode(const PyStrPtr& name) {
-  auto byteCode = CreatePyString("")->as<PyBytes>();
+  auto byteCode = PyString::Create("")->as<PyBytes>();
   auto consts = CreatePyList();
   auto names = CreatePyList();
   auto varNames = CreatePyList();
