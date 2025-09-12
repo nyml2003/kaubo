@@ -17,7 +17,6 @@
 #include "Tools/Terminal/Terminal.h"
 
 namespace kaubo::Object {
-std::mutex PyString::poolMutex;
 
 namespace {
 std::unordered_map<size_t, std::shared_ptr<PyString>>& GetStringPool() {

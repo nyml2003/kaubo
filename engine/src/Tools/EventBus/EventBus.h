@@ -5,7 +5,6 @@
 
 #include <cstdint>
 #include <functional>
-#include <mutex>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -37,7 +36,6 @@ class EventBus : public Singleton<EventBus> {
   EventId generate_id();
 
   std::unordered_map<EventType, std::vector<Subscription>> subscriptions;
-  std::mutex mtx;
   EventId next_id = 0;
 };
 }  // namespace kaubo

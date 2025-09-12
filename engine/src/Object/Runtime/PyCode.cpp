@@ -192,41 +192,29 @@ void PrintCode(const PyCodePtr& code) {
   VerboseTerminal::get_instance().info(
     codeObj->str()->as<PyString>()->ToCppString()
   );
-  VerboseTerminal::get_instance().VerboseTerminal::IncreaseIndent();
+  VerboseTerminal::IncreaseIndent();
 
   VerboseTerminal::get_instance().info("name: ");
   VerboseTerminal::get_instance().info(
     codeObj->Name()->str()->as<PyString>()->ToCppString()
   );
-  VerboseTerminal::get_instance()
-    .
 
-    VerboseTerminal::get_instance()
-    .info("consts: ");
+  VerboseTerminal::get_instance().info("consts: ");
   VerboseTerminal::get_instance().info(
     codeObj->Consts()->str()->as<PyString>()->ToCppString()
   );
-  VerboseTerminal::get_instance()
-    .
 
-    VerboseTerminal::get_instance()
-    .info("names: ");
+  VerboseTerminal::get_instance().info("names: ");
   VerboseTerminal::get_instance().info(
     codeObj->Names()->str()->as<PyString>()->ToCppString()
   );
-  VerboseTerminal::get_instance()
-    .
 
-    VerboseTerminal::get_instance()
-    .info("varNames: ");
+  VerboseTerminal::get_instance().info("varNames: ");
   VerboseTerminal::get_instance().info(
     codeObj->VarNames()->str()->as<PyString>()->ToCppString()
   );
-  VerboseTerminal::get_instance()
-    .
 
-    VerboseTerminal::get_instance()
-    .info("instructions:");
+  VerboseTerminal::get_instance().info("instructions:");
   VerboseTerminal::IncreaseIndent();
 
   for (Index i = 0; i < codeObj->Instructions()->Length(); i++) {

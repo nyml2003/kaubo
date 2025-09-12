@@ -4,7 +4,6 @@
 #include "Object/Core/PyObject.h"
 #include "Object/Object.h"
 
-#include <mutex>
 #include <unordered_map>
 #include <utility>
 namespace kaubo::Object {
@@ -33,7 +32,6 @@ class PyString : public PyObject {
  private:
   Collections::String value;
   static std::unordered_map<size_t, std::shared_ptr<PyString>> stringPool;
-  static std::mutex poolMutex;
 
  public:
   explicit PyString(Collections::String _value)
