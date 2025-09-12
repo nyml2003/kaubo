@@ -166,7 +166,7 @@ PyObjPtr Ravel(const PyObjPtr& args) {
   for (Index i = 0; i < data.Size(); i++) {
     result.Push(CreatePyFloat(data[i]));
   }
-  return CreatePyList(result);
+  return PyList::Create(result);
 }
 
 PyObjPtr Concatenate(const PyObjPtr& args) {

@@ -28,7 +28,7 @@ GetCodeFromList(const Object::PyObjPtr& codeList, const INodePtr& node) {
 }
 void PrintNode(const Object::PyObjPtr& node, const Object::PyStrPtr& text) {
   IntermediateRepresentationTerminal::get_instance().info(
-    Function::Identity(Object::CreatePyList({node}))
+    Function::Identity(Object::PyList::Create<Object::PyObjPtr>({node}))
       ->str()
       ->as<Object::PyString>()
       ->ToCppString()
@@ -44,7 +44,7 @@ void PrintEdge(
   const Object::PyStrPtr& text
 ) {
   IntermediateRepresentationTerminal::get_instance().info(
-    Function::Identity(Object::CreatePyList({parent}))
+    Function::Identity(Object::PyList::Create<Object::PyObjPtr>({parent}))
       ->str()
       ->as<Object::PyString>()
       ->ToCppString()
@@ -58,7 +58,7 @@ void PrintEdge(
     IntermediateRepresentationTerminal::get_instance().info(" -->");
   }
   IntermediateRepresentationTerminal::get_instance().info(
-    Function::Identity(Object::CreatePyList({child}))
+    Function::Identity(Object::PyList::Create<Object::PyObjPtr>({child}))
       ->str()
       ->as<Object::PyString>()
       ->ToCppString()

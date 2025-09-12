@@ -17,8 +17,8 @@ PyPromise::PyPromise(PyObjPtr executor)
   : PyObject(PromiseKlass::Self()),
     state(State::PENDING),
     value(CreatePyNone()),
-    onFulfilledCallbacks(CreatePyList()),
-    onRejectedCallbacks(CreatePyList()),
+    onFulfilledCallbacks(PyList::Create()),
+    onRejectedCallbacks(PyList::Create()),
     executor(std::move(executor)) {}
 
 PyPromisePtr CreatePyPromise(const PyObjPtr& executor) {
@@ -35,7 +35,9 @@ PyPromisePtr CreatePyPromise(const PyObjPtr& executor) {
           Runtime::EventLoop::Instance().EnqueueMicroTask(
             CreatePyNativeFunction([self, callback](const PyObjPtr&) {
               auto nativeCallback = callback->as<PyNativeFunction>();
-              nativeCallback->Call(CreatePyList({self->GetValue()}));
+              nativeCallback->Call(
+                PyList::Create<Object::PyObjPtr>({self->GetValue()})
+              );
               return CreatePyNone();
             })
           );
@@ -53,7 +55,9 @@ PyPromisePtr CreatePyPromise(const PyObjPtr& executor) {
         Runtime::EventLoop::Instance().EnqueueMicroTask(
           CreatePyNativeFunction([self, callback](const PyObjPtr&) {
             auto nativeCallback = callback->as<PyNativeFunction>();
-            nativeCallback->Call(CreatePyList({self->GetValue()}));
+            nativeCallback->Call(
+              PyList::Create<Object::PyObjPtr>({self->GetValue()})
+            );
             return CreatePyNone();
           })
         );
@@ -64,10 +68,12 @@ PyPromisePtr CreatePyPromise(const PyObjPtr& executor) {
 
   try {
     Runtime::Evaluator::InvokeCallable(
-      executor, CreatePyList({resolve, reject})
+      executor, PyList::Create<Object::PyObjPtr>({resolve, reject})
     );
   } catch (const std::exception& e) {
-    reject->Call(CreatePyList({PyString::Create(e.what())}));
+    reject->Call(
+      PyList::Create<Object::PyObjPtr>({PyString::Create(e.what())})
+    );
   }
   return promise;
 }
@@ -83,13 +89,14 @@ PyPromisePtr PyPromise::Then(const PyObjPtr& onFulfilled) {
                                               reject](const PyObjPtr&) {
         try {
           auto result = Runtime::Evaluator::InvokeCallable(
-            onFulfilled, CreatePyList({self->GetValue()})
+            onFulfilled, PyList::Create<Object::PyObjPtr>({self->GetValue()})
           );
-          Runtime::Evaluator::InvokeCallable(resolve, CreatePyList({result}));
+          Runtime::Evaluator::InvokeCallable(resolve, PyList::Create({result}));
           return CreatePyNone();
         } catch (const std::exception& e) {
           Runtime::Evaluator::InvokeCallable(
-            reject, CreatePyList({PyString::Create(e.what())})
+            reject,
+            PyList::Create<Object::PyObjPtr>({PyString::Create(e.what())})
           );
           return CreatePyNone();
         }
@@ -98,7 +105,7 @@ PyPromisePtr PyPromise::Then(const PyObjPtr& onFulfilled) {
         Runtime::EventLoop::Instance().EnqueueMicroTask(callback);
       } else if (self->state == State::REJECTED) {
         Runtime::Evaluator::InvokeCallable(
-          reject, CreatePyList({self->GetValue()})
+          reject, PyList::Create<Object::PyObjPtr>({self->GetValue()})
         );
       } else {
         self->onFulfilledCallbacks->Append(callback);
@@ -119,13 +126,16 @@ PyPromisePtr PyPromise::Catch(const PyObjPtr& onRejected) {
                                               resolve](const PyObjPtr&) {
         try {
           auto result = Runtime::Evaluator::InvokeCallable(
-            onRejected, CreatePyList({self->GetValue()})
+            onRejected, PyList::Create<Object::PyObjPtr>({self->GetValue()})
           );
-          Runtime::Evaluator::InvokeCallable(resolve, CreatePyList({result}));
+          Runtime::Evaluator::InvokeCallable(
+            resolve, PyList::Create<Object::PyObjPtr>({result})
+          );
           return CreatePyNone();
         } catch (const std::exception& e) {
           Runtime::Evaluator::InvokeCallable(
-            reject, CreatePyList({PyString::Create(e.what())})
+            reject,
+            PyList::Create<Object::PyObjPtr>({PyString::Create(e.what())})
           );
         }
         return CreatePyNone();
@@ -191,7 +201,9 @@ auto PromiseResolve(const PyObjPtr& args) -> PyObjPtr {
   auto executor = CreatePyNativeFunction([value](const PyObjPtr& args) {
     auto argList = args->as<PyList>();
     auto resolve = argList->GetItem(0);
-    return Runtime::Evaluator::InvokeCallable(resolve, CreatePyList({value}));
+    return Runtime::Evaluator::InvokeCallable(
+      resolve, PyList::Create<Object::PyObjPtr>({value})
+    );
   });
   return CreatePyPromise(executor);
 }
@@ -202,7 +214,9 @@ auto PromiseReject(const PyObjPtr& args) -> PyObjPtr {
   auto executor = CreatePyNativeFunction([reason](const PyObjPtr& args) {
     auto argList = args->as<PyList>();
     auto reject = argList->GetItem(0);
-    return Runtime::Evaluator::InvokeCallable(reject, CreatePyList({reason}));
+    return Runtime::Evaluator::InvokeCallable(
+      reject, PyList::Create<Object::PyObjPtr>({reason})
+    );
   });
   return CreatePyPromise(executor);
 }

@@ -39,7 +39,7 @@ PyObjPtr PyDictionary::GetItem(Index index) const {
   auto dictIterator = dict.begin();
   std::advance(dictIterator, index);
   auto entry = *dictIterator;
-  return CreatePyList({entry.first, entry.second});
+  return PyList::Create<Object::PyObjPtr>({entry.first, entry.second});
 }
 
 PyDictPtr PyDictionary::Add(const PyDictPtr& other) {
@@ -134,15 +134,19 @@ PyObjPtr DictionaryKlass::repr(const PyObjPtr& obj) {
   auto dictItemReprList = Map(obj, [](const PyObjPtr& item) {
     auto key = item->as<PyList>()->GetItem(0);
     auto value = item->as<PyList>()->GetItem(1);
-    return StringConcat(CreatePyList(
-      {key->repr(), PyString::Create(": ")->as<PyString>(), value->repr()}
-    ));
+    return StringConcat(
+      PyList::Create<PyObjPtr>(
+        {key->repr(), PyString::Create(": ")->as<PyString>(), value->repr()}
+      )
+    );
   });
   auto repr = PyString::Create(", ")->as<PyString>()->Join(dictItemReprList);
-  return StringConcat(CreatePyList(
-    {PyString::Create("{")->as<PyString>(), repr,
-     PyString::Create("}")->as<PyString>()}
-  ));
+  return StringConcat(
+    PyList::Create<Object::PyObjPtr>(
+      {PyString::Create("{")->as<PyString>(), repr,
+       PyString::Create("}")->as<PyString>()}
+    )
+  );
 }
 
 PyObjPtr DictionaryKlass::str(const PyObjPtr& obj) {
@@ -152,15 +156,20 @@ PyObjPtr DictionaryKlass::str(const PyObjPtr& obj) {
   auto dictItemStrList = Map(obj, [](const PyObjPtr& item) {
     auto key = item->as<PyList>()->GetItem(0);
     auto value = item->as<PyList>()->GetItem(1);
-    return StringConcat(CreatePyList(
-      {key->str()->repr(), PyString::Create(": ")->as<PyString>(), value->str()}
-    ));
+    return StringConcat(
+      PyList::Create<PyObjPtr>(
+        {key->str()->repr(), PyString::Create(": ")->as<PyString>(),
+         value->str()}
+      )
+    );
   });
   auto repr = PyString::Create(", ")->as<PyString>()->Join(dictItemStrList);
-  return StringConcat(CreatePyList(
-    {PyString::Create("{")->as<PyString>(), repr,
-     PyString::Create("}")->as<PyString>()}
-  ));
+  return StringConcat(
+    PyList::Create<PyObjPtr>(
+      {PyString::Create("{")->as<PyString>(), repr,
+       PyString::Create("}")->as<PyString>()}
+    )
+  );
 }
 
 PyObjPtr DictionaryKlass::len(const PyObjPtr& obj) {
@@ -197,9 +206,9 @@ auto DictClear(const PyObjPtr& obj) -> PyObjPtr {
 auto DictItems(const PyObjPtr& obj) -> PyObjPtr {
   auto argList = obj->as<PyList>();
   auto dict = argList->GetItem(0)->as<PyDictionary>();
-  auto items = CreatePyList();
+  auto items = PyList::Create();
   for (const auto& item : dict->Dictionary()) {
-    items->Append(CreatePyList({item.first, item.second}));
+    items->Append(PyList::Create<Object::PyObjPtr>({item.first, item.second}));
   }
   return items;
 }

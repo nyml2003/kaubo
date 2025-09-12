@@ -107,11 +107,14 @@ PyObjPtr CodeKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
 }
 
 PyObjPtr CodeKlass::repr(const PyObjPtr& self) {
-  return StringConcat(CreatePyList(
-    {PyString::Create("<code object at ")->as<PyString>(),
-     Function::Identity(CreatePyList({self}))->as<PyString>(),
-     PyString::Create(">")->as<PyString>()}
-  ));
+  return StringConcat(
+    PyList::Create<Object::PyObjPtr>(
+      {PyString::Create("<code object at ")->as<PyString>(),
+       Function::Identity(PyList::Create<Object::PyObjPtr>({self}))
+         ->as<PyString>(),
+       PyString::Create(">")->as<PyString>()}
+    )
+  );
 }
 
 PyObjPtr CodeKlass::_serialize_(const PyObjPtr& self) {
@@ -179,9 +182,9 @@ void PyCode::RegisterVarName(const PyObjPtr& _name) {
 
 PyCodePtr CreatePyCode(const PyStrPtr& name) {
   auto byteCode = PyString::Create("")->as<PyBytes>();
-  auto consts = CreatePyList();
-  auto names = CreatePyList();
-  auto varNames = CreatePyList();
+  auto consts = PyList::Create();
+  auto names = PyList::Create();
+  auto varNames = PyList::Create();
   return std::make_shared<PyCode>(
     byteCode, consts, names, varNames, name, 0, false
   );

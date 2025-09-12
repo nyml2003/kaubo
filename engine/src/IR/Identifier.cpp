@@ -24,7 +24,7 @@ Object::PyObjPtr IdentifierKlass::visit(
       registry = IdentifierRegistry::GLOBAL_NAME;
       found = true;
     }
-    if (!found && identifier->Builtins()->Contains(name)) {
+    if (!found && Identifier::Builtins()->Contains(name)) {
       registry = IdentifierRegistry::BUILTIN;
     }
   } else {
@@ -38,14 +38,15 @@ Object::PyObjPtr IdentifierKlass::visit(
     }
     auto moduleCode = GetCodeFromList(codeList, module);
     registry =
-      GetIdentifierRegistry(name, code, moduleCode, identifier->Builtins());
+      GetIdentifierRegistry(name, code, moduleCode, Identifier::Builtins());
   }
   if (mode == STOREORLOAD::STORE &&
       registry == IdentifierRegistry::UNREGISTERED) {
     if (scope == Object::Scope::GLOBAL) {
       code->RegisterName(name);
       return Object::CreatePyNone();
-    } else if (scope == Object::Scope::LOCAL) {
+    }
+    if (scope == Object::Scope::LOCAL) {
       code->RegisterVarName(name);
       return Object::CreatePyNone();
     }
@@ -131,8 +132,9 @@ Object::PyObjPtr IdentifierKlass::emit(
       module = context->as<FuncDef>()->Parents()->GetItem(0)->as<INode>();
     }
     auto moduleCode = GetCodeFromList(codeList, module);
-    auto registry =
-      GetIdentifierRegistry(name, code, moduleCode, identifier->Builtins());
+    auto registry = GetIdentifierRegistry(
+      name, code, moduleCode, kaubo::IR::Identifier::Builtins()
+    );
 
     if (registry == IdentifierRegistry::LOCAL_VARNAME &&
         mode == STOREORLOAD::STORE) {
@@ -206,7 +208,7 @@ Object::PyObjPtr IdentifierKlass::print(const Object::PyObjPtr& obj) {
   PrintNode(
     identifier,
     Object::StringConcat(
-      Object::CreatePyList(
+      Object::PyList::Create<Object::PyObjPtr>(
         {Object::PyString::Create("Identifier "), identifier->Name()}
       )
     )

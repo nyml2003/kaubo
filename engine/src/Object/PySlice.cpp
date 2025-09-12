@@ -76,11 +76,13 @@ PyObjPtr SliceKlass::str(const PyObjPtr& obj) {
     throw std::runtime_error("PySlice::str(): obj is not a slice");
   }
   auto slice = obj->as<PySlice>();
-  return StringConcat(CreatePyList(
-    {PyString::Create("slice("), slice->GetStart()->str(),
-     PyString::Create(", "), slice->GetStop()->str(), PyString::Create(", "),
-     slice->GetStep()->str(), PyString::Create(")")}
-  ));
+  return StringConcat(
+    PyList::Create<Object::PyObjPtr>(
+      {PyString::Create("slice("), slice->GetStart()->str(),
+       PyString::Create(", "), slice->GetStop()->str(), PyString::Create(", "),
+       slice->GetStep()->str(), PyString::Create(")")}
+    )
+  );
 }
 
 }  // namespace kaubo::Object

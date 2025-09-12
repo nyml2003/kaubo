@@ -34,7 +34,7 @@ Object::PyObjPtr AtomKlass::print(const Object::PyObjPtr& obj) {
   auto atom = obj->as<Atom>();
   PrintNode(
     atom, Object::StringConcat(
-            Object::CreatePyList(
+            Object::PyList::Create<Object::PyObjPtr>(
               {Object::PyString::Create("Atom: "), atom->Obj()->str()}
             )
           )

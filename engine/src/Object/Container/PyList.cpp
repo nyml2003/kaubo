@@ -20,33 +20,19 @@
 
 namespace kaubo::Object {
 
-PyListPtr CreatePyList(Index capacity) {
-  if (capacity == 0) {
-    return std::make_shared<PyList>(Collections::List<PyObjPtr>());
+PyList::PyList(ExpandAndFill reserve) : PyObject(ListKlass::Self()) {
+  if (reserve.capacity == 0) {
+    return;
   }
-  Collections::List<PyObjPtr> list(capacity);
-  list.Fill(CreatePyNone());
-  return std::make_shared<PyList>(list);
+  m_list.Expand(reserve.capacity);
+  m_list.Fill(CreatePyNone());
 }
 
-PyListPtr CreatePyListWithNullPtr(Index capacity) {
-  if (capacity == 0) {
-    return std::make_shared<PyList>(Collections::List<PyObjPtr>());
+PyList::PyList(ExpandOnly reserve) : PyObject(ListKlass::Self()) {
+  if (reserve.capacity == 0) {
+    return;
   }
-  Collections::List<PyObjPtr> list(capacity);
-  return std::make_shared<PyList>(list);
-}
-
-PyListPtr CreatePyList() {
-  return std::make_shared<PyList>(Collections::List<PyObjPtr>());
-}
-
-PyListPtr CreatePyList(const Collections::List<PyObjPtr>& list) {
-  return std::make_shared<PyList>(list);
-}
-
-PyListPtr CreatePyList(std::initializer_list<PyObjPtr> list) {
-  return std::make_shared<PyList>(Collections::List<PyObjPtr>(list));
+  m_list.Expand(reserve.capacity);
 }
 
 void ListKlass::Initialize() {
@@ -159,7 +145,7 @@ PyObjPtr ListKlass::init(const PyObjPtr& type, const PyObjPtr& args) {
   }
   auto argList = args->as<PyList>();
   if (argList->Length() == 0) {
-    return CreatePyList();
+    return PyList::Create();
   }
   CheckNativeFunctionArgumentsWithExpectedLength(args, 1);
   auto value = argList->GetItem(0);
@@ -185,7 +171,7 @@ PyObjPtr ListKlass::mul(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   if (list->Length() == 1) {
     auto value = list->GetItem(0);
     Collections::List<PyObjPtr> result(times, value);
-    return CreatePyList(result);
+    return PyList::Create(result);
   }
   Collections::List<PyObjPtr> result(list->Length() * times);
   for (Index i = 0; i < times; i++) {
@@ -193,28 +179,32 @@ PyObjPtr ListKlass::mul(const PyObjPtr& lhs, const PyObjPtr& rhs) {
       result.Push(list->GetItem(j));
     }
   }
-  return CreatePyList(result);
+  return PyList::Create(result);
 }
 
 PyObjPtr ListKlass::str(const PyObjPtr& obj) {
   auto list = obj->as<PyList>();
   auto strList = Map(list, [](const PyObjPtr& value) { return value->repr(); });
-  return StringConcat(CreatePyList(
-    {PyString::Create("[")->as<PyString>(),
-     PyString::Create(", ")->as<PyString>()->Join(strList),
-     PyString::Create("]")->as<PyString>()}
-  ));
+  return StringConcat(
+    PyList::Create<Object::PyObjPtr>(
+      {PyString::Create("[")->as<PyString>(),
+       PyString::Create(", ")->as<PyString>()->Join(strList),
+       PyString::Create("]")->as<PyString>()}
+    )
+  );
 }
 
 PyObjPtr ListKlass::repr(const PyObjPtr& obj) {
   auto list = obj->as<PyList>();
   auto reprList =
     Map(list, [](const PyObjPtr& value) { return value->repr(); });
-  return StringConcat(CreatePyList(
-    {PyString::Create("["),
-     PyString::Create(", ")->as<PyString>()->Join(reprList),
-     PyString::Create("]")}
-  ));
+  return StringConcat(
+    PyList::Create<Object::PyObjPtr>(
+      {PyString::Create("["),
+       PyString::Create(", ")->as<PyString>()->Join(reprList),
+       PyString::Create("]")}
+    )
+  );
 }
 
 PyObjPtr ListKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -236,10 +226,12 @@ PyObjPtr ListKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
 
 PyObjPtr ListKlass::getitem(const PyObjPtr& obj, const PyObjPtr& key) {
   if (!obj->is(ListKlass::Self())) {
-    auto errorMessage = StringConcat(CreatePyList(
-      {PyString::Create("AttributeError: '"), obj->Klass()->Name(),
-       PyString::Create("' object has no attribute '__getitem__'")}
-    ));
+    auto errorMessage = StringConcat(
+      PyList::Create<Object::PyObjPtr>(
+        {PyString::Create("AttributeError: '"), obj->Klass()->Name(),
+         PyString::Create("' object has no attribute '__getitem__'")}
+      )
+    );
     throw std::runtime_error(errorMessage->as<PyString>()->ToCppString());
   }
   auto list = obj->as<PyList>();
@@ -272,12 +264,14 @@ PyObjPtr ListKlass::getitem(const PyObjPtr& obj, const PyObjPtr& key) {
     }
     return result;
   }
-  auto errorMessage = StringConcat(CreatePyList(
-    {PyString::Create(
-       "TypeError: list indices must be integers or slices, not '"
-     ),
-     key->Klass()->Name(), PyString::Create("'")}
-  ));
+  auto errorMessage = StringConcat(
+    PyList::Create<Object::PyObjPtr>(
+      {PyString::Create(
+         "TypeError: list indices must be integers or slices, not '"
+       ),
+       key->Klass()->Name(), PyString::Create("'")}
+    )
+  );
   throw std::runtime_error(errorMessage->as<PyString>()->ToCppString());
 }
 
@@ -287,10 +281,12 @@ PyObjPtr ListKlass::setitem(
   const PyObjPtr& value
 ) {
   if (!obj->is(ListKlass::Self())) {
-    auto errorMessage = StringConcat(CreatePyList(
-      {PyString::Create("AttributeError: '"), obj->Klass()->Name(),
-       PyString::Create("' object has no attribute '__setitem__'")}
-    ));
+    auto errorMessage = StringConcat(
+      PyList::Create<Object::PyObjPtr>(
+        {PyString::Create("AttributeError: '"), obj->Klass()->Name(),
+         PyString::Create("' object has no attribute '__setitem__'")}
+      )
+    );
     throw std::runtime_error(errorMessage->as<PyString>()->ToCppString());
   }
   auto list = obj->as<PyList>();
@@ -311,7 +307,7 @@ PyObjPtr ListKlass::setitem(
     slice->BindLength(list->Length());
     auto stop = slice->GetStop()->as<PyInteger>()->ToU64();
     auto start = slice->GetStart()->as<PyInteger>()->ToU64();
-    auto valueList = CreatePyListFromIterable(value);
+    auto valueList = PyList::Create(value);
     list->InsertAndReplace(start, stop, valueList);
     return CreatePyNone();
   }
@@ -324,22 +320,26 @@ PyObjPtr ListKlass::setitem(
     result->setitem(indexList->GetItem(indexList->Length() - 1), value);
     return CreatePyNone();
   }
-  auto errorMessage = StringConcat(CreatePyList(
-    {PyString::Create(
-       "TypeError: list indices must be integers or slices, not '"
-     ),
-     key->Klass()->Name(), PyString::Create("'")}
-  ));
+  auto errorMessage = StringConcat(
+    PyList::Create<Object::PyObjPtr>(
+      {PyString::Create(
+         "TypeError: list indices must be integers or slices, not '"
+       ),
+       key->Klass()->Name(), PyString::Create("'")}
+    )
+  );
   throw std::runtime_error(errorMessage->as<PyString>()->ToCppString());
 }
 
 PyObjPtr ListKlass::len(const PyObjPtr& obj) {
   if (!obj->is(ListKlass::Self())) {
-    auto errorMessage = StringConcat(CreatePyList(
-      {PyString::Create("TypeError: unsupported operand type(s) for"),
-       PyString::Create(" len(): '"), obj->Klass()->Name(),
-       PyString::Create("'")}
-    ));
+    auto errorMessage = StringConcat(
+      PyList::Create<Object::PyObjPtr>(
+        {PyString::Create("TypeError: unsupported operand type(s) for"),
+         PyString::Create(" len(): '"), obj->Klass()->Name(),
+         PyString::Create("'")}
+      )
+    );
     throw std::runtime_error(errorMessage->as<PyString>()->ToCppString());
   }
   return CreatePyInteger(obj->as<PyList>()->Length());
@@ -502,13 +502,13 @@ PyObjPtr PyList::GetSlice(const PySlicePtr& slice) const {
     slice->BindLength(Length());
     auto start = slice->GetStart()->as<PyInteger>()->ToU64();
     auto stop = slice->GetStop()->as<PyInteger>()->ToU64();
-    return CreatePyList(value.Slice(start, stop))->as<PyList>();
+    return PyList::Create(m_list.Slice(start, stop))->as<PyList>();
   }
   slice->BindLength(Length());
   int64_t start = slice->GetStart()->as<PyInteger>()->ToI64();
   int64_t stop = slice->GetStop()->as<PyInteger>()->ToI64();
   int64_t step = slice->GetStep()->as<PyInteger>()->ToI64();
-  auto subList = CreatePyList()->as<PyList>();
+  auto subList = PyList::Create()->as<PyList>();
   if (step > 0) {
     for (int64_t i = start; i < stop; i += step) {
       if (i >= static_cast<int64_t>(Length())) {
@@ -527,7 +527,7 @@ PyObjPtr PyList::GetSlice(const PySlicePtr& slice) const {
   return subList;
 }
 
-PyListPtr CreatePyListFromIterable(const PyObjPtr& iterator) {
+PyList::PyList(const PyObjPtr& iterator) : PyObject(ListKlass::Self()) {
   auto iter = iterator->iter();
   auto value = iter->next();
   Collections::List<PyObjPtr> list;
@@ -535,7 +535,7 @@ PyListPtr CreatePyListFromIterable(const PyObjPtr& iterator) {
     list.Push(value);
     value = iter->next();
   }
-  return CreatePyList(list)->as<PyList>();
+  this->m_list = list;
 }
 
 }  // namespace kaubo::Object

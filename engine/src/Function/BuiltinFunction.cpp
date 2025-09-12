@@ -131,7 +131,7 @@ Object::PyObjPtr Normal(const Object::PyObjPtr& args) {
   auto size = argList->GetItem(2);
   if (size->is(Object::IntegerKlass::Self())) {
     auto sizeValue = size->as<Object::PyInteger>()->ToU64();
-    auto result = Object::CreatePyList(sizeValue);
+    auto result = Object::PyList::Create(Object::PyList::ExpandOnly{sizeValue});
     for (Index i = 0; i < sizeValue; i++) {
       result->SetItem(i, Object::CreatePyFloat(dis(gen)));
     }
@@ -192,12 +192,14 @@ Object::PyObjPtr Input(const Object::PyObjPtr& args) {
 
             // 调用resolve回调，传递输入内容
             Runtime::Evaluator::InvokeCallable(
-              resolve, Object::CreatePyList({pyInput})
+              resolve, Object::PyList::Create<Object::PyObjPtr>({pyInput})
             );
           } catch (const std::exception& e) {
             // 处理可能的异常
             Runtime::Evaluator::InvokeCallable(
-              reject, Object::CreatePyList({Object::PyString::Create(e.what())})
+              reject, Object::PyList::Create<Object::PyObjPtr>(
+                        {Object::PyString::Create(e.what())}
+                      )
             );
           }
 
@@ -230,11 +232,13 @@ auto ReadFile(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
         file.close();
         auto content = Object::PyString::Create(buffer.str());
         Runtime::Evaluator::InvokeCallable(
-          resolve, Object::CreatePyList({content})
+          resolve, Object::PyList::Create<Object::PyObjPtr>({content})
         );
       } catch (const std::exception& e) {
         Runtime::Evaluator::InvokeCallable(
-          reject, Object::CreatePyList({Object::PyString::Create(e.what())})
+          reject, Object::PyList::Create<Object::PyObjPtr>(
+                    {Object::PyString::Create(e.what())}
+                  )
         );
       }
       return Object::CreatePyNone();
@@ -246,7 +250,7 @@ auto ReadFile(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
 //   auto argList = args->as<Object::PyList>();
 //   auto generator = argList->GetItem(0);
 //   auto gen =
-//     Runtime::Evaluator::InvokeCallable(generator, Object::CreatePyList({}))
+//     Runtime::Evaluator::InvokeCallable(generator, Object::PyList::Create({}))
 //       ->as<Object::PyGenerator>();
 //   auto executor =
 //     Object::CreatePyNativeFunction([gen](const Object::PyObjPtr& args) {
@@ -269,13 +273,13 @@ auto ReadFile(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
 //           } catch (const std::exception& e) {
 //             return Runtime::Evaluator::InvokeCallable(
 //               reject,
-//               Object::CreatePyList({Object::PyString::Create(e.what())})
+//               Object::PyList::Create({Object::PyString::Create(e.what())})
 //             );
 //           }
 //           if (ret->Klass() == Object::GeneratorKlass::Self()) {
 //             ret->as<Object::PyPromise>()->Then(onFullilled);
 //           } else {
-//             Object::PromiseResolve(Object::CreatePyList({ret}))
+//             Object::PromiseResolve(Object::PyList::Create({ret}))
 //               ->as<Object::PyPromise>()
 //               ->Then(onFullilled);
 //           }
@@ -284,7 +288,7 @@ auto ReadFile(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
 //         }
 //       );
 //       Runtime::Evaluator::InvokeCallable(
-//         onFullilled, Object::CreatePyList({Object::CreatePyNone()})
+//         onFullilled, Object::PyList::Create({Object::CreatePyNone()})
 //       );
 //       return Object::CreatePyNone();
 //     });
@@ -405,7 +409,7 @@ Object::PyObjPtr BuildClass(const Object::PyObjPtr& args) {
   // 保存当前帧
   // 创建新帧并执行类定义函数
   auto frame =
-    Object::CreateFrameWithPyFunction(function, Object::CreatePyList());
+    Object::CreateFrameWithPyFunction(function, Object::PyList::Create());
   auto result = frame->Eval();
   Runtime::VirtualMachine::Instance().BackToParentFrame();
   if (!result->is(Object::NoneKlass::Self())) {
@@ -414,11 +418,12 @@ Object::PyObjPtr BuildClass(const Object::PyObjPtr& args) {
   // 获取执行结果
   auto classDict = frame->CurrentLocals();
   // 创建新的类型对象
-  auto typeName =
-    StringConcat(
-      Object::CreatePyList({_name_, Object::PyString::Create("."), name})
-    )
-      ->as<Object::PyString>();
+  auto typeName = StringConcat(
+                    Object::PyList::Create<Object::PyObjPtr>(
+                      {_name_, Object::PyString::Create("."), name}
+                    )
+  )
+                    ->as<Object::PyString>();
   auto* klass = Object::CreatePyKlass(typeName, classDict, bases);
   auto type = Object::CreatePyType(klass);
   return type;

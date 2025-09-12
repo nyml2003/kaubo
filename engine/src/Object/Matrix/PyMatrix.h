@@ -86,8 +86,9 @@ class PyMatrix : public PyObject {
     return PyString::Create(matrix.ToString())->as<PyString>();
   }
   PyListPtr Shape() const {
-    return CreatePyList({CreatePyInteger(matrix.Shape()[0]),
-                         CreatePyInteger(matrix.Shape()[1])})
+    return PyList::Create<Object::PyObjPtr>({CreatePyInteger(matrix.Shape()[0]),
+                                             CreatePyInteger(matrix.Shape()[1])}
+    )
       ->as<PyList>();
   }
   PyIntPtr Rows() const {

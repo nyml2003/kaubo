@@ -16,7 +16,7 @@ Object::PyObjPtr ModuleKlass::visit(
   module->SetCodeIndex(codeList->as<Object::PyList>()->Length());
   auto code = Object::CreatePyCode(module->Name());
   code->SetScope(Object::Scope::GLOBAL);
-  code->SetInstructions(Object::CreatePyList());
+  code->SetInstructions(Object::PyList::Create());
   codeList->as<Object::PyList>()->Append(code);
   Object::ForEach(module->Body(), [&codeList](const Object::PyObjPtr& stmt) {
     stmt->as<INode>()->visit(codeList);
@@ -42,12 +42,12 @@ Object::PyObjPtr ModuleKlass::emit(
 Object::PyObjPtr ModuleKlass::print(const Object::PyObjPtr& obj) {
   auto module = obj->as<Module>();
   PrintNode(
-    module,
-    Object::StringConcat(
-      Object::CreatePyList({Object::PyString::Create("Module "), module->Name()}
-      )
-    )
-      ->as<Object::PyString>()
+    module, Object::StringConcat(
+              Object::PyList::Create<Object::PyObjPtr>(
+                {Object::PyString::Create("Module "), module->Name()}
+              )
+            )
+              ->as<Object::PyString>()
   );
   Object::ForEach(module->Body(), [&module](const Object::PyObjPtr& stmt) {
     stmt->as<INode>()->print();

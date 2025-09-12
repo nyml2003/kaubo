@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdint>
 #include "IR/INode.h"
 #include "Object/String/PyString.h"
 
@@ -36,54 +37,55 @@ class Identifier : public INode {
   void SetStoreMode() { mode = STOREORLOAD::STORE; }
   STOREORLOAD Mode() const { return mode; }
   [[nodiscard]] static Object::PyListPtr Builtins() {
-    static Object::PyListPtr builtins = Object::CreatePyList({
-      Object::PyString::Create("print"),
-      Object::PyString::Create("reshape"),
-      Object::PyString::Create("Reshape"),
-      Object::PyString::Create("len"),
-      Object::PyString::Create("__name__"),
-      Object::PyString::Create("randint"),
-      Object::PyString::Create("sleep"),
-      Object::PyString::Create("input"),
-      Object::PyString::Create("next"),
-      Object::PyString::Create("int"),
-      Object::PyString::Create("float"),
-      Object::PyString::Create("str"),
-      Object::PyString::Create("list"),
-      Object::PyString::Create("object"),
-      Object::PyString::Create("type"),
-      Object::PyString::Create("dict"),
-      Object::PyString::Create("slice"),
-      Object::PyString::Create("repr"),
-      Object::PyString::Create("bool"),
-      Object::PyString::Create("whoami"),
-      Object::PyString::Create("Array"),
-      Object::PyString::Create("Eye"),
-      Object::PyString::Create("Zeros"),
-      Object::PyString::Create("Ones"),
-      Object::PyString::Create("Diag"),
-      Object::PyString::Create("Transpose"),
-      Object::PyString::Create("Shape"),
-      Object::PyString::Create("Concatenate"),
-      Object::PyString::Create("Ravel"),
-      Object::PyString::Create("Normal"),
-      Object::PyString::Create("Shuffle"),
-      Object::PyString::Create("LogisticLoss"),
-      Object::PyString::Create("LogisticLossDerivative"),
-      Object::PyString::Create("Sum"),
-      Object::PyString::Create("Log"),
-      Object::PyString::Create("Softmax"),
-      Object::PyString::Create("Max"),
-      Object::PyString::Create("ArgMax"),
-      Object::PyString::Create("id"),
-      Object::PyString::Create("hash"),
-      Object::PyString::Create("time"),
-      Object::PyString::Create("range"),
-      Object::PyString::Create("iter"),
-      Object::PyString::Create("Promise"),
-      Object::PyString::Create("readFile")
-      // Object::PyString::Create("co")}
-    });
+    static Object::PyListPtr builtins =
+      Object::PyList::Create<Object::PyObjPtr>({
+        Object::PyString::Create("print"),
+        Object::PyString::Create("reshape"),
+        Object::PyString::Create("Reshape"),
+        Object::PyString::Create("len"),
+        Object::PyString::Create("__name__"),
+        Object::PyString::Create("randint"),
+        Object::PyString::Create("sleep"),
+        Object::PyString::Create("input"),
+        Object::PyString::Create("next"),
+        Object::PyString::Create("int"),
+        Object::PyString::Create("float"),
+        Object::PyString::Create("str"),
+        Object::PyString::Create("list"),
+        Object::PyString::Create("object"),
+        Object::PyString::Create("type"),
+        Object::PyString::Create("dict"),
+        Object::PyString::Create("slice"),
+        Object::PyString::Create("repr"),
+        Object::PyString::Create("bool"),
+        Object::PyString::Create("whoami"),
+        Object::PyString::Create("Array"),
+        Object::PyString::Create("Eye"),
+        Object::PyString::Create("Zeros"),
+        Object::PyString::Create("Ones"),
+        Object::PyString::Create("Diag"),
+        Object::PyString::Create("Transpose"),
+        Object::PyString::Create("Shape"),
+        Object::PyString::Create("Concatenate"),
+        Object::PyString::Create("Ravel"),
+        Object::PyString::Create("Normal"),
+        Object::PyString::Create("Shuffle"),
+        Object::PyString::Create("LogisticLoss"),
+        Object::PyString::Create("LogisticLossDerivative"),
+        Object::PyString::Create("Sum"),
+        Object::PyString::Create("Log"),
+        Object::PyString::Create("Softmax"),
+        Object::PyString::Create("Max"),
+        Object::PyString::Create("ArgMax"),
+        Object::PyString::Create("id"),
+        Object::PyString::Create("hash"),
+        Object::PyString::Create("time"),
+        Object::PyString::Create("range"),
+        Object::PyString::Create("iter"),
+        Object::PyString::Create("Promise"),
+        Object::PyString::Create("readFile")
+        // Object::PyString::Create("co")}
+      });
     return builtins;
   }
 
@@ -100,7 +102,7 @@ CreateIdentifier(const Object::PyStrPtr& name, const INodePtr& parent) {
   return std::make_shared<Identifier>(name, parent);
 }
 
-enum class IdentifierRegistry {
+enum class IdentifierRegistry : uint8_t {
   UNREGISTERED,
   LOCAL_VARNAME,
   LOCAL_NAME,

@@ -12,6 +12,7 @@
 #include "Object/Matrix/PyMatrix.h"
 #include "Object/Number/PyFloat.h"
 #include "Object/Number/PyInteger.h"
+#include "Object/Object.h"
 #include "Object/String/PyBytes.h"
 #include "Runtime/VirtualMachine.h"
 #include "gsl/pointers"
@@ -22,8 +23,10 @@ void LoadClass(const PyStrPtr& name, const KlassPtr& klass) {
   klass->SetAttributes(PyDictionary::Create());
   klass->SetType(CreatePyType(klass)->as<PyType>());
   auto objectType = CreatePyType(ObjectKlass::Self());
-  klass->SetSuper(CreatePyList({objectType}));
-  klass->SetMro(CreatePyList({CreatePyType(klass), objectType}));
+  klass->SetSuper(PyList::Create<Object::PyObjPtr>({objectType}));
+  klass->SetMro(
+    PyList::Create<Object::PyObjPtr>({CreatePyType(klass), objectType})
+  );
   klass->SetNative();
 }
 
@@ -95,7 +98,7 @@ PyObjPtr BindSelf(const PyObjPtr& obj, const PyObjPtr& attr) {
     return CreatePyMethod(obj, attr);
   }
   if (attr->is(IifeKlass::Self())) {
-    return attr->as<PyIife>()->Call(CreatePyList({obj}));
+    return attr->as<PyIife>()->Call(PyList::Create<Object::PyObjPtr>({obj}));
   }
   return attr;
 }
@@ -136,25 +139,26 @@ PyObjPtr GetDict(const PyObjPtr& args) {
 PyListPtr ComputeMro(const PyTypePtr& type) {
   auto oldMro = type->Owner()->Mro();
   if (oldMro) {
-    //    Function::DebugPrint(StringConcat(CreatePyList(
+    //    Function::DebugPrint(StringConcat(PyList::Create(
     //      {PyString::Create("Mro for "), type->Owner()->Name(),
     //       PyString::Create(" already computed: "), oldMro->str()}
     //    )));
     return oldMro;
   }
-  //  Function::DebugPrint(StringConcat(CreatePyList(
+  //  Function::DebugPrint(StringConcat(PyList::Create(
   //    {PyString::Create("Computing Mro for "), type->Owner()->Name(),
   //     PyString::Create(" with super: "), type->Owner()->Super()->str()}
   //  )));
   auto bases = type->Owner()->Super();
-  PyListPtr mros = CreatePyList();
+  PyListPtr mros = PyList::Create();
   for (Index i = 0; i < bases->Length(); i++) {
     auto base = bases->GetItem(i)->as<PyType>();
     auto mro = base->Owner()->Mro();
     mros->Append(mro->Copy());
   }
   //  Function::DebugPrint(StringConcat(
-  //    CreatePyList({PyString::Create("Mros needed to merge: "), mros->str()})
+  //    PyList::Create({PyString::Create("Mros needed to merge: "),
+  //    mros->str()})
   //  ));
   //  ForEach(mros, [&](const PyObjPtr& mro) {
   //    mro->str()->as<PyString>()->Print();
@@ -162,15 +166,18 @@ PyListPtr ComputeMro(const PyTypePtr& type) {
   //  PyString::Create("")->as<PyString>()->PrintLine();
   auto mro = MergeMro(mros);
   //  Function::DebugPrint(
-  //    StringConcat(CreatePyList({PyString::Create("Merged Mro: "),
+  //    StringConcat(PyList::Create({PyString::Create("Merged Mro: "),
   //    mro->str()}))
   //  );
   //  ForEach(mros, [&](const PyObjPtr& mro) {
   //    mro->str()->as<PyString>()->Print();
   //  });
   //  PyString::Create("")->as<PyString>()->PrintLine();
-  mro = CreatePyList({type})->as<PyList>()->Add(mro)->as<PyList>();
-  //  Function::DebugPrint(StringConcat(CreatePyList(
+  mro = PyList::Create<Object::PyObjPtr>({type})
+          ->as<PyList>()
+          ->Add(mro)
+          ->as<PyList>();
+  //  Function::DebugPrint(StringConcat(PyList::Create(
   //    {PyString::Create("Mro for "), type->Owner()->Name(),
   //    PyString::Create(":"),
   //     mro->str()}
@@ -222,12 +229,12 @@ void RemoveHeadFromMros(
 
 PyListPtr MergeMro(const PyListPtr& mros) {
   if (mros->Length() == 0) {
-    return CreatePyList();
+    return PyList::Create();
   }
-  PyListPtr result = CreatePyList();
+  PyListPtr result = PyList::Create();
   while (mros->Length() > 1) {
     //    Function::DebugPrint(StringConcat(
-    //      CreatePyList({PyString::Create("Mros to merge: "), mros->str()})
+    //      PyList::Create({PyString::Create("Mros to merge: "), mros->str()})
     //    ));
     CleanMros(mros);
     auto candidate = FindCandidateBase(mros);
@@ -244,12 +251,13 @@ PyListPtr MergeMro(const PyListPtr& mros) {
     }
 
     //    Function::DebugPrint(StringConcat(
-    //      CreatePyList({PyString::Create("Mros after merge: "), mros->str()})
+    //      PyList::Create({PyString::Create("Mros after merge: "),
+    //      mros->str()})
     //    ));
   }
   if (mros->Length() == 0) {
     //    Function::DebugPrint(StringConcat(
-    //      CreatePyList({PyString::Create("the mro is: "), result->str()})
+    //      PyList::Create({PyString::Create("the mro is: "), result->str()})
     //    ));
     return result;
   }
@@ -258,7 +266,7 @@ PyListPtr MergeMro(const PyListPtr& mros) {
     result->Append(last_mro->GetItem(i));
   }
   //  Function::DebugPrint(
-  //    StringConcat(CreatePyList({PyString::Create("the mro is: "),
+  //    StringConcat(PyList::Create({PyString::Create("the mro is: "),
   //    result->str()}))
   //  );
   return result;
@@ -294,11 +302,13 @@ bool CouldTypePlaceAhead(
 }
 
 PyObjPtr KlassStr(const PyObjPtr& args) {
-  return StringConcat(CreatePyList(
-    {PyString::Create("<"), args->as<PyList>()->GetItem(0)->Klass()->Name(),
-     PyString::Create(" object at "), Function::Identity(args),
-     PyString::Create(">")}
-  ));
+  return StringConcat(
+    PyList::Create<PyObjPtr>(
+      {PyString::Create("<"), args->as<PyList>()->GetItem(0)->Klass()->Name(),
+       PyString::Create(" object at "), Function::Identity(args),
+       PyString::Create(">")}
+    )
+  );
 }
 
 PyObjPtr Repr(const PyObjPtr& args) {
@@ -307,11 +317,13 @@ PyObjPtr Repr(const PyObjPtr& args) {
 }
 
 PyObjPtr KlassRepr(const PyObjPtr& args) {
-  return StringConcat(CreatePyList(
-    {PyString::Create("<"), args->as<PyList>()->GetItem(0)->Klass()->Name(),
-     PyString::Create(" object at "), Function::Identity(args),
-     PyString::Create(">")}
-  ));
+  return StringConcat(
+    PyList::Create<PyObjPtr>(
+      {PyString::Create("<"), args->as<PyList>()->GetItem(0)->Klass()->Name(),
+       PyString::Create(" object at "), Function::Identity(args),
+       PyString::Create(">")}
+    )
+  );
 }
 
 PyObjPtr Bool(const PyObjPtr& args) {

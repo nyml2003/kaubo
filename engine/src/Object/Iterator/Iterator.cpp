@@ -19,11 +19,13 @@ PyObjPtr ListIteratorKlass::next(const PyObjPtr& obj) {
 
 PyObjPtr ListIteratorKlass::repr(const PyObjPtr& obj) {
   auto iterator = obj->as<ListIterator>();
-  return StringConcat(CreatePyList(
-    {PyString::Create("<list_iterator object of "), iterator->List()->str(),
-     PyString::Create(" index: "),
-     CreatePyInteger(iterator->CurrentIndex())->str(), PyString::Create(">")}
-  ));
+  return StringConcat(
+    PyList::Create<Object::PyObjPtr>(
+      {PyString::Create("<list_iterator object of "), iterator->List()->str(),
+       PyString::Create(" index: "),
+       CreatePyInteger(iterator->CurrentIndex())->str(), PyString::Create(">")}
+    )
+  );
 }
 
 PyObjPtr ListReverseIteratorKlass::next(const PyObjPtr& obj) {
@@ -39,11 +41,13 @@ PyObjPtr ListReverseIteratorKlass::next(const PyObjPtr& obj) {
 
 PyObjPtr ListReverseIteratorKlass::repr(const PyObjPtr& obj) {
   auto iterator = obj->as<ListReverseIterator>();
-  return StringConcat(CreatePyList(
-    {PyString::Create("<list_reversed_iterator object of "),
-     iterator->List()->str(), PyString::Create(" index: "),
-     CreatePyInteger(iterator->CurrentIndex())->str(), PyString::Create(">")}
-  ));
+  return StringConcat(
+    PyList::Create<Object::PyObjPtr>(
+      {PyString::Create("<list_reversed_iterator object of "),
+       iterator->List()->str(), PyString::Create(" index: "),
+       CreatePyInteger(iterator->CurrentIndex())->str(), PyString::Create(">")}
+    )
+  );
 }
 
 PyObjPtr StringIteratorKlass::next(const PyObjPtr& obj) {
@@ -77,10 +81,12 @@ PyObjPtr DictItemIteratorKlass::str(const PyObjPtr& obj) {
   auto iterator = obj->as<DictItemIterator>();
   auto dict = iterator->Dict();
   auto value = dict->GetItem(iterator->CurrentIndex())->as<PyList>();
-  auto result = StringConcat(CreatePyList(
-    {value->GetItem(0)->str(), PyString::Create(": ")->as<PyString>(),
-     value->GetItem(1)->str()}
-  ));
+  auto result = StringConcat(
+    PyList::Create<Object::PyObjPtr>(
+      {value->GetItem(0)->str(), PyString::Create(": ")->as<PyString>(),
+       value->GetItem(1)->str()}
+    )
+  );
   return result;
 }
 

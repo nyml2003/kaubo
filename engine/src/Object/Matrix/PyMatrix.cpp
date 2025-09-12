@@ -74,9 +74,9 @@ PyObjPtr MatrixKlass::gt(const PyObjPtr& lhs, const PyObjPtr& rhs) {
                                       : PyBoolean::Create(false)
       );
     }
-    data.Push(CreatePyList(row));
+    data.Push(PyList::Create(row));
   }
-  return CreatePyList(data);
+  return PyList::Create(data);
 }
 
 PyObjPtr MatrixKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -97,9 +97,9 @@ PyObjPtr MatrixKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
                                        : PyBoolean::Create(false)
       );
     }
-    data.Push(CreatePyList(row));
+    data.Push(PyList::Create(row));
   }
-  return CreatePyList(data);
+  return PyList::Create(data);
 }
 
 PyObjPtr MatrixKlass::mul(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -318,7 +318,11 @@ PyObjPtr MatrixKlass::pow(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   if (power < 0) {
     throw std::runtime_error("MatrixKlass::pow(): n is less than 0");
   }
-  auto result = Eye(CreatePyList({lhs->as<PyMatrix>()->Shape()->GetItem(0)}))
+  auto result = Eye(
+                  PyList::Create<Object::PyObjPtr>(
+                    {lhs->as<PyMatrix>()->Shape()->GetItem(0)}
+                  )
+  )
                   ->as<PyMatrix>();
   // 快速幂算法
   while (power != 0) {

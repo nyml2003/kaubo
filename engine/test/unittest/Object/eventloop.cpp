@@ -47,7 +47,7 @@ TEST_F(EventLoopTest, PromiseChaining) {
     auto argList = args->as<PyList>();
     auto resolve = argList->GetItem(0)->as<PyNativeFunction>();
     auto value = CreatePyInteger(TEST_VALUE_1);
-    resolve->Call(CreatePyList({value}));
+    resolve->Call(PyList::Create({value}));
     kaubo::Function::DebugPrint(value);
     return CreatePyNone();
   });

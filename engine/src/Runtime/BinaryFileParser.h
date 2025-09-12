@@ -2,6 +2,7 @@
 
 #include "Collections/String/BytesHelper.h"
 #include "Collections/String/StringHelper.h"
+#include "Object/Container/PyList.h"
 #include "Object/Core/PyBoolean.h"
 #include "Object/Core/PyNone.h"
 #include "Object/Number/PyFloat.h"
@@ -86,14 +87,14 @@ class BinaryFileParser {
   Object::PyListPtr ReadList() {
     uint64_t size = ReadU64();
     if (size == 0) {
-      return Object::CreatePyList(0);
+      return Object::PyList::Create(Object::PyList::ExpandOnly{0});
     }
     Collections::List<Object::PyObjPtr> list(size);
     for (uint64_t i = 0; i < size; ++i) {
       auto obj = ReadObject();
       list.Push(obj);
     }
-    return Object::CreatePyList(list);
+    return Object::PyList::Create(list);
   }
   uint8_t ReadU8() {
     uint8_t value = 0;

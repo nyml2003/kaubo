@@ -44,7 +44,7 @@ PyFramePtr CreateModuleEntryFrame(const PyCodePtr& code) {
   auto locals = PyDictionary::Create();
   auto globals = locals;
   locals->Put(PyString::Create("__name__"), PyString::Create("__main__"));
-  auto fastLocals = CreatePyList(code->NLocals());
+  auto fastLocals = PyList::Create(Object::PyList::ExpandOnly{code->NLocals()});
   auto caller = nullptr;
   auto frame =
     std::make_shared<PyFrame>(code, locals, globals, fastLocals, caller);
@@ -95,7 +95,7 @@ PyListPtr PyFrame::CurrentFastLocals() const {
 }
 
 PyListPtr PyFrame::DumpStack() const {
-  return CreatePyList(stack.GetContent());
+  return PyList::Create(stack.GetContent());
 }
 
 PyInstPtr PyFrame::Instruction() const {
@@ -133,7 +133,7 @@ void ParseByteCode(const PyCodePtr& code) {
   }
   iter++;
   Index size = Collections::DeserializeU64(bytes, iter);
-  auto insts = CreatePyList(size);
+  auto insts = PyList::Create(PyList::ExpandAndFill{size});
   for (Index pcCounter = 0; pcCounter < size; pcCounter++) {
     auto byte = bytes[iter++];
     insts->SetItem(pcCounter, [byte, &iter, &bytes]() {
@@ -320,11 +320,12 @@ PyObjPtr FrameKlass::repr(const PyObjPtr& obj) {
     throw std::runtime_error("repr(): klass is not a frame");
   }
   auto frame = obj->as<PyFrame>();
-  return StringConcat(CreatePyList(
-    {PyString::Create("<frame object at ")->as<PyString>(),
-     Function::Identity(CreatePyList({obj}))->as<PyString>(),
-     PyString::Create(">")->as<PyString>()}
-  ));
+  return StringConcat(
+    PyList::Create<Object::PyObjPtr>(
+      {PyString::Create("<frame object at "),
+       Function::Identity(PyList::Create({obj})), PyString::Create(">")}
+    )
+  );
 }
 
 void PrintFrame(const PyFramePtr& frame) {  // NOLINT(misc-no-recursion)
@@ -660,7 +661,7 @@ PyObjPtr PyFrame::Eval() {  // NOLINT(readability-function-cognitive-complexity)
       }
       case ByteCode::CALL_FUNCTION: {
         auto argumentCount = std::get<Index>(oprt);
-        auto argList = CreatePyList(stack.Top(argumentCount));
+        auto argList = PyList::Create(stack.Top(argumentCount));
         auto func = stack.Pop();
         auto result = Runtime::Evaluator::InvokeCallable(func, argList);
         stack.Push(result);
@@ -684,10 +685,12 @@ PyObjPtr PyFrame::Eval() {  // NOLINT(readability-function-cognitive-complexity)
           value = Runtime::VirtualMachine::Instance().Builtins()->getitem(key);
         }
         if (!found) {
-          auto errorMessage = StringConcat(CreatePyList(
-            {PyString::Create("NameError: name '"), key,
-             PyString::Create("' is not defined")}
-          ));
+          auto errorMessage = StringConcat(
+            PyList::Create<PyObjPtr>(
+              {PyString::Create("NameError: name '"), key,
+               PyString::Create("' is not defined")}
+            )
+          );
           throw std::runtime_error(errorMessage->as<PyString>()->ToCppString());
         }
         stack.Push(value);
@@ -773,7 +776,7 @@ PyObjPtr PyFrame::Eval() {  // NOLINT(readability-function-cognitive-complexity)
         for (Index i = 0; i < size; i++) {
           elements.Push(stack.Pop());
         }
-        auto list = CreatePyList(elements);
+        auto list = PyList::Create(elements);
         stack.Push(list);
         NextProgramCounter();
         break;

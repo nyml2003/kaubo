@@ -28,7 +28,7 @@ TEST_F(MROTest, Init) {
       CreatePyKlass(
         PyString::Create("O")->as<PyString>(),
         PyDictionary::Create()->as<PyDictionary>(),
-        CreatePyList({CreatePyType(ObjectKlass::Self())->as<PyType>()})
+        PyList::Create({CreatePyType(ObjectKlass::Self())->as<PyType>()})
           ->as<PyList>()
       )
     )
@@ -36,38 +36,38 @@ TEST_F(MROTest, Init) {
   auto typeA = CreatePyType(CreatePyKlass(
                               PyString::Create("A")->as<PyString>(),
                               PyDictionary::Create()->as<PyDictionary>(),
-                              CreatePyList({typeO})->as<PyList>()
+                              PyList::Create({typeO})->as<PyList>()
                             ))
                  ->as<PyType>();
   auto typeB = CreatePyType(CreatePyKlass(
                               PyString::Create("B")->as<PyString>(),
                               PyDictionary::Create()->as<PyDictionary>(),
-                              CreatePyList({typeO})->as<PyList>()
+                              PyList::Create({typeO})->as<PyList>()
                             ))
                  ->as<PyType>();
   auto typeC = CreatePyType(CreatePyKlass(
                               PyString::Create("C")->as<PyString>(),
                               PyDictionary::Create()->as<PyDictionary>(),
-                              CreatePyList({typeO})->as<PyList>()
+                              PyList::Create({typeO})->as<PyList>()
                             ))
                  ->as<PyType>();
   auto typeE = CreatePyType(CreatePyKlass(
                               PyString::Create("E")->as<PyString>(),
                               PyDictionary::Create()->as<PyDictionary>(),
-                              CreatePyList({typeA, typeB})->as<PyList>()
+                              PyList::Create({typeA, typeB})->as<PyList>()
                             ))
                  ->as<PyType>();
   auto typeF = CreatePyType(CreatePyKlass(
                               PyString::Create("F")->as<PyString>(),
                               PyDictionary::Create()->as<PyDictionary>(),
-                              CreatePyList({typeB, typeC})->as<PyList>()
+                              PyList::Create({typeB, typeC})->as<PyList>()
                             ))
 
                  ->as<PyType>();
   auto typeG = CreatePyType(CreatePyKlass(
                               PyString::Create("G")->as<PyString>(),
                               PyDictionary::Create()->as<PyDictionary>(),
-                              CreatePyList({typeE, typeF})->as<PyList>()
+                              PyList::Create({typeE, typeF})->as<PyList>()
                             ))
                  ->as<PyType>();
   auto mroOfG = ComputeMro(typeG);

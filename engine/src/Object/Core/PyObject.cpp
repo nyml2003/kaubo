@@ -56,9 +56,10 @@ void ObjectKlass::Initialize() {
     CreatePyNativeFunction(KlassBool)
   );
   instance->SetType(CreatePyType(instance)->as<PyType>());
-  instance->SetSuper(CreatePyList()->as<PyList>());
+  instance->SetSuper(PyList::Create()->as<PyList>());
   instance->SetMro(
-    CreatePyList({CreatePyType(instance)->as<PyType>()})->as<PyList>()
+    PyList::Create<Object::PyObjPtr>({CreatePyType(instance)->as<PyType>()})
+      ->as<PyList>()
   );
   instance->SetNative();
   ConfigureBasicAttributes(instance);
@@ -84,7 +85,7 @@ bool operator<(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   auto ltFunc = lhs->getattr(PyString::Create("__lt__")->as<PyString>());
   if (ltFunc != nullptr) {
     return Runtime::Evaluator::InvokeCallable(
-             ltFunc, CreatePyList({rhs})->as<PyList>()
+             ltFunc, PyList::Create<Object::PyObjPtr>({rhs})->as<PyList>()
     )
       ->as<PyBoolean>()
       ->Value();

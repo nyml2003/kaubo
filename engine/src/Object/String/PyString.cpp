@@ -131,7 +131,9 @@ PyObjPtr StringKlass::repr(const PyObjPtr& obj) {
   }
   auto string = obj->as<PyString>();
   return StringConcat(
-    CreatePyList({PyString::Create("'"), string, PyString::Create("'")})
+    PyList::Create<Object::PyObjPtr>(
+      {PyString::Create("'"), string, PyString::Create("'")}
+    )
   );
 }
 
@@ -195,7 +197,7 @@ PyStrPtr PyString::Join(const PyObjPtr& iterable) {
 
 // PyListPtr PyString::Split(const PyStrPtr& delimiter) {
 //   auto parts = value.Split(delimiter->value);
-//   auto result = CreatePyList(parts.Size())->as<PyList>();
+//   auto result = PyList::Create(parts.Size())->as<PyList>();
 //   for (Index i = 0; i < parts.Size(); i++) {
 //     result->SetItem(i, PyString::Create(parts[i]));
 //   }

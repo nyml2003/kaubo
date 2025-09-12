@@ -137,7 +137,7 @@ Object::PyObjPtr BinaryKlass::print(const Object::PyObjPtr& obj) {
   auto rightStr = right->print();
   PrintNode(
     binary, Object::StringConcat(
-              Object::CreatePyList({
+              Object::PyList::Create<Object::PyObjPtr>({
                 Object::PyString::Create("Binary "),
                 Stringify(binary->Oprt()),
               })

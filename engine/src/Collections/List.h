@@ -29,9 +29,9 @@ class List {
    * @details 默认扩容为原来的两倍
    */
   void Expand();
-  void Expand(Index newCapacity);
 
  public:
+  void Expand(Index newCapacity);
   void ExpandWithElement(Index newCapacity, T element);
   explicit List(Index capacity);
   explicit List();

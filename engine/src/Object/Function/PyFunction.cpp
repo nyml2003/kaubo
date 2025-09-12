@@ -4,12 +4,14 @@
 namespace kaubo::Object {
 
 PyObjPtr FunctionKlass::repr(const PyObjPtr& obj) {
-  return StringConcat(CreatePyList(
-    {PyString::Create("<function ")->as<PyString>(),
-     obj->as<PyFunction>()->Name(), PyString::Create(" at ")->as<PyString>(),
-     Function::Identity(CreatePyList({obj}))->as<PyString>(),
-     PyString::Create(">")->as<PyString>()}
-  ));
+  return StringConcat(
+    PyList::Create<Object::PyObjPtr>(
+      {PyString::Create("<function ")->as<PyString>(),
+       obj->as<PyFunction>()->Name(), PyString::Create(" at ")->as<PyString>(),
+       Function::Identity(PyList::Create({obj}))->as<PyString>(),
+       PyString::Create(">")->as<PyString>()}
+    )
+  );
 }
 
 }  // namespace kaubo::Object

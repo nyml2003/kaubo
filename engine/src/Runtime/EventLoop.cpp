@@ -26,14 +26,14 @@ void EventLoop::Run() {
     while (!microTaskQueue.empty()) {
       auto task = microTaskQueue.front();
       microTaskQueue.pop();
-      Evaluator::InvokeCallable(task, Object::CreatePyList());
+      Evaluator::InvokeCallable(task, Object::PyList::Create());
     }
 
     // 处理一个宏任务
     if (!macroTaskQueue.empty()) {
       auto task = macroTaskQueue.front();
       macroTaskQueue.pop();
-      Evaluator::InvokeCallable(task, Object::CreatePyList());
+      Evaluator::InvokeCallable(task, Object::PyList::Create());
       continue;
     }
 

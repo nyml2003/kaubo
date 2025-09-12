@@ -48,16 +48,26 @@ Object::PyObjPtr UnaryKlass::print(const Object::PyObjPtr& obj) {
   auto unary = obj->as<Unary>();
   auto operand = unary->Operand();
   auto text = Object::PyString::Create("Unary");
-  auto oprt = Object::PyString::Create(
-    unary->Oprt() == Unary::Operator::PLUS
-      ? "+"
-      : (unary->Oprt() == Unary::Operator::MINUS
-           ? "-"
-           : (unary->Oprt() == Unary::Operator::INVERT ? "~" : "!"))
-  );
+  std::string operatorStr;
+  switch (unary->Oprt()) {
+    case Unary::Operator::PLUS:
+      operatorStr = "+";
+      break;
+    case Unary::Operator::MINUS:
+      operatorStr = "-";
+      break;
+    case Unary::Operator::INVERT:
+      operatorStr = "~";
+      break;
+    case Unary::Operator::NOT:
+      operatorStr = "!";
+      break;
+  }
+  auto oprt = Object::PyString::Create(operatorStr);
   operand->print();
   auto textList =
-    StringConcat(Object::CreatePyList({text, oprt}))->as<Object::PyString>();
+    StringConcat(Object::PyList::Create<Object::PyObjPtr>({text, oprt}))
+      ->as<Object::PyString>();
   PrintNode(unary, textList);
   PrintEdge(unary, operand, textList);
   return Object::CreatePyNone();

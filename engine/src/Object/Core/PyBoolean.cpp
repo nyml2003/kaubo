@@ -8,10 +8,12 @@ namespace kaubo::Object {
 
 PyObjPtr BooleanKlass::repr(const PyObjPtr& obj) {
   if (!obj->is(BooleanKlass::Self())) {
-    auto errorMessage = StringConcat(CreatePyList(
-      {PyString::Create("AttributeError: '"), obj->Klass()->Name(),
-       PyString::Create("' object has no attribute '__repr__'")}
-    ));
+    auto errorMessage = StringConcat(
+      PyList::Create<Object::PyObjPtr>(
+        {PyString::Create("AttributeError: '"), obj->Klass()->Name(),
+         PyString::Create("' object has no attribute '__repr__'")}
+      )
+    );
     throw std::runtime_error(errorMessage->as<PyString>()->ToCppString());
   }
   auto boolean = obj->as<PyBoolean>();
