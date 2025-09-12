@@ -11,18 +11,6 @@
 
 namespace kaubo::Object {
 
-PyIntPtr CreatePyInteger(Collections::Integer value) {
-  return std::make_shared<PyInteger>(value);
-}
-
-PyIntPtr CreatePyInteger(uint64_t value) {
-  return std::make_shared<PyInteger>(Collections::CreateIntegerWithU64(value));
-}
-
-PyIntPtr CreatePyInteger(int64_t value) {
-  return std::make_shared<PyInteger>(Collections::CreateIntegerWithI64(value));
-}
-
 void IntegerKlass::Initialize() {
   InitKlass(PyString::Create("int")->as<PyString>(), Self());
 }
@@ -33,7 +21,7 @@ PyObjPtr IntegerKlass::init(const PyObjPtr& klass, const PyObjPtr& args) {
   }
   auto argList = args->as<PyList>();
   if (argList->Length() == 0) {
-    return CreatePyInteger(Collections::CreateIntegerZero());
+    return PyInteger::Create(Collections::CreateIntegerZero());
   }
   if (argList->Length() != 1) {
     throw std::runtime_error(
@@ -46,11 +34,13 @@ PyObjPtr IntegerKlass::init(const PyObjPtr& klass, const PyObjPtr& args) {
   }
   if (value->is(StringKlass::Self())) {
     auto str = value->as<PyString>();
-    return CreatePyInteger(Collections::CreateIntegerWithString(str->Value()));
+    return PyInteger::Create(
+      Collections::CreateIntegerWithString(str->Value())
+    );
   }
   if (value->is(FloatKlass::Self())) {
     auto floatValue = value->as<PyFloat>()->Value();
-    return CreatePyInteger(
+    return PyInteger::Create(
       Collections::CreateIntegerWithU64(static_cast<uint64_t>(floatValue))
     );
   }
@@ -63,7 +53,7 @@ PyObjPtr IntegerKlass::add(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyInteger>();
   auto right = rhs->as<PyInteger>();
-  return CreatePyInteger(left->value.Add(right->value));
+  return PyInteger::Create(left->value.Add(right->value));
 }
 
 PyObjPtr IntegerKlass::sub(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -72,7 +62,7 @@ PyObjPtr IntegerKlass::sub(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyInteger>();
   auto right = rhs->as<PyInteger>();
-  return CreatePyInteger(left->value.Subtract(right->value));
+  return PyInteger::Create(left->value.Subtract(right->value));
 }
 
 PyObjPtr IntegerKlass::mul(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -81,7 +71,7 @@ PyObjPtr IntegerKlass::mul(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyInteger>();
   auto right = rhs->as<PyInteger>();
-  return CreatePyInteger(left->value.Multiply(right->value));
+  return PyInteger::Create(left->value.Multiply(right->value));
 }
 
 PyObjPtr IntegerKlass::floordiv(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -92,7 +82,7 @@ PyObjPtr IntegerKlass::floordiv(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyInteger>();
   auto right = rhs->as<PyInteger>();
-  return CreatePyInteger(left->value.Divide(right->value));
+  return PyInteger::Create(left->value.Divide(right->value));
 }
 
 PyObjPtr IntegerKlass::truediv(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -101,7 +91,7 @@ PyObjPtr IntegerKlass::truediv(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = static_cast<double>(lhs->as<PyInteger>()->ToU64());
   auto right = static_cast<double>(rhs->as<PyInteger>()->ToU64());
-  return CreatePyFloat(left / right);
+  return PyFloat::Create(left / right);
 }
 
 PyObjPtr IntegerKlass::mod(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -110,7 +100,7 @@ PyObjPtr IntegerKlass::mod(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyInteger>();
   auto right = rhs->as<PyInteger>();
-  return CreatePyInteger(left->value.Modulo(right->value));
+  return PyInteger::Create(left->value.Modulo(right->value));
 }
 
 PyObjPtr IntegerKlass::pow(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -119,7 +109,7 @@ PyObjPtr IntegerKlass::pow(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyInteger>();
   auto right = rhs->as<PyInteger>();
-  return CreatePyInteger(left->value.Power(right->value));
+  return PyInteger::Create(left->value.Power(right->value));
 }
 
 PyObjPtr IntegerKlass::pos(const PyObjPtr& obj) {
@@ -134,7 +124,7 @@ PyObjPtr IntegerKlass::neg(const PyObjPtr& obj) {
     throw std::runtime_error("PyInteger::neg(): obj is not an integer");
   }
   auto integer = obj->as<PyInteger>();
-  return CreatePyInteger(integer->value.Negate());
+  return PyInteger::Create(integer->value.Negate());
 }
 
 PyObjPtr IntegerKlass::boolean(const PyObjPtr& obj) {
@@ -150,7 +140,7 @@ PyObjPtr IntegerKlass::hash(const PyObjPtr& obj) {
     throw std::runtime_error("PyInteger::hash(): obj is not an integer");
   }
   if (obj->as<PyInteger>()->IsBigNumber()) {
-    return CreatePyInteger(
+    return PyInteger::Create(
       Collections::CreateIntegerWithU64(reinterpret_cast<uint64_t>(obj.get()))
     );
   }
@@ -173,7 +163,7 @@ PyObjPtr IntegerKlass::_xor_(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyInteger>();
   auto right = rhs->as<PyInteger>();
-  return CreatePyInteger(left->value.BitWiseXor(right->value));
+  return PyInteger::Create(left->value.BitWiseXor(right->value));
 }
 
 PyObjPtr IntegerKlass::invert(const PyObjPtr& obj) {
@@ -181,7 +171,7 @@ PyObjPtr IntegerKlass::invert(const PyObjPtr& obj) {
     throw std::runtime_error("PyInteger::invert(): obj is not an integer");
   }
   auto integer = obj->as<PyInteger>();
-  return CreatePyInteger(integer->value.BitWiseNot());
+  return PyInteger::Create(integer->value.BitWiseNot());
 }
 
 PyObjPtr IntegerKlass::lshift(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -192,7 +182,7 @@ PyObjPtr IntegerKlass::lshift(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyInteger>();
   auto right = rhs->as<PyInteger>();
-  return CreatePyInteger(left->value.LeftShift(right->value));
+  return PyInteger::Create(left->value.LeftShift(right->value));
 }
 
 PyObjPtr IntegerKlass::rshift(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -203,7 +193,7 @@ PyObjPtr IntegerKlass::rshift(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyInteger>();
   auto right = rhs->as<PyInteger>();
-  return CreatePyInteger(left->value.RightShift(right->value));
+  return PyInteger::Create(left->value.RightShift(right->value));
 }
 PyObjPtr IntegerKlass::repr(const PyObjPtr& obj) {
   if (!obj->is(IntegerKlass::Self())) {

@@ -1,4 +1,5 @@
 #pragma once
+#include "Object/Core/IObjectCreator.h"
 #include "Object/Core/PyNone.h"
 #include "Object/Core/PyObject.h"
 #include "Object/Iterator/Iterator.h"
@@ -20,7 +21,7 @@ class GeneratorKlass : public KlassBase<GeneratorKlass> {
 class PyGenerator;
 using PyGeneratorPtr = std::shared_ptr<PyGenerator>;
 
-class PyGenerator : public PyObject {
+class PyGenerator : public PyObject, public IObjectCreator<PyGenerator> {
  private:
   PyFramePtr frame;
   bool isExhausted{};
@@ -63,15 +64,5 @@ class PyGenerator : public PyObject {
 
   PyObjPtr Next() { return Send(PyNone::Create()); }
 };
-
-inline PyObjPtr CreatePyGenerator(const PyFramePtr& frame) {
-  return std::make_shared<PyGenerator>(frame);
-}
-
-inline PyObjPtr CreatePyGenerator(
-  const std::function<PyObjPtr(const PyGeneratorPtr&)>& func
-) {
-  return std::make_shared<PyGenerator>(func);
-}
 
 }  // namespace kaubo::Object

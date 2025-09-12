@@ -38,13 +38,13 @@ void ConfigureBasicAttributes(const KlassPtr& klass) {
     PyString::Create("__class__")->as<PyString>(), klass->Type()
   );
   klass->AddAttribute(
-    PyString::Create("__bases__")->as<PyString>(), CreatePyIife(GetBases)
+    PyString::Create("__bases__")->as<PyString>(), PyIife::Create(GetBases)
   );
   klass->AddAttribute(
-    PyString::Create("__mro__")->as<PyString>(), CreatePyIife(GetMro)
+    PyString::Create("__mro__")->as<PyString>(), PyIife::Create(GetMro)
   );
   klass->AddAttribute(
-    PyString::Create("__dict__")->as<PyString>(), CreatePyIife(GetDict)
+    PyString::Create("__dict__")->as<PyString>(), PyIife::Create(GetDict)
   );
 }
 
@@ -92,10 +92,10 @@ PyObjPtr GetAttr(const PyObjPtr& obj, const PyStrPtr& attrName) noexcept {
 
 PyObjPtr BindSelf(const PyObjPtr& obj, const PyObjPtr& attr) {
   if (attr->is(NativeFunctionKlass::Self())) {
-    return CreatePyMethod(obj, attr);
+    return PyMethod::Create(obj, attr);
   }
   if (attr->is(FunctionKlass::Self())) {
-    return CreatePyMethod(obj, attr);
+    return PyMethod::Create(obj, attr);
   }
   if (attr->is(IifeKlass::Self())) {
     return attr->as<PyIife>()->Call(PyList::Create<Object::PyObjPtr>({obj}));

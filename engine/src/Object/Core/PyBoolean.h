@@ -40,19 +40,23 @@ class PyBoolean : public PyObject, public IObjectCreator<PyBoolean> {
   explicit PyBoolean(bool value)
     : PyObject(BooleanKlass::Self()), value(value) {}
   static PyBoolPtr False() {
-    static PyBoolPtr instance = std::make_shared<PyBoolean>(false);
+    static PyBoolPtr instance = IObjectCreator::Create(false);
     return instance;
   }
   static PyBoolPtr True() {
-    static PyBoolPtr instance = std::make_shared<PyBoolean>(true);
+    static PyBoolPtr instance = IObjectCreator::Create(true);
     return instance;
   }
   bool Value() const { return value; }
+
+  static PyBoolPtr Create(bool value) {
+    if (value) {
+      return PyBoolean::True();
+    }
+    return PyBoolean::False();
+  }
 };
 
-// inline PyObjPtrPyBoolean::Create(bool value) {
-//   return value ? PyBoolean::True() : PyBoolean::False();
-// }
 inline bool IsTrue(const PyObjPtr& obj) {
   return obj->boolean()->as<PyBoolean>()->Value();
 }

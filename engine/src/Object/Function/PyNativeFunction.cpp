@@ -22,9 +22,9 @@ void CheckNativeFunctionArgumentsWithExpectedLength(
         {PyString::Create(
            "Check Native Function Arguments With Expected Length: "
          ),
-         CreatePyInteger(expected)->str(),
+         PyInteger::Create(expected)->str(),
          PyString::Create(" Expected, but got "),
-         CreatePyInteger(list->Length())->str()}
+         PyInteger::Create(list->Length())->str()}
       )
     );
     throw std::runtime_error(errorMessage->str()->as<PyString>()->ToCppString()
@@ -68,7 +68,7 @@ void CheckNativeFunctionArgumentWithType(
       PyList::Create<Object::PyObjPtr>(
         {PyString::Create("Check Native Function (Name: "), funcName,
          PyString::Create(") Arguments With Type At Index: "),
-         CreatePyInteger(index)->str(), PyString::Create(" Expected Type: "),
+         PyInteger::Create(index)->str(), PyString::Create(" Expected Type: "),
          klass->Name(), PyString::Create(" Got Type: "), arg->Klass()->Name()}
       )
     );

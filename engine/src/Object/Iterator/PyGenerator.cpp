@@ -23,7 +23,7 @@ void GeneratorKlass::Initialize() {
     )
   );
   AddAttribute(
-    PyString::Create("done"), CreatePyIife([](const PyObjPtr& args) {
+    PyString::Create("done"), PyIife::Create([](const PyObjPtr& args) {
       return PyBoolean::Create(
         args->as<PyList>()->GetItem(0)->as<PyGenerator>()->IsExhausted()
       );

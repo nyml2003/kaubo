@@ -23,7 +23,8 @@ PyObjPtr ListIteratorKlass::repr(const PyObjPtr& obj) {
     PyList::Create<Object::PyObjPtr>(
       {PyString::Create("<list_iterator object of "), iterator->List()->str(),
        PyString::Create(" index: "),
-       CreatePyInteger(iterator->CurrentIndex())->str(), PyString::Create(">")}
+       PyInteger::Create(iterator->CurrentIndex())->str(),
+       PyString::Create(">")}
     )
   );
 }
@@ -45,7 +46,8 @@ PyObjPtr ListReverseIteratorKlass::repr(const PyObjPtr& obj) {
     PyList::Create<Object::PyObjPtr>(
       {PyString::Create("<list_reversed_iterator object of "),
        iterator->List()->str(), PyString::Create(" index: "),
-       CreatePyInteger(iterator->CurrentIndex())->str(), PyString::Create(">")}
+       PyInteger::Create(iterator->CurrentIndex())->str(),
+       PyString::Create(">")}
     )
   );
 }

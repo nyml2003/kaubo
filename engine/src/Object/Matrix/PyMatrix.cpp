@@ -29,7 +29,8 @@ PyObjPtr MatrixKlass::str(const PyObjPtr& obj) {
     repr = repr->Add(PyString::Create("[")->as<PyString>());
     for (Index j = 0; j < cols; j++) {
       repr = repr->Add(PyString::Create(" ")->as<PyString>());
-      repr = repr->Add(CreatePyFloat(matrix->At(i, j))->repr()->as<PyString>());
+      repr =
+        repr->Add(PyFloat::Create(matrix->At(i, j))->repr()->as<PyString>());
       if (j != cols - 1) {
         repr = repr->Add(PyString::Create(", ")->as<PyString>());
       }
@@ -187,7 +188,7 @@ PyObjPtr MatrixKlass::getitem(const PyObjPtr& obj, const PyObjPtr& key) {
         assert(temp >= 0 && "Negative index not allowed");
         colValue = static_cast<Index>(temp);
       }
-      return CreatePyFloat(matrix->At(rowValue, colValue));
+      return PyFloat::Create(matrix->At(rowValue, colValue));
     }
     if (keyList->GetItem(0)->is(SliceKlass::Self()) &&
         keyList->GetItem(1)->is(SliceKlass::Self())) {
@@ -342,10 +343,10 @@ void MatrixKlass::Initialize() {
   auto* instance = Self();
   InitKlass(PyString::Create("matrix")->as<PyString>(), instance);
   instance->AddAttribute(
-    PyString::Create("T")->as<PyString>(), CreatePyIife(Transpose)
+    PyString::Create("T")->as<PyString>(), PyIife::Create(Transpose)
   );
   instance->AddAttribute(
-    PyString::Create("shape")->as<PyString>(), CreatePyIife(Shape)
+    PyString::Create("shape")->as<PyString>(), PyIife::Create(Shape)
   );
   instance->AddAttribute(
     PyString::Create("reshape")->as<PyString>(),

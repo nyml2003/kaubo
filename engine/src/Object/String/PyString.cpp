@@ -117,7 +117,7 @@ PyObjPtr StringKlass::len(const PyObjPtr& obj) {
     throw std::runtime_error("StringKlass::len(): obj is not a string");
   }
   auto string = obj->as<PyString>();
-  return CreatePyInteger(string->Length());
+  return PyInteger::Create(string->Length());
 }
 
 PyObjPtr StringKlass::str(const PyObjPtr& obj) {
@@ -151,12 +151,12 @@ PyObjPtr StringKlass::hash(const PyObjPtr& obj) {
     throw std::runtime_error("StringKlass::hash(): obj is not a string");
   }
   if (obj->Hashed()) {
-    return CreatePyInteger(obj->HashValue());
+    return PyInteger::Create(obj->HashValue());
   }
   auto string = obj->as<PyString>();
   size_t hash = string->Hash();
   string->SetHashValue(hash);
-  return CreatePyInteger(hash);
+  return PyInteger::Create(hash);
 }
 
 PyObjPtr StringKlass::boolean(const PyObjPtr& obj) {

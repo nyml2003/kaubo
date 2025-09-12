@@ -1,7 +1,9 @@
 #pragma once
 
+#include <cstdint>
 #include "Collections/Integer/Integer.h"
 #include "Collections/Integer/IntegerHelper.h"
+#include "Object/Core/IObjectCreator.h"
 #include "Object/Core/Klass.h"
 #include "Object/Core/PyObject.h"
 #include "Object/Object.h"
@@ -42,13 +44,7 @@ class PyInteger;
 
 using PyIntPtr = std::shared_ptr<PyInteger>;
 
-PyIntPtr CreatePyInteger(Collections::Integer value);
-
-PyIntPtr CreatePyInteger(uint64_t value);
-
-PyIntPtr CreatePyInteger(int64_t value);
-
-class PyInteger : public PyObject {
+class PyInteger : public PyObject, public IObjectCreator<PyInteger> {
   friend class IntegerKlass;
 
  private:
@@ -57,6 +53,12 @@ class PyInteger : public PyObject {
  public:
   explicit PyInteger(Collections::Integer value)
     : PyObject(IntegerKlass::Self()), value(std::move(value)) {}
+
+  explicit PyInteger(uint64_t value)
+    : PyInteger(Collections::CreateIntegerWithU64(value)) {}
+
+  explicit PyInteger(int64_t value)
+    : PyInteger(Collections::CreateIntegerWithI64(value)) {}
 
   [[nodiscard]] Index ToU64() const { return Collections::ToU64(value); }
 

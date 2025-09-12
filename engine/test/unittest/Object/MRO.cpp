@@ -3,11 +3,6 @@
 #include "../test_default.h"
 
 #include "../Collections/Collections.h"
-#include "ByteCode/ByteCode.h"
-#include "Function/BuiltinFunction.h"
-#include "Object.h"
-#include "Object/Core/Klass.h"
-#include "Object/Number/PyInteger.h"
 #include "Object/String/PyString.h"
 
 using namespace kaubo::Object;       // NOLINT
@@ -40,15 +35,15 @@ TEST_F(MROTest, Init) {
                             ))
                  ->as<PyType>();
   auto typeB = CreatePyType(CreatePyKlass(
-                              PyString::Create("B")->as<PyString>(),
-                              PyDictionary::Create()->as<PyDictionary>(),
-                              PyList::Create({typeO})->as<PyList>()
+                              PyString::Create("B"),
+                              PyDictionary::Create(),
+                              PyList::Create({typeO})
                             ))
                  ->as<PyType>();
   auto typeC = CreatePyType(CreatePyKlass(
-                              PyString::Create("C")->as<PyString>(),
+                              PyString::Create("C"),
                               PyDictionary::Create(),
-                              PyList::Create({typeO})->as<PyList>()
+                              PyList::Create({typeO})
                             ))
                  ->as<PyType>();
   auto typeE = CreatePyType(CreatePyKlass(

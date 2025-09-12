@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Object/Core/CoreHelper.h"
+#include "Object/Core/IObjectCreator.h"
 #include "Object/Object.h"
 #include "Object/String/PyString.h"
 
@@ -38,7 +39,7 @@ class FloatKlass : public KlassBase<FloatKlass> {
   PyObjPtr _serialize_(const PyObjPtr& obj) override;
 };
 
-class PyFloat : public PyObject {
+class PyFloat : public PyObject, public IObjectCreator<PyFloat> {
  private:
   double value;
 
@@ -48,8 +49,5 @@ class PyFloat : public PyObject {
   [[nodiscard]] double Value() const { return value; }
 };
 using PyFloatPtr = std::shared_ptr<PyFloat>;
-inline PyFloatPtr CreatePyFloat(double value) {
-  return std::make_shared<PyFloat>(value);
-}
 
 }  // namespace kaubo::Object

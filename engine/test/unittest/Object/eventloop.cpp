@@ -47,7 +47,7 @@ TEST_F(EventLoopTest, PromiseChaining) {
     PyNativeFunction::Create([](const PyObjPtr& args) -> PyObjPtr {
       auto argList = args->as<PyList>();
       auto resolve = argList->GetItem(0)->as<PyNativeFunction>();
-      auto value = CreatePyInteger(TEST_VALUE_1);
+      auto value = PyInteger::Create(TEST_VALUE_1);
       resolve->Call(PyList::Create({value}));
       kaubo::Function::DebugPrint(value);
       return PyNone::Create();
@@ -57,7 +57,7 @@ TEST_F(EventLoopTest, PromiseChaining) {
     PyNativeFunction::Create([](const PyObjPtr& args) -> PyObjPtr {
       auto argList = args->as<PyList>();
       auto value = argList->GetItem(0);
-      value = value->mul(CreatePyInteger(TEST_VALUE_2));
+      value = value->mul(PyInteger::Create(TEST_VALUE_2));
       kaubo::Function::DebugPrint(value);
       return value;
     })
@@ -66,7 +66,7 @@ TEST_F(EventLoopTest, PromiseChaining) {
     PyNativeFunction::Create([](const PyObjPtr& args) -> PyObjPtr {
       auto argList = args->as<PyList>();
       auto value = argList->GetItem(0);
-      value = value->add(CreatePyInteger(TEST_VALUE_3));
+      value = value->add(PyInteger::Create(TEST_VALUE_3));
       kaubo::Function::DebugPrint(value);
       return value;
     })
@@ -87,7 +87,7 @@ TEST_F(EventLoopTest, PromiseChaining) {
       return PyNone::Create();
     })
   );
-  kaubo::Function::DebugPrint(CreatePyInteger(114ULL));
+  kaubo::Function::DebugPrint(PyInteger::Create(114ULL));
   EventLoop::Instance().EnqueueTask(
     PyNativeFunction::Create([](const PyObjPtr&) {
       if (EventLoop::Instance().Idle()) {

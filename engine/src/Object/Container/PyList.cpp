@@ -345,7 +345,7 @@ PyObjPtr ListKlass::len(const PyObjPtr& obj) {
     );
     throw std::runtime_error(errorMessage->as<PyString>()->ToCppString());
   }
-  return CreatePyInteger(obj->as<PyList>()->Length());
+  return PyInteger::Create(obj->as<PyList>()->Length());
 }
 
 PyObjPtr ListKlass::contains(const PyObjPtr& obj, const PyObjPtr& key) {
@@ -417,7 +417,7 @@ PyObjPtr ListIndex(const PyObjPtr& args) {
   auto argList = args->as<PyList>();
   auto obj = argList->GetItem(1);
   auto list = argList->GetItem(0)->as<PyList>();
-  return CreatePyInteger(list->IndexOf(obj));
+  return PyInteger::Create(list->IndexOf(obj));
 }
 
 PyObjPtr ListPop(const PyObjPtr& args) {
@@ -466,7 +466,7 @@ PyObjPtr ListCount(const PyObjPtr& args) {
       count++;
     }
   }
-  return CreatePyInteger(count);
+  return PyInteger::Create(count);
 }
 
 PyObjPtr ListReverse(const PyObjPtr& args) {

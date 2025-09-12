@@ -177,7 +177,7 @@ PyObjPtr DictionaryKlass::len(const PyObjPtr& obj) {
     throw std::runtime_error("PyDictionary::len(): obj is not a dict");
   }
   auto dict = obj->as<PyDictionary>();
-  return CreatePyInteger(dict->Size());
+  return PyInteger::Create(dict->Size());
 }
 
 PyObjPtr DictionaryKlass::contains(const PyObjPtr& obj, const PyObjPtr& key) {

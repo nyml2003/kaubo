@@ -172,12 +172,12 @@ antlrcpp::Any Generator::visitAtom(Python3Parser::AtomContext* ctx) {
     if (numberText.find('.') != std::string::npos) {
       // 情况 5.1: Float
       return IR::CreateAtom(
-        Object::CreatePyFloat(std::stod(numberText)), context
+        Object::PyFloat::Create(std::stod(numberText)), context
       );
     }
     // 情况 5.2: Integer
     return IR::CreateAtom(
-      Object::CreatePyInteger(
+      Object::PyInteger::Create(
         Collections::CreateIntegerWithCString(numberText.c_str())
       ),
       context

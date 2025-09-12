@@ -135,7 +135,7 @@ PyObjPtr Klass::repr(const PyObjPtr& self) {
 
 PyObjPtr Klass::hash(const PyObjPtr& obj) {
   if (obj->Hashed()) {
-    return CreatePyInteger(obj->HashValue());
+    return PyInteger::Create(obj->HashValue());
   }
   auto hashFunc = obj->getattr(PyString::Create("__hash__")->as<PyString>());
   if (hashFunc != nullptr) {
@@ -146,11 +146,11 @@ PyObjPtr Klass::hash(const PyObjPtr& obj) {
     }
     auto hashValue = reinterpret_cast<uint64_t>(obj.get());
     obj->SetHashValue(hashValue);
-    return CreatePyInteger(hashValue);
+    return PyInteger::Create(hashValue);
   }
   auto hashValue = reinterpret_cast<uint64_t>(obj.get());
   obj->SetHashValue(hashValue);
-  return CreatePyInteger(hashValue);
+  return PyInteger::Create(hashValue);
 }
 
 PyObjPtr Klass::gt(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -185,7 +185,7 @@ PyObjPtr Klass::boolean(const PyObjPtr& obj) {
   auto lenFunc = obj->getattr(PyString::Create("__len__")->as<PyString>());
   if (lenFunc != nullptr) {
     auto len = Runtime::Evaluator::InvokeCallable(lenFunc, PyList::Create());
-    return len->ne(CreatePyInteger(0ULL));
+    return len->ne(PyInteger::Create(0ULL));
   }
   return PyBoolean::Create(true);
 }

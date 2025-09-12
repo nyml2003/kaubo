@@ -53,9 +53,9 @@ void PySlice::BindLength(Index length) {
       throw std::runtime_error("start 不能小于等于 stop。");
     }
   }
-  start = CreatePyInteger(Collections::CreateIntegerWithI64(startValue));
-  stop = CreatePyInteger(Collections::CreateIntegerWithI64(stopValue));
-  step = CreatePyInteger(Collections::CreateIntegerWithI64(stepValue));
+  start = PyInteger::Create(Collections::CreateIntegerWithI64(startValue));
+  stop = PyInteger::Create(Collections::CreateIntegerWithI64(stopValue));
+  step = PyInteger::Create(Collections::CreateIntegerWithI64(stepValue));
 }
 
 PyObjPtr SliceKlass::init(const PyObjPtr& type, const PyObjPtr& args) {

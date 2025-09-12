@@ -75,7 +75,7 @@ Object::PyObjPtr UserFunction(
   auto frame = CreateFrameWithPyFunction(func, arguments);
   if (func->Code()->IsGenerator()) {
     Runtime::VirtualMachine::Instance().BackToParentFrame();
-    return Object::CreatePyGenerator(frame);
+    return Object::PyGenerator::Create(frame);
   }
   return frame->EvalAndDestroy();
 }

@@ -1,4 +1,5 @@
 #pragma once
+#include "Object/Core/IObjectCreator.h"
 #include "Object/Core/PyObject.h"
 
 #include <functional>
@@ -16,7 +17,7 @@ class IifeKlass : public KlassBase<IifeKlass> {
   PyObjPtr str(const PyObjPtr& self) override;
 };
 
-class PyIife : public PyObject {
+class PyIife : public PyObject, public IObjectCreator<PyIife> {
  private:
   TypeFunction nativeFunction;
 
@@ -27,8 +28,5 @@ class PyIife : public PyObject {
   PyObjPtr Call(const PyObjPtr& args) { return nativeFunction(args); }
 };
 
-inline PyObjPtr CreatePyIife(TypeFunction nativeFunction) {
-  return std::make_shared<PyIife>(std::move(nativeFunction));
-}
 
 }  // namespace kaubo::Object

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Object/Core/CoreHelper.h"
+#include "Object/Core/IObjectCreator.h"
 #include "Object/String/PyString.h"
 namespace kaubo::Object {
 
@@ -19,7 +20,7 @@ class MethodKlass : public KlassBase<MethodKlass> {
   PyObjPtr repr(const PyObjPtr& obj) override;
 };
 
-class PyMethod : public PyObject {
+class PyMethod : public PyObject, public IObjectCreator<PyMethod> {
  public:
   explicit PyMethod(PyObjPtr owner, PyObjPtr method)
     : PyObject(MethodKlass::Self()),
@@ -35,8 +36,5 @@ class PyMethod : public PyObject {
   PyObjPtr method;
 };
 using PyMethodPtr = std::shared_ptr<PyMethod>;
-inline PyObjPtr CreatePyMethod(PyObjPtr owner, PyObjPtr method) {
-  return std::make_shared<PyMethod>(std::move(owner), std::move(method));
-}
 
 }  // namespace kaubo::Object

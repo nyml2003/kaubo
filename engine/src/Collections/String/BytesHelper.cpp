@@ -6,7 +6,6 @@
 
 #include "Tools/Terminal/Terminal.h"
 
-#include <format>
 #include <fstream>
 #include <iomanip>
 #include <sstream>

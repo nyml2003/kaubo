@@ -164,7 +164,7 @@ PyObjPtr Ravel(const PyObjPtr& args) {
   auto data = matrix->Ravel();
   Collections::List<PyObjPtr> result(data.Size());
   for (Index i = 0; i < data.Size(); i++) {
-    result.Push(CreatePyFloat(data[i]));
+    result.Push(PyFloat::Create(data[i]));
   }
   return PyList::Create(result);
 }

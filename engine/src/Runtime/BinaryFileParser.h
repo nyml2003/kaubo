@@ -77,13 +77,15 @@ class BinaryFileParser {
   }
   Object::PyIntPtr ReadInteger() {
     uint64_t size = ReadSize();
-    return Object::CreatePyInteger(
+    return Object::PyInteger::Create(
       Collections::DeserializeInteger(
         ReadBytes((size * 2) + sizeof(uint64_t) + 1)
       )
     );
   }
-  Object::PyFloatPtr ReadFloat() { return Object::CreatePyFloat(ReadDouble()); }
+  Object::PyFloatPtr ReadFloat() {
+    return Object::PyFloat::Create(ReadDouble());
+  }
   Object::PyListPtr ReadList() {
     uint64_t size = ReadU64();
     if (size == 0) {
@@ -120,7 +122,7 @@ class BinaryFileParser {
       case Object::Literal::NONE:
         return Object::PyNone::Create();
       case Object::Literal::ZERO:
-        return Object::CreatePyInteger(0ULL);
+        return Object::PyInteger::Create(0ULL);
       case Object::Literal::CODE:
         return ReadCode();
       case Object::Literal::BYTES:

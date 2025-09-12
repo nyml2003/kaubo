@@ -336,7 +336,7 @@ void PrintFrame(const PyFramePtr& frame) {  // NOLINT(misc-no-recursion)
 
   // Program Counter
   VerboseTerminal::get_instance().info("Program Counter: ");
-  auto pc_repr = CreatePyInteger(frame->ProgramCounter())
+  auto pc_repr = PyInteger::Create(frame->ProgramCounter())
                    ->repr()
                    ->as<PyString>()
                    ->ToCppString();
@@ -415,7 +415,7 @@ PyObjPtr PyFrame::Eval() {  // NOLINT(readability-function-cognitive-complexity)
     switch (byteCode) {
       case ByteCode::LOAD_CONST: {
         auto key = std::get<Index>(oprt);
-        auto value = Code()->Consts()->getitem(CreatePyInteger(key));
+        auto value = Code()->Consts()->getitem(PyInteger::Create(key));
         stack.Push(value);
         NextProgramCounter();
         break;
@@ -423,14 +423,14 @@ PyObjPtr PyFrame::Eval() {  // NOLINT(readability-function-cognitive-complexity)
       case ByteCode::STORE_GLOBAL: {
         auto key = std::get<Index>(oprt);
         auto value = stack.Pop();
-        globals->setitem(CreatePyInteger(key), value);
+        globals->setitem(PyInteger::Create(key), value);
         NextProgramCounter();
         break;
       }
       case ByteCode::STORE_FAST: {
         auto index = std::get<Index>(oprt);
         auto value = stack.Pop();
-        fastLocals->setitem(CreatePyInteger(index), value);
+        fastLocals->setitem(PyInteger::Create(index), value);
         NextProgramCounter();
         break;
       }
@@ -847,7 +847,7 @@ PyObjPtr PyFrame::Eval() {  // NOLINT(readability-function-cognitive-complexity)
       }
       case ByteCode::YIELD_VALUE: {
         NextProgramCounter();
-        return CreatePyGenerator(shared_from_this()->as<PyFrame>());
+        return PyGenerator::Create(shared_from_this()->as<PyFrame>());
       }
       case ByteCode::JUMP_FORWARD: {
         SetProgramCounter(programCounter + std::get<Index>(oprt));

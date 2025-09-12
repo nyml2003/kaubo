@@ -80,12 +80,12 @@ Object::PyObjPtr RandInt(const Object::PyObjPtr& args) {
   auto left = argList->GetItem(0)->as<Object::PyInteger>();
   auto right = argList->GetItem(1)->as<Object::PyInteger>();
   if (IsTrue(left->ge(
-        Object::CreatePyInteger(
+        Object::PyInteger::Create(
           static_cast<uint64_t>(std::numeric_limits<int32_t>::max())
         )
       )) ||
       IsTrue(right->ge(
-        Object::CreatePyInteger(
+        Object::PyInteger::Create(
           static_cast<uint64_t>(std::numeric_limits<int32_t>::max())
         )
       )) ||
@@ -105,14 +105,14 @@ Object::PyObjPtr RandInt(const Object::PyObjPtr& args) {
     );
 
   auto result = dis(gen);
-  return Object::CreatePyInteger(static_cast<int64_t>(result));
+  return Object::PyInteger::Create(static_cast<int64_t>(result));
 }
 
 Object::PyObjPtr Sleep(const Object::PyObjPtr& args) {
   CheckNativeFunctionArgumentsWithExpectedLength(args, 1);
   auto seconds =
     args->as<Object::PyList>()->GetItem(0)->as<Object::PyInteger>();
-  if (IsTrue(seconds->lt(Object::CreatePyInteger(0ULL)))) {
+  if (IsTrue(seconds->lt(Object::PyInteger::Create(0ULL)))) {
     seconds->str()->as<Object::PyString>()->Print();
     throw std::runtime_error("Sleep function need non-negative argument");
   }
@@ -133,7 +133,7 @@ Object::PyObjPtr Normal(const Object::PyObjPtr& args) {
     auto sizeValue = size->as<Object::PyInteger>()->ToU64();
     auto result = Object::PyList::Create(Object::PyList::ExpandOnly{sizeValue});
     for (Index i = 0; i < sizeValue; i++) {
-      result->SetItem(i, Object::CreatePyFloat(dis(gen)));
+      result->SetItem(i, Object::PyFloat::Create(dis(gen)));
     }
     return result;
   }
@@ -364,11 +364,11 @@ Object::PyObjPtr Range(const Object::PyObjPtr& args) {
   if (step == 0) {
     throw std::runtime_error("Step cannot be zero");
   }
-  return Object::CreatePyGenerator(
+  return Object::PyGenerator::Create(
     [start, end, step](const Object::PyGeneratorPtr& generator) mutable {
       if (step > 0) {
         while (start < end) {
-          auto value = Object::CreatePyInteger(start);
+          auto value = Object::PyInteger::Create(start);
           start += step;
           if (start >= end) {
             generator->SetExhausted();
@@ -377,7 +377,7 @@ Object::PyObjPtr Range(const Object::PyObjPtr& args) {
         }
       }
       while (start > end) {
-        auto value = Object::CreatePyInteger(start);
+        auto value = Object::PyInteger::Create(start);
         start += step;
         if (start <= end) {
           generator->SetExhausted();
@@ -391,7 +391,7 @@ Object::PyObjPtr Range(const Object::PyObjPtr& args) {
 
 Object::PyObjPtr Type(const Object::PyObjPtr& args) {
   CheckNativeFunctionArgumentsWithExpectedLength(args, 1);
-  auto obj = args->getitem(Object::CreatePyInteger(0ULL));
+  auto obj = args->getitem(Object::PyInteger::Create(0ULL));
   return obj->Klass()->Type();
 }
 
@@ -472,7 +472,7 @@ auto Sum(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
   for (Index i = 0; i < values.Size(); i++) {
     result += values[i];
   }
-  return Object::CreatePyFloat(result);
+  return Object::PyFloat::Create(result);
 }
 
 auto Log(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
@@ -516,7 +516,7 @@ auto Max(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
   for (Index i = 1; i < values.Size(); i++) {
     maxValue = std::max(values[i], maxValue);
   }
-  return Object::CreatePyFloat(maxValue);
+  return Object::PyFloat::Create(maxValue);
 }
 
 auto ArgMax(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
@@ -531,7 +531,7 @@ auto ArgMax(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
       maxIndex = i;
     }
   }
-  return Object::CreatePyInteger(maxIndex);
+  return Object::PyInteger::Create(maxIndex);
 }
 
 auto Hash(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
