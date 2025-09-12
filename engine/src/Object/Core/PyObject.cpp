@@ -12,14 +12,14 @@ namespace kaubo::Object {
 
 PyDictPtr PyObject::Attributes() noexcept {
   if (attributes == nullptr) {
-    attributes = CreatePyDict()->as<PyDictionary>();
+    attributes = PyDictionary::Create();
   }
   return attributes;
 }
 
 PyDictPtr PyObject::Methods() noexcept {
   if (methods == nullptr) {
-    methods = CreatePyDict()->as<PyDictionary>();
+    methods = PyDictionary::Create();
   }
   return methods;
 }
@@ -38,7 +38,7 @@ void ObjectKlass::Initialize() {
   }
   auto* instance = Self();
   instance->SetName(PyString::Create("object")->as<PyString>());
-  instance->SetAttributes(CreatePyDict()->as<PyDictionary>());
+  instance->SetAttributes(PyDictionary::Create());
   instance->AddAttribute(
     PyString::Create("__init__")->as<PyString>(),
     CreatePyNativeFunction(ObjectInit)

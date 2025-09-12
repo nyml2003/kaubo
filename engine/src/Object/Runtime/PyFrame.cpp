@@ -41,7 +41,7 @@ PyFrame::PyFrame(
     caller(std::move(caller)) {}
 
 PyFramePtr CreateModuleEntryFrame(const PyCodePtr& code) {
-  auto locals = CreatePyDict()->as<PyDictionary>();
+  auto locals = PyDictionary::Create();
   auto globals = locals;
   locals->Put(PyString::Create("__name__"), PyString::Create("__main__"));
   auto fastLocals = CreatePyList(code->NLocals());
@@ -58,7 +58,7 @@ PyFramePtr CreateFrameWithPyFunction(
 ) {
   auto code = function->Code();
   auto globals = function->Globals();
-  auto locals = CreatePyDict()->as<PyDictionary>();
+  auto locals = PyDictionary::Create();
   Index nLocals = code->NLocals();
   for (Index i = arguments->Length(); i < nLocals; i++) {
     arguments->Append(PyNone::Instance());
@@ -852,7 +852,7 @@ PyObjPtr PyFrame::Eval() {  // NOLINT(readability-function-cognitive-complexity)
       }
       case ByteCode::BUILD_MAP: {
         auto size = std::get<Index>(oprt);
-        auto map = CreatePyDict();
+        auto map = PyDictionary::Create();
         for (Index i = 0; i < size; i++) {
           auto value = stack.Pop();
           auto key = stack.Pop();

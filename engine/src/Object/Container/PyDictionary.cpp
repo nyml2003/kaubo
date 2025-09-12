@@ -11,10 +11,6 @@
 
 namespace kaubo::Object {
 
-PyObjPtr CreatePyDict() {
-  return std::make_shared<PyDictionary>();
-}
-
 void PyDictionary::Put(const PyObjPtr& key, const PyObjPtr& value) {
   dict.insert_or_assign(key, value);
 }
@@ -47,7 +43,7 @@ PyObjPtr PyDictionary::GetItem(Index index) const {
 }
 
 PyDictPtr PyDictionary::Add(const PyDictPtr& other) {
-  auto newDict = CreatePyDict()->as<PyDictionary>();
+  auto newDict = PyDictionary::Create();
   for (const auto& item : dict) {
     newDict->Put(item.first, item.second);
   }
@@ -91,7 +87,7 @@ PyObjPtr DictionaryKlass::init(const PyObjPtr& klass, const PyObjPtr& args) {
   if (argList->Length() != 0) {
     throw std::runtime_error("PyDictionary::init(): args must be empty");
   }
-  return CreatePyDict();
+  return PyDictionary::Create();
 }
 
 PyObjPtr DictionaryKlass::setitem(

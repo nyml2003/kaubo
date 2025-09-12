@@ -27,7 +27,7 @@ TEST_F(MROTest, Init) {
     CreatePyType(
       CreatePyKlass(
         PyString::Create("O")->as<PyString>(),
-        CreatePyDict()->as<PyDictionary>(),
+        PyDictionary::Create()->as<PyDictionary>(),
         CreatePyList({CreatePyType(ObjectKlass::Self())->as<PyType>()})
           ->as<PyList>()
       )
@@ -35,38 +35,38 @@ TEST_F(MROTest, Init) {
       ->as<PyType>();
   auto typeA = CreatePyType(CreatePyKlass(
                               PyString::Create("A")->as<PyString>(),
-                              CreatePyDict()->as<PyDictionary>(),
+                              PyDictionary::Create()->as<PyDictionary>(),
                               CreatePyList({typeO})->as<PyList>()
                             ))
                  ->as<PyType>();
   auto typeB = CreatePyType(CreatePyKlass(
                               PyString::Create("B")->as<PyString>(),
-                              CreatePyDict()->as<PyDictionary>(),
+                              PyDictionary::Create()->as<PyDictionary>(),
                               CreatePyList({typeO})->as<PyList>()
                             ))
                  ->as<PyType>();
   auto typeC = CreatePyType(CreatePyKlass(
                               PyString::Create("C")->as<PyString>(),
-                              CreatePyDict()->as<PyDictionary>(),
+                              PyDictionary::Create()->as<PyDictionary>(),
                               CreatePyList({typeO})->as<PyList>()
                             ))
                  ->as<PyType>();
   auto typeE = CreatePyType(CreatePyKlass(
                               PyString::Create("E")->as<PyString>(),
-                              CreatePyDict()->as<PyDictionary>(),
+                              PyDictionary::Create()->as<PyDictionary>(),
                               CreatePyList({typeA, typeB})->as<PyList>()
                             ))
                  ->as<PyType>();
   auto typeF = CreatePyType(CreatePyKlass(
                               PyString::Create("F")->as<PyString>(),
-                              CreatePyDict()->as<PyDictionary>(),
+                              PyDictionary::Create()->as<PyDictionary>(),
                               CreatePyList({typeB, typeC})->as<PyList>()
                             ))
 
                  ->as<PyType>();
   auto typeG = CreatePyType(CreatePyKlass(
                               PyString::Create("G")->as<PyString>(),
-                              CreatePyDict()->as<PyDictionary>(),
+                              PyDictionary::Create()->as<PyDictionary>(),
                               CreatePyList({typeE, typeF})->as<PyList>()
                             ))
                  ->as<PyType>();

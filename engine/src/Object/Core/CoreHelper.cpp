@@ -19,7 +19,7 @@
 namespace kaubo::Object {
 void LoadClass(const PyStrPtr& name, const KlassPtr& klass) {
   klass->SetName(name);
-  klass->SetAttributes(CreatePyDict()->as<PyDictionary>());
+  klass->SetAttributes(PyDictionary::Create());
   klass->SetType(CreatePyType(klass)->as<PyType>());
   auto objectType = CreatePyType(ObjectKlass::Self());
   klass->SetSuper(CreatePyList({objectType}));

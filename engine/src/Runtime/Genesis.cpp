@@ -23,7 +23,7 @@ namespace kaubo::Runtime {
 Object::PyDictPtr Genesis() {
   Object::LoadBootstrapClasses();
   Object::LoadRuntimeSupportClasses();
-  auto builtins = Object::CreatePyDict()->as<Object::PyDictionary>();
+  auto builtins = Object::PyDictionary::Create();
   // 注册内置函数和类型
   builtins->Put(Object::PyString::Create("None"), Object::CreatePyNone());
   builtins->Put(

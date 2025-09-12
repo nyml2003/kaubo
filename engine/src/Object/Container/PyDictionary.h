@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common.h"
+#include "Object/Core/IObjectCreator.h"
 #include "Object/Core/Klass.h"
 #include "Object/Core/PyObject.h"
 
@@ -32,7 +33,7 @@ class DictionaryKlass : public KlassBase<DictionaryKlass> {
 
 // bool KeyCompare(const PyObjPtr& lhs, const PyObjPtr& rhs);
 
-class PyDictionary : public PyObject {
+class PyDictionary : public PyObject, public IObjectCreator<PyDictionary> {
  private:
   std::unordered_map<PyObjPtr, PyObjPtr> dict;
 
@@ -57,8 +58,6 @@ class PyDictionary : public PyObject {
   void Clear() { dict.clear(); }
   auto Dictionary() -> decltype(dict) { return dict; }
 };
-
-PyObjPtr CreatePyDict();
 using PyDictPtr = std::shared_ptr<PyDictionary>;
 
 auto DictClear(const PyObjPtr& obj) -> PyObjPtr;
