@@ -149,7 +149,7 @@ PyObjPtr FloatKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   if (!lhs->is(Self()) || !rhs->is(Self())) {
     throw std::runtime_error("PyFloat::eq(): lhs or rhs is not a float");
   }
-  return CreatePyBoolean(
+  return PyBoolean::create(
     lhs->as<PyFloat>()->Value() == rhs->as<PyFloat>()->Value()
   );
 }
@@ -158,7 +158,7 @@ PyObjPtr FloatKlass::lt(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   if (!lhs->is(Self()) || !rhs->is(Self())) {
     throw std::runtime_error("PyFloat::lt(): lhs or rhs is not a float");
   }
-  return CreatePyBoolean(
+  return PyBoolean::create(
     lhs->as<PyFloat>()->Value() < rhs->as<PyFloat>()->Value()
   );
 }
@@ -167,7 +167,7 @@ PyObjPtr FloatKlass::boolean(const PyObjPtr& obj) {
   if (!obj->is(Self())) {
     throw std::runtime_error("PyFloat::boolean(): obj is not a float");
   }
-  return CreatePyBoolean(obj->as<PyFloat>()->Value() != 0.0);
+  return PyBoolean::create(obj->as<PyFloat>()->Value() != 0.0);
 }
 
 }  // namespace kaubo::Object

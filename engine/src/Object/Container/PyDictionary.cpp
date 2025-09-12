@@ -180,7 +180,7 @@ PyObjPtr DictionaryKlass::contains(const PyObjPtr& obj, const PyObjPtr& key) {
     throw std::runtime_error("PyDictionary::contains(): obj is not a dict");
   }
   auto dict = obj->as<PyDictionary>();
-  return CreatePyBoolean(dict->Contains(key));
+  return PyBoolean::create(dict->Contains(key));
 }
 
 // bool KeyCompare(const PyObjPtr& lhs, const PyObjPtr& rhs) {

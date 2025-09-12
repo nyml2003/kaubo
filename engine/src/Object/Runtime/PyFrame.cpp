@@ -472,11 +472,11 @@ PyObjPtr PyFrame::Eval() {  // NOLINT(readability-function-cognitive-complexity)
             break;
           }
           case CompareOp::IS: {
-            stack.Push(CreatePyBoolean(left.get() == right.get()));
+            stack.Push(PyBoolean::create(left.get() == right.get()));
             break;
           }
           case CompareOp::IS_NOT: {
-            stack.Push(CreatePyBoolean(left.get() != right.get()));
+            stack.Push(PyBoolean::create(left.get() != right.get()));
             break;
           }
           default:

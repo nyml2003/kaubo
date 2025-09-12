@@ -26,9 +26,11 @@ Object::PyDictPtr Genesis() {
   auto builtins = Object::CreatePyDict()->as<Object::PyDictionary>();
   // 注册内置函数和类型
   builtins->Put(Object::CreatePyString("None"), Object::CreatePyNone());
-  builtins->Put(Object::CreatePyString("True"), Object::CreatePyBoolean(true));
   builtins->Put(
-    Object::CreatePyString("False"), Object::CreatePyBoolean(false)
+    Object::CreatePyString("True"), Object::PyBoolean::create(true)
+  );
+  builtins->Put(
+    Object::CreatePyString("False"), Object::PyBoolean::create(false)
   );
 
   // 注册内置函数

@@ -110,11 +110,11 @@ PyObjPtr StringKlass::add(const PyObjPtr& lhs, const PyObjPtr& rhs) {
 
 PyObjPtr StringKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   if (!lhs->is(StringKlass::Self()) || !rhs->is(StringKlass::Self())) {
-    return CreatePyBoolean(false);
+    return PyBoolean::create(false);
   }
   auto left = lhs->as<PyString>();
   auto right = rhs->as<PyString>();
-  return CreatePyBoolean(left->Equal(right));
+  return PyBoolean::create(left->Equal(right));
 }
 
 PyObjPtr StringKlass::len(const PyObjPtr& obj) {
@@ -167,7 +167,7 @@ PyObjPtr StringKlass::boolean(const PyObjPtr& obj) {
     throw std::runtime_error("StringKlass::boolean(): obj is not a string");
   }
   auto string = obj->as<PyString>();
-  return CreatePyBoolean(string->Length() > 0);
+  return PyBoolean::create(string->Length() > 0);
 }
 
 PyObjPtr StringKlass::_serialize_(const PyObjPtr& obj) {

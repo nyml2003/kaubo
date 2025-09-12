@@ -183,7 +183,7 @@ PyObjPtr Klass::boolean(const PyObjPtr& obj) {
     auto len = Runtime::Evaluator::InvokeCallable(lenFunc, CreatePyList());
     return len->ne(CreatePyInteger(0ULL));
   }
-  return CreatePyBoolean(true);
+  return PyBoolean::create(true);
 }
 
 PyObjPtr Klass::getitem(const PyObjPtr& obj, const PyObjPtr& key) {

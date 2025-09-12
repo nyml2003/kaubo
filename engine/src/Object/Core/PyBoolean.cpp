@@ -29,7 +29,7 @@ PyObjPtr BooleanKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyBoolean>();
   auto right = rhs->as<PyBoolean>();
-  return CreatePyBoolean(left->Value() == right->Value());
+  return PyBoolean::create(left->Value() == right->Value());
 }
 
 PyObjPtr BooleanKlass::_and_(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -38,7 +38,7 @@ PyObjPtr BooleanKlass::_and_(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyBoolean>();
   auto right = rhs->boolean()->as<PyBoolean>();
-  return CreatePyBoolean(left->Value() && right->Value());
+  return PyBoolean::create(left->Value() && right->Value());
 }
 
 PyObjPtr BooleanKlass::_or_(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -47,7 +47,7 @@ PyObjPtr BooleanKlass::_or_(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyBoolean>();
   auto right = rhs->boolean()->as<PyBoolean>();
-  return CreatePyBoolean(left->Value() || right->Value());
+  return PyBoolean::create(left->Value() || right->Value());
 }
 
 PyObjPtr BooleanKlass::_serialize_(const PyObjPtr& obj) {

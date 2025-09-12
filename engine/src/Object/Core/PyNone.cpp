@@ -22,16 +22,16 @@ PyObjPtr NoneKlass::repr(const PyObjPtr& obj) {
 
 PyObjPtr NoneKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   if (lhs->is(NoneKlass::Self()) && rhs->is(NoneKlass::Self())) {
-    return CreatePyBoolean(true);
+    return PyBoolean::create(true);
   }
-  return CreatePyBoolean(false);
+  return PyBoolean::create(false);
 }
 
 PyObjPtr NoneKlass::boolean(const PyObjPtr& obj) {
   if (!obj->is(NoneKlass::Self())) {
     throw std::runtime_error("NoneType does not support boolean operation");
   }
-  return CreatePyBoolean(false);
+  return PyBoolean::create(false);
 }
 
 PyNone::PyNone() : PyObject(NoneKlass::Self()) {}

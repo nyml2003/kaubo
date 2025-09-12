@@ -214,19 +214,19 @@ PyObjPtr ListKlass::repr(const PyObjPtr& obj) {
 
 PyObjPtr ListKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   if (!lhs->is(ListKlass::Self()) || !rhs->is(ListKlass::Self())) {
-    return CreatePyBoolean(false);
+    return PyBoolean::create(false);
   }
   auto left = lhs->as<PyList>();
   auto right = rhs->as<PyList>();
   if (left->Length() != right->Length()) {
-    return CreatePyBoolean(false);
+    return PyBoolean::create(false);
   }
   for (Index i = 0; i < left->Length(); i++) {
     if (left->GetItem(i) != right->GetItem(i)) {
-      return CreatePyBoolean(false);
+      return PyBoolean::create(false);
     }
   }
-  return CreatePyBoolean(true);
+  return PyBoolean::create(true);
 }
 
 PyObjPtr ListKlass::getitem(const PyObjPtr& obj, const PyObjPtr& key) {
@@ -343,14 +343,14 @@ PyObjPtr ListKlass::contains(const PyObjPtr& obj, const PyObjPtr& key) {
   if (!obj->is(ListKlass::Self())) {
     throw std::runtime_error("List does not support contains operation");
   }
-  return CreatePyBoolean(obj->as<PyList>()->Contains(key));
+  return PyBoolean::create(obj->as<PyList>()->Contains(key));
 }
 
 PyObjPtr ListKlass::boolean(const PyObjPtr& obj) {
   if (!obj->is(ListKlass::Self())) {
     throw std::runtime_error("List does not support boolean operation");
   }
-  return CreatePyBoolean(obj->as<PyList>()->Length() > 0);
+  return PyBoolean::create(obj->as<PyList>()->Length() > 0);
 }
 
 PyObjPtr ListKlass::_serialize_(const PyObjPtr& obj) {

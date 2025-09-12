@@ -31,7 +31,7 @@ PyObjPtr TypeKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto lhsType = lhs->as<PyType>();
   auto rhsType = rhs->as<PyType>();
-  return CreatePyBoolean(lhsType->Owner() == rhsType->Owner());
+  return PyBoolean::create(lhsType->Owner() == rhsType->Owner());
 }
 
 }  // namespace kaubo::Object

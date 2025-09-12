@@ -142,7 +142,7 @@ PyObjPtr IntegerKlass::boolean(const PyObjPtr& obj) {
     throw std::runtime_error("PyInteger::boolean(): obj is not an integer");
   }
   auto integer = obj->as<PyInteger>();
-  return CreatePyBoolean(!integer->value.IsZero());
+  return PyBoolean::create(!integer->value.IsZero());
 }
 
 PyObjPtr IntegerKlass::hash(const PyObjPtr& obj) {
@@ -222,7 +222,7 @@ PyObjPtr IntegerKlass::lt(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyInteger>();
   auto right = rhs->as<PyInteger>();
-  return CreatePyBoolean(left->value.LessThan(right->value));
+  return PyBoolean::create(left->value.LessThan(right->value));
 }
 
 PyObjPtr IntegerKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -231,7 +231,7 @@ PyObjPtr IntegerKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   }
   auto left = lhs->as<PyInteger>();
   auto right = rhs->as<PyInteger>();
-  return CreatePyBoolean(left->value.Equal(right->value));
+  return PyBoolean::create(left->value.Equal(right->value));
 }
 
 PyObjPtr IntegerKlass::_serialize_(const PyObjPtr& obj) {

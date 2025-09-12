@@ -81,29 +81,29 @@ Index PyCode::NLocals() const {
 
 PyObjPtr CodeKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
   if (!lhs->is(CodeKlass::Self()) || !rhs->is(CodeKlass::Self())) {
-    return CreatePyBoolean(false);
+    return PyBoolean::create(false);
   }
   auto lhsc = lhs->as<PyCode>();
   auto rhsc = rhs->as<PyCode>();
   if (!IsTrue(lhsc->Name()->eq(rhsc->Name()))) {
-    return CreatePyBoolean(false);
+    return PyBoolean::create(false);
   }
   if (!IsTrue(lhsc->Consts()->eq(rhsc->Consts()))) {
-    return CreatePyBoolean(false);
+    return PyBoolean::create(false);
   }
   if (!IsTrue(lhsc->Names()->eq(rhsc->Names()))) {
-    return CreatePyBoolean(false);
+    return PyBoolean::create(false);
   }
   if (!IsTrue(lhsc->VarNames()->eq(rhsc->VarNames()))) {
-    return CreatePyBoolean(false);
+    return PyBoolean::create(false);
   }
   if (lhsc->NLocals() != rhsc->NLocals()) {
-    return CreatePyBoolean(false);
+    return PyBoolean::create(false);
   }
   if (!IsTrue(lhsc->Instructions()->eq(rhsc->Instructions()))) {
-    return CreatePyBoolean(false);
+    return PyBoolean::create(false);
   }
-  return CreatePyBoolean(true);
+  return PyBoolean::create(true);
 }
 
 PyObjPtr CodeKlass::repr(const PyObjPtr& self) {

@@ -319,7 +319,7 @@ PyObjPtr Bool(const PyObjPtr& args) {
 
 PyObjPtr KlassBool(const PyObjPtr& args) {
   CheckNativeFunctionArgumentsWithExpectedLength(args, 1);
-  return CreatePyBoolean(true);
+  return PyBoolean::create(true);
 }
 
 KlassPtr CreatePyKlass(

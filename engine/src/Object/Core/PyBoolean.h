@@ -1,5 +1,6 @@
 #pragma once
 
+#include "IObjectCreator.h"
 #include "Object/Core/CoreHelper.h"
 #include "Object/String/PyString.h"
 
@@ -31,7 +32,7 @@ class BooleanKlass : public KlassBase<BooleanKlass> {
   PyObjPtr _serialize_(const PyObjPtr& obj) override;
 };
 
-class PyBoolean : public PyObject {
+class PyBoolean : public PyObject, public IObjectCreator<PyBoolean> {
  private:
   bool value;
 
@@ -49,9 +50,9 @@ class PyBoolean : public PyObject {
   bool Value() const { return value; }
 };
 
-inline PyObjPtr CreatePyBoolean(bool value) {
-  return value ? PyBoolean::True() : PyBoolean::False();
-}
+// inline PyObjPtrPyBoolean::create(bool value) {
+//   return value ? PyBoolean::True() : PyBoolean::False();
+// }
 inline bool IsTrue(const PyObjPtr& obj) {
   return obj->boolean()->as<PyBoolean>()->Value();
 }

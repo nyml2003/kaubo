@@ -202,10 +202,10 @@ antlrcpp::Any Generator::visitAtom(Python3Parser::AtomContext* ctx) {
     return IR::CreateAtom(Object::CreatePyNone(), context);
   } else if (ctx->TRUE() != nullptr) {
     // 情况 9: 'True'
-    return IR::CreateAtom(Object::CreatePyBoolean(true), context);
+    return IR::CreateAtom(Object::PyBoolean::create(true), context);
   } else if (ctx->FALSE() != nullptr) {
     // 情况 10: 'False'
-    return IR::CreateAtom(Object::CreatePyBoolean(false), context);
+    return IR::CreateAtom(Object::PyBoolean::create(false), context);
   } else {
     // 其他情况
     std::cout << "atom: Unknown type" << std::endl;

@@ -113,9 +113,9 @@ class BinaryFileParser {
       case Object::Literal::LIST:
         return ReadList();
       case Object::Literal::TRUE_LITERAL:
-        return Object::CreatePyBoolean(true);
+        return Object::PyBoolean::create(true);
       case Object::Literal::FALSE_LITERAL:
-        return Object::CreatePyBoolean(false);
+        return Object::PyBoolean::create(false);
       case Object::Literal::NONE:
         return Object::CreatePyNone();
       case Object::Literal::ZERO:

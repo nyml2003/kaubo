@@ -70,8 +70,8 @@ PyObjPtr MatrixKlass::gt(const PyObjPtr& lhs, const PyObjPtr& rhs) {
     Collections::List<PyObjPtr> row;
     for (Index j = 0; j < cols; j++) {
       row.Push(
-        matrix->At(i, j) > compareObj ? CreatePyBoolean(true)
-                                      : CreatePyBoolean(false)
+        matrix->At(i, j) > compareObj ? PyBoolean::create(true)
+                                      : PyBoolean::create(false)
       );
     }
     data.Push(CreatePyList(row));
@@ -93,8 +93,8 @@ PyObjPtr MatrixKlass::eq(const PyObjPtr& lhs, const PyObjPtr& rhs) {
     Collections::List<PyObjPtr> row;
     for (Index j = 0; j < cols; j++) {
       row.Push(
-        matrix->At(i, j) == compareObj ? CreatePyBoolean(true)
-                                       : CreatePyBoolean(false)
+        matrix->At(i, j) == compareObj ? PyBoolean::create(true)
+                                       : PyBoolean::create(false)
       );
     }
     data.Push(CreatePyList(row));
