@@ -14,7 +14,7 @@ Object::PyObjPtr MemberAccessKlass::visit(
   auto member = memberAccess->Member();
   auto code = GetCodeFromList(codeList, memberAccess);
   code->RegisterName(member);
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr MemberAccessKlass::emit(
@@ -32,7 +32,7 @@ Object::PyObjPtr MemberAccessKlass::emit(
   if (memberAccess->Mode() == STOREORLOAD::LOAD) {
     code->LoadAttr(member);
   }
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr MemberAccessKlass::print(const Object::PyObjPtr& obj) {
@@ -44,7 +44,7 @@ Object::PyObjPtr MemberAccessKlass::print(const Object::PyObjPtr& obj) {
   member->print();
   PrintEdge(memberAccess, object, Object::PyString::Create("object"));
   PrintEdge(memberAccess, member, Object::PyString::Create("member"));
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 }  // namespace kaubo::IR

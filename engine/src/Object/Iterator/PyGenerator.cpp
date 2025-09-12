@@ -18,7 +18,7 @@ void GeneratorKlass::Initialize() {
   InitKlass(PyString::Create("generator"), GeneratorKlass::Self());
   AddAttribute(
     PyString::Create("__next__"),
-    CreatePyNativeFunction(
+    PyNativeFunction::Create(
       CreateForwardFunction<GeneratorKlass>(&GeneratorKlass::next)
     )
   );
@@ -30,7 +30,8 @@ void GeneratorKlass::Initialize() {
     })
   );
   AddAttribute(
-    PyString::Create("send"), CreatePyNativeFunction([](const PyObjPtr& args) {
+    PyString::Create("send"),
+    PyNativeFunction::Create([](const PyObjPtr& args) {
       auto argList = args->as<PyList>();
       auto generator = argList->GetItem(0)->as<PyGenerator>();
       auto value = argList->GetItem(1);

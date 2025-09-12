@@ -11,7 +11,7 @@ AtomKlass::emit(const Object::PyObjPtr& obj, const Object::PyObjPtr& codeList) {
   auto object = atom->Obj();
   if (std::dynamic_pointer_cast<INode>(object) == nullptr) {
     code->LoadConst(object);
-    return Object::CreatePyNone();
+    return Object::PyNone::Create();
   }
   throw std::runtime_error("AtomKlass::emit(): unsupported object type");
 }
@@ -25,7 +25,7 @@ Object::PyObjPtr AtomKlass::visit(
   auto object = atom->Obj();
   if (std::dynamic_pointer_cast<INode>(object) == nullptr) {
     code->RegisterConst(object);
-    return Object::CreatePyNone();
+    return Object::PyNone::Create();
   }
   throw std::runtime_error("AtomKlass::visit(): unsupported object type");
 }
@@ -40,7 +40,7 @@ Object::PyObjPtr AtomKlass::print(const Object::PyObjPtr& obj) {
           )
             ->as<Object::PyString>()
   );
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 }  // namespace kaubo::IR

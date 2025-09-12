@@ -10,7 +10,7 @@ Object::PyObjPtr YieldExprKlass::visit(
   auto stmt = obj->as<YieldExpr>();
   auto content = stmt->Content();
   content->visit(codeList);
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr YieldExprKlass::emit(
@@ -23,7 +23,7 @@ Object::PyObjPtr YieldExprKlass::emit(
   auto code = GetCodeFromList(codeList, stmt);
   code->EnableGenerator();
   code->YieldValue();
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr YieldExprKlass::print(const Object::PyObjPtr& obj) {
@@ -32,7 +32,7 @@ Object::PyObjPtr YieldExprKlass::print(const Object::PyObjPtr& obj) {
   PrintNode(stmt, Object::PyString::Create("YieldExpr"));
   content->print();
   PrintEdge(stmt, content);
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 }  // namespace kaubo::IR

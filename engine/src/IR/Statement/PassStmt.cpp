@@ -9,13 +9,13 @@ Object::PyObjPtr PassStmtKlass::emit(
   auto stmt = obj->as<PassStmt>();
   auto code = GetCodeFromList(codeList, stmt);
   code->Nop();
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr PassStmtKlass::print(const Object::PyObjPtr& obj) {
   auto stmt = obj->as<PassStmt>();
   PrintNode(stmt, Object::PyString::Create("PassStmt"));
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 }  // namespace kaubo::IR

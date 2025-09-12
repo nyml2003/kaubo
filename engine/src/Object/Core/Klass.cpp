@@ -263,7 +263,7 @@ PyObjPtr Klass::setattr(
     }
   }
   obj->Attributes()->Put(key->as<PyString>(), value);
-  return CreatePyNone();
+  return PyNone::Create();
 }
 
 PyObjPtr Klass::str(const PyObjPtr& self) {

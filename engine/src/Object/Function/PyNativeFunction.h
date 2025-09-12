@@ -1,6 +1,7 @@
 #pragma once
 
 #include <functional>
+#include "Object/Core/IObjectCreator.h"
 #include "Object/String/PyString.h"
 
 namespace kaubo::Object {
@@ -15,7 +16,8 @@ class NativeFunctionKlass : public KlassBase<NativeFunctionKlass> {
   void Initialize() override;
 };
 
-class PyNativeFunction : public PyObject {
+class PyNativeFunction : public PyObject,
+                         public IObjectCreator<PyNativeFunction> {
  private:
   TypeFunction nativeFunction;
 
@@ -28,10 +30,6 @@ class PyNativeFunction : public PyObject {
 };
 
 using PyNativeFunctionPtr = std::shared_ptr<PyNativeFunction>;
-
-inline PyNativeFunctionPtr CreatePyNativeFunction(TypeFunction nativeFunction) {
-  return std::make_shared<PyNativeFunction>(std::move(nativeFunction));
-}
 
 void CheckNativeFunctionArguments(const PyObjPtr& args);
 void CheckNativeFunctionArgumentsWithExpectedLength(

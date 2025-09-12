@@ -55,10 +55,10 @@ Object::PyObjPtr ClassDefKlass::visit(
   Object::ForEach(classDef->Body(), [&codeList](const Object::PyObjPtr& stmt) {
     stmt->as<INode>()->visit(codeList);
   });
-  code->RegisterConst(Object::CreatePyNone());
+  code->RegisterConst(Object::PyNone::Create());
   parent->RegisterConst(code);
   parent->RegisterConst(classDef->Name());
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr ClassDefKlass::emit(
@@ -74,7 +74,7 @@ Object::PyObjPtr ClassDefKlass::emit(
   Object::ForEach(classDef->Body(), [&codeList](const Object::PyObjPtr& stmt) {
     stmt->as<INode>()->emit(codeList);
   });
-  selfCode->LoadConst(Object::CreatePyNone());
+  selfCode->LoadConst(Object::PyNone::Create());
   selfCode->ReturnValue();
   auto parent = GetCodeFromList(codeList, classDef->Parent());
   parent->LoadBuildClass();
@@ -91,7 +91,7 @@ Object::PyObjPtr ClassDefKlass::emit(
     );
     Object::PrintCode(selfCode);
   }
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr ClassDefKlass::print(const Object::PyObjPtr& obj) {
@@ -110,7 +110,7 @@ Object::PyObjPtr ClassDefKlass::print(const Object::PyObjPtr& obj) {
     stmt->as<INode>()->print();
     PrintEdge(classDef, stmt);
   });
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 }  // namespace kaubo::IR

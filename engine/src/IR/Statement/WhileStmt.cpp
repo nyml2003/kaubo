@@ -15,7 +15,7 @@ Object::PyObjPtr WhileStmtKlass::visit(
   Object::ForEach(body, [&codeList](const Object::PyObjPtr& stmt) {
     stmt->as<INode>()->visit(codeList);
   });
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr WhileStmtKlass::emit(
@@ -38,7 +38,7 @@ Object::PyObjPtr WhileStmtKlass::emit(
   code->Instructions()->SetItem(
     jumpStart - 1, Object::MakeInst<Object::ByteCode::POP_JUMP_IF_FALSE>(offset)
   );
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr WhileStmtKlass::print(const Object::PyObjPtr& obj) {
@@ -52,7 +52,7 @@ Object::PyObjPtr WhileStmtKlass::print(const Object::PyObjPtr& obj) {
     stmt->as<INode>()->print();
     PrintEdge(whileStmt, stmt);
   });
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 }  // namespace kaubo::IR

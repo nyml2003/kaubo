@@ -41,19 +41,19 @@ void ObjectKlass::Initialize() {
   instance->SetAttributes(PyDictionary::Create());
   instance->AddAttribute(
     PyString::Create("__init__")->as<PyString>(),
-    CreatePyNativeFunction(ObjectInit)
+    PyNativeFunction::Create(ObjectInit)
   );
   instance->AddAttribute(
     PyString::Create("__str__")->as<PyString>(),
-    CreatePyNativeFunction(KlassStr)
+    PyNativeFunction::Create(KlassStr)
   );
   instance->AddAttribute(
     PyString::Create("__repr__")->as<PyString>(),
-    CreatePyNativeFunction(KlassRepr)
+    PyNativeFunction::Create(KlassRepr)
   );
   instance->AddAttribute(
     PyString::Create("__bool__")->as<PyString>(),
-    CreatePyNativeFunction(KlassBool)
+    PyNativeFunction::Create(KlassBool)
   );
   instance->SetType(CreatePyType(instance)->as<PyType>());
   instance->SetSuper(PyList::Create()->as<PyList>());

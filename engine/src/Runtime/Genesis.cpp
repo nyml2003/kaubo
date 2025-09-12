@@ -25,7 +25,7 @@ Object::PyDictPtr Genesis() {
   Object::LoadRuntimeSupportClasses();
   auto builtins = Object::PyDictionary::Create();
   // 注册内置函数和类型
-  builtins->Put(Object::PyString::Create("None"), Object::CreatePyNone());
+  builtins->Put(Object::PyString::Create("None"), Object::PyNone::Create());
   builtins->Put(
     Object::PyString::Create("True"), Object::PyBoolean::Create(true)
   );
@@ -35,48 +35,60 @@ Object::PyDictPtr Genesis() {
 
   // 注册内置函数
   builtins->Put(
-    Object::PyString::Create("print"), CreatePyNativeFunction(Function::Print)
+    Object::PyString::Create("print"),
+    Object::PyNativeFunction::Create(Function::Print)
   );
   builtins->Put(
     Object::PyString::Create("readFile"),
-    CreatePyNativeFunction(Function::ReadFile)
+    Object::PyNativeFunction::Create(Function::ReadFile)
   );
   builtins->Put(
-    Object::PyString::Create("len"), CreatePyNativeFunction(Function::Len)
+    Object::PyString::Create("len"),
+    Object::PyNativeFunction::Create(Function::Len)
   );
   builtins->Put(
-    Object::PyString::Create("next"), CreatePyNativeFunction(Function::Next)
+    Object::PyString::Create("next"),
+    Object::PyNativeFunction::Create(Function::Next)
   );
   builtins->Put(
-    Object::PyString::Create("iter"), CreatePyNativeFunction(Function::Iter)
+    Object::PyString::Create("iter"),
+    Object::PyNativeFunction::Create(Function::Iter)
   );
   builtins->Put(
-    Object::PyString::Create("str"), CreatePyNativeFunction(Object::Str)
+    Object::PyString::Create("str"),
+    Object::PyNativeFunction::Create(Object::Str)
   );
   builtins->Put(
-    Object::PyString::Create("repr"), CreatePyNativeFunction(Object::Repr)
+    Object::PyString::Create("repr"),
+    Object::PyNativeFunction::Create(Object::Repr)
   );
   builtins->Put(
-    Object::PyString::Create("bool"), CreatePyNativeFunction(Object::Bool)
+    Object::PyString::Create("bool"),
+    Object::PyNativeFunction::Create(Object::Bool)
   );
   builtins->Put(
-    Object::PyString::Create("id"), CreatePyNativeFunction(Function::Identity)
+    Object::PyString::Create("id"),
+    Object::PyNativeFunction::Create(Function::Identity)
   );
   builtins->Put(
-    Object::PyString::Create("hash"), CreatePyNativeFunction(Function::Hash)
+    Object::PyString::Create("hash"),
+    Object::PyNativeFunction::Create(Function::Hash)
   );
   builtins->Put(
-    Object::PyString::Create("time"), CreatePyNativeFunction(Function::Time)
+    Object::PyString::Create("time"),
+    Object::PyNativeFunction::Create(Function::Time)
   );
   builtins->Put(
-    Object::PyString::Create("range"), CreatePyNativeFunction(Function::Range)
+    Object::PyString::Create("range"),
+    Object::PyNativeFunction::Create(Function::Range)
   );
   builtins->Put(
     Object::PyString::Create("__build_class__"),
-    CreatePyNativeFunction(Function::BuildClass)
+    Object::PyNativeFunction::Create(Function::BuildClass)
   );
   builtins->Put(
-    Object::PyString::Create("type"), CreatePyNativeFunction(Function::Type)
+    Object::PyString::Create("type"),
+    Object::PyNativeFunction::Create(Function::Type)
   );
   builtins->Put(
     Object::PyString::Create("whoami"),
@@ -84,96 +96,99 @@ Object::PyDictPtr Genesis() {
   );
   // builtins->Put(
   //   Object::PyString::Create("co"),
-  //   Object::CreatePyNativeFunction(Function::Coroutine)
+  //   Object::PyNativeFunction::Create(Function::Coroutine)
   // );
 
   // 内置全局对象
   builtins->Put(
     Object::PyString::Create("Array"),
-    Object::CreatePyNativeFunction(Object::Array)
+    Object::PyNativeFunction::Create(Object::Array)
   );
   builtins->Put(
-    Object::PyString::Create("Eye"), Object::CreatePyNativeFunction(Object::Eye)
+    Object::PyString::Create("Eye"),
+    Object::PyNativeFunction::Create(Object::Eye)
   );
   builtins->Put(
     Object::PyString::Create("Zeros"),
-    Object::CreatePyNativeFunction(Object::Zeros)
+    Object::PyNativeFunction::Create(Object::Zeros)
   );
   builtins->Put(
     Object::PyString::Create("Ones"),
-    Object::CreatePyNativeFunction(Object::Ones)
+    Object::PyNativeFunction::Create(Object::Ones)
   );
   builtins->Put(
     Object::PyString::Create("Diag"),
-    Object::CreatePyNativeFunction(Object::Diagnostic)
+    Object::PyNativeFunction::Create(Object::Diagnostic)
   );
   builtins->Put(
     Object::PyString::Create("Transpose"),
-    Object::CreatePyNativeFunction(Object::Transpose)
+    Object::PyNativeFunction::Create(Object::Transpose)
   );
   builtins->Put(
     Object::PyString::Create("Reshape"),
-    Object::CreatePyNativeFunction(Object::Reshape)
+    Object::PyNativeFunction::Create(Object::Reshape)
   );
   builtins->Put(
     Object::PyString::Create("Shape"),
-    Object::CreatePyNativeFunction(Object::Shape)
+    Object::PyNativeFunction::Create(Object::Shape)
   );
   builtins->Put(
     Object::PyString::Create("Concatenate"),
-    Object::CreatePyNativeFunction(Object::Concatenate)
+    Object::PyNativeFunction::Create(Object::Concatenate)
   );
   builtins->Put(
     Object::PyString::Create("Ravel"),
-    Object::CreatePyNativeFunction(Object::Ravel)
+    Object::PyNativeFunction::Create(Object::Ravel)
   );
   builtins->Put(
     Object::PyString::Create("Normal"),
-    Object::CreatePyNativeFunction(Function::Normal)
+    Object::PyNativeFunction::Create(Function::Normal)
   );
   builtins->Put(
     Object::PyString::Create("Shuffle"),
-    Object::CreatePyNativeFunction(Function::Shuffle)
+    Object::PyNativeFunction::Create(Function::Shuffle)
   );
   builtins->Put(
     Object::PyString::Create("LogisticLoss"),
-    Object::CreatePyNativeFunction(Function::LogisticLoss)
+    Object::PyNativeFunction::Create(Function::LogisticLoss)
   );
   builtins->Put(
     Object::PyString::Create("LogisticLossDerivative"),
-    Object::CreatePyNativeFunction(Function::LogisticLossDerivative)
+    Object::PyNativeFunction::Create(Function::LogisticLossDerivative)
   );
   builtins->Put(
     Object::PyString::Create("Sum"),
-    Object::CreatePyNativeFunction(Function::Sum)
+    Object::PyNativeFunction::Create(Function::Sum)
   );
   builtins->Put(
     Object::PyString::Create("Log"),
-    Object::CreatePyNativeFunction(Function::Log)
+    Object::PyNativeFunction::Create(Function::Log)
   );
   builtins->Put(
     Object::PyString::Create("Softmax"),
-    Object::CreatePyNativeFunction(Function::SoftMax)
+    Object::PyNativeFunction::Create(Function::SoftMax)
   );
   builtins->Put(
     Object::PyString::Create("Max"),
-    Object::CreatePyNativeFunction(Function::Max)
+    Object::PyNativeFunction::Create(Function::Max)
   );
   builtins->Put(
     Object::PyString::Create("ArgMax"),
-    Object::CreatePyNativeFunction(Function::ArgMax)
+    Object::PyNativeFunction::Create(Function::ArgMax)
   );
 
   // 系统相关函数
   builtins->Put(
-    Object::PyString::Create("input"), CreatePyNativeFunction(Function::Input)
+    Object::PyString::Create("input"),
+    Object::PyNativeFunction::Create(Function::Input)
   );
   builtins->Put(
-    Object::PyString::Create("sleep"), CreatePyNativeFunction(Function::Sleep)
+    Object::PyString::Create("sleep"),
+    Object::PyNativeFunction::Create(Function::Sleep)
   );
   builtins->Put(
     Object::PyString::Create("randint"),
-    CreatePyNativeFunction(Function::RandInt)
+    Object::PyNativeFunction::Create(Function::RandInt)
   );
 
   // 注册切片类型

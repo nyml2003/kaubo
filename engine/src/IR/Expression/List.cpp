@@ -14,7 +14,7 @@ ListKlass::emit(const Object::PyObjPtr& obj, const Object::PyObjPtr& codeList) {
   );
   auto code = GetCodeFromList(codeList, list);
   code->BuildList(elements->Length());
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr ListKlass::visit(
@@ -26,7 +26,7 @@ Object::PyObjPtr ListKlass::visit(
   Object::ForEach(elements, [&codeList](const Object::PyObjPtr& element) {
     element->as<INode>()->visit(codeList);
   });
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr ListKlass::print(const Object::PyObjPtr& obj) {
@@ -37,7 +37,7 @@ Object::PyObjPtr ListKlass::print(const Object::PyObjPtr& obj) {
     element->as<INode>()->print();
     PrintEdge(list, element);
   });
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 }  // namespace kaubo::IR

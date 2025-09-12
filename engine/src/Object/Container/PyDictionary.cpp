@@ -65,15 +65,15 @@ void DictionaryKlass::Initialize() {
   ConfigureBasicAttributes(Self());
   Self()->AddAttribute(
     PyString::Create("clear")->as<PyString>(),
-    CreatePyNativeFunction(DictClear)->as<PyNativeFunction>()
+    PyNativeFunction::Create(DictClear)->as<PyNativeFunction>()
   );
   Self()->AddAttribute(
     PyString::Create("items")->as<PyString>(),
-    CreatePyNativeFunction(DictItems)->as<PyNativeFunction>()
+    PyNativeFunction::Create(DictItems)->as<PyNativeFunction>()
   );
   Self()->AddAttribute(
     PyString::Create("get")->as<PyString>(),
-    CreatePyNativeFunction(DictGet)->as<PyNativeFunction>()
+    PyNativeFunction::Create(DictGet)->as<PyNativeFunction>()
   );
 
   this->SetInitialized();
@@ -100,7 +100,7 @@ PyObjPtr DictionaryKlass::setitem(
   }
   auto dict = obj->as<PyDictionary>();
   dict->Put(key, value);
-  return CreatePyNone();
+  return PyNone::Create();
 }
 
 PyObjPtr DictionaryKlass::getitem(const PyObjPtr& obj, const PyObjPtr& key) {
@@ -200,7 +200,7 @@ auto DictClear(const PyObjPtr& obj) -> PyObjPtr {
   auto argList = obj->as<PyList>();
   auto dict = argList->GetItem(0)->as<PyDictionary>();
   dict->Clear();
-  return CreatePyNone();
+  return PyNone::Create();
 }
 
 auto DictItems(const PyObjPtr& obj) -> PyObjPtr {

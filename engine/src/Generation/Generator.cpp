@@ -135,13 +135,13 @@ antlrcpp::Any Generator::visitAtom(Python3Parser::AtomContext* ctx) {
     return IR::CreateList(testlist_comp, context);
   }
   if (ctx->OPEN_BRACE() != nullptr) {
-    auto *dictorsetmaker = ctx->dictorsetmaker();
+    auto* dictorsetmaker = ctx->dictorsetmaker();
     if (dictorsetmaker == nullptr) {
       return IR::CreateMap(
         Object::PyList::Create(), Object::PyList::Create(), context
       );
     }
-    auto *dictorset = ctx->dictorsetmaker();
+    auto* dictorset = ctx->dictorsetmaker();
     auto tests = dictorset->test();
     Collections::List<Object::PyObjPtr> keys(
       static_cast<uint64_t>(tests.size() / 2)
@@ -199,7 +199,7 @@ antlrcpp::Any Generator::visitAtom(Python3Parser::AtomContext* ctx) {
 
   } else if (ctx->NONE() != nullptr) {
     // 情况 8: 'None'
-    return IR::CreateAtom(Object::CreatePyNone(), context);
+    return IR::CreateAtom(Object::PyNone::Create(), context);
   } else if (ctx->TRUE() != nullptr) {
     // 情况 9: 'True'
     return IR::CreateAtom(Object::PyBoolean::Create(true), context);
@@ -712,7 +712,7 @@ antlrcpp::Any Generator::visitReturn_stmt(
 ) {
   if (ctx->testlist() == nullptr) {
     return IR::CreateReturnStmt(
-      CreateAtom(Object::CreatePyNone(), context), context
+      CreateAtom(Object::PyNone::Create(), context), context
     );
   }
   return IR::CreateReturnStmt(
@@ -809,7 +809,7 @@ antlrcpp::Any Generator::visitSubscript_(
   if (ctx->COLON() == nullptr) {
     return std::any_cast<IR::INodePtr>(visitTest(ctx->test(0)));
   }
-  auto none = IR::CreateAtom(Object::CreatePyNone(), context);
+  auto none = IR::CreateAtom(Object::PyNone::Create(), context);
   auto step = none;
   if (ctx->sliceop() != nullptr) {
     step = std::any_cast<IR::INodePtr>(visitSliceop(ctx->sliceop()));
@@ -884,7 +884,7 @@ Generator::visitPass_stmt(Python3Parser::Pass_stmtContext* /*ctx*/) {
 antlrcpp::Any Generator::visitImport_stmt(
   Python3Parser::Import_stmtContext* /*ctx*/
 ) {
-  return IR::CreateAtom(Object::CreatePyNone(), context);
+  return IR::CreateAtom(Object::PyNone::Create(), context);
 }
 
 antlrcpp::Any Generator::visitYield_stmt(
@@ -905,7 +905,7 @@ antlrcpp::Any Generator::visitYield_expr(
     );
   }
   return IR::CreateYieldExpr(
-    IR::CreateAtom(Object::CreatePyNone(), context), context
+    IR::CreateAtom(Object::PyNone::Create(), context), context
   );
 }
 

@@ -51,7 +51,7 @@ Object::PyObjPtr Print(const Object::PyObjPtr& args) {
   CheckNativeFunctionArguments(args);
   auto argList = args->as<Object::PyList>();
   if (argList->Length() == 0) {
-    return Object::CreatePyNone();
+    return Object::PyNone::Create();
   }
   std::string result =
     argList->GetItem(0)->str()->as<Object::PyString>()->ToCppString();
@@ -61,7 +61,7 @@ Object::PyObjPtr Print(const Object::PyObjPtr& args) {
     result += arg->str()->as<Object::PyString>()->ToCppString();
   }
   ConsoleTerminal::get_instance().info(result);
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr Len(const Object::PyObjPtr& args) {
@@ -118,7 +118,7 @@ Object::PyObjPtr Sleep(const Object::PyObjPtr& args) {
   }
   auto secondsValue = seconds->ToU64();
   std::this_thread::sleep_for(std::chrono::seconds(secondsValue));
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 Object::PyObjPtr Normal(const Object::PyObjPtr& args) {
   CheckNativeFunctionArgumentsWithExpectedLength(args, 3);
@@ -146,7 +146,7 @@ Object::PyObjPtr Normal(const Object::PyObjPtr& args) {
     for (Index i = 0; i < sizeValue; i++) {
       result.Push(dis(gen));
     }
-    return Object::CreatePyMatrix(Collections::Matrix(row, col, result));
+    return Object::PyMatrix::Create(Collections::Matrix(row, col, result));
   }
   throw std::runtime_error("Normal function need integer or list argument");
 }
@@ -157,11 +157,11 @@ Object::PyObjPtr Shuffle(const Object::PyObjPtr& args) {
   auto arg = argList->GetItem(0);
   if (arg->is(Object::ListKlass::Self())) {
     arg->as<Object::PyList>()->Shuffle();
-    return Object::CreatePyNone();
+    return Object::PyNone::Create();
   }
   if (arg->is(Object::MatrixKlass::Self())) {
     arg->as<Object::PyMatrix>()->Shuffle();
-    return Object::CreatePyNone();
+    return Object::PyNone::Create();
   }
   throw std::runtime_error("Shuffle function need list or matrix argument");
 }
@@ -176,7 +176,7 @@ Object::PyObjPtr Input(const Object::PyObjPtr& args) {
     ConsoleTerminal::get_instance().info(prompt);
   }
   return Object::CreatePyPromise(
-    Object::CreatePyNativeFunction([](const Object::PyObjPtr& promiseArgs) {
+    Object::PyNativeFunction::Create([](const Object::PyObjPtr& promiseArgs) {
       // 从Promise参数中获取resolve和reject回调
       auto argsList = promiseArgs->as<Object::PyList>();
       auto resolve = argsList->GetItem(0);
@@ -206,10 +206,10 @@ Object::PyObjPtr Input(const Object::PyObjPtr& args) {
           // 只处理一次输入，完成后取消订阅
           // EventBus::get_instance().unsubscribe(eventId);
 
-          return Object::CreatePyNone();
+          return Object::PyNone::Create();
         }
       );
-      return Object::CreatePyNone();
+      return Object::PyNone::Create();
     })
   );
 }
@@ -219,7 +219,7 @@ auto ReadFile(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
   auto argList = args->as<Object::PyList>();
   auto filePath = argList->GetItem(0)->as<Object::PyString>()->ToCppString();
   return Object::CreatePyPromise(
-    Object::CreatePyNativeFunction([filePath](const Object::PyObjPtr& args) {
+    Object::PyNativeFunction::Create([filePath](const Object::PyObjPtr& args) {
       auto resolve = args->as<Object::PyList>()->GetItem(0);
       auto reject = args->as<Object::PyList>()->GetItem(1);
       try {
@@ -241,7 +241,7 @@ auto ReadFile(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
                   )
         );
       }
-      return Object::CreatePyNone();
+      return Object::PyNone::Create();
     })
   );
 }
@@ -253,20 +253,20 @@ auto ReadFile(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
 //     Runtime::Evaluator::InvokeCallable(generator, Object::PyList::Create({}))
 //       ->as<Object::PyGenerator>();
 //   auto executor =
-//     Object::CreatePyNativeFunction([gen](const Object::PyObjPtr& args) {
+//     Object::PyNativeFunction::Create([gen](const Object::PyObjPtr& args) {
 //       auto argsList = args->as<Object::PyList>();
 //       auto resolve = argsList->GetItem(0);
 //       auto reject = argsList->GetItem(1);
 
 //       Object::PyNativeFunctionPtr onFullilled =
-//         Object::CreatePyNativeFunction([](const Object::PyObjPtr&) {
-//           return Object::CreatePyNone();
+//         Object::PyNativeFunction::Create([](const Object::PyObjPtr&) {
+//           return Object::PyNone::Create();
 //         });
 
-//       onFullilled = Object::CreatePyNativeFunction(
+//       onFullilled = Object::PyNativeFunction::Create(
 //         [resolve, reject, gen,
 //          onFullilled](const Object::PyObjPtr& args) -> Object::PyObjPtr {
-//           Object::PyObjPtr ret = Object::CreatePyNone();
+//           Object::PyObjPtr ret = Object::PyNone::Create();
 //           auto result = args->as<Object::PyList>()->GetItem(0);
 //           try {
 //             ret = gen->Send(result);
@@ -284,13 +284,13 @@ auto ReadFile(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
 //               ->Then(onFullilled);
 //           }
 
-//           return Object::CreatePyNone();
+//           return Object::PyNone::Create();
 //         }
 //       );
 //       Runtime::Evaluator::InvokeCallable(
-//         onFullilled, Object::PyList::Create({Object::CreatePyNone()})
+//         onFullilled, Object::PyList::Create({Object::PyNone::Create()})
 //       );
-//       return Object::CreatePyNone();
+//       return Object::PyNone::Create();
 //     });
 //   return Object::CreatePyPromise(executor);
 // }
@@ -328,7 +328,7 @@ Object::PyObjPtr Time(const Object::PyObjPtr& args) {
 
   ConsoleTerminal::get_instance().info("Current time: " + oss.str());
 
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 /*
  * def range(start, end, step):
@@ -441,7 +441,7 @@ auto LogisticLoss(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
     }
     result[i] = std::log(1 + std::exp(-value));
   }
-  return Object::CreatePyMatrix(
+  return Object::PyMatrix::Create(
     Collections::Matrix(matrix->RowsIndex(), matrix->ColsIndex(), result)
   );
 }
@@ -459,7 +459,7 @@ auto LogisticLossDerivative(const Object::PyObjPtr& args) noexcept
     }
     result[i] = -1 / (1 + std::exp(value));
   }
-  return Object::CreatePyMatrix(
+  return Object::PyMatrix::Create(
     Collections::Matrix(matrix->RowsIndex(), matrix->ColsIndex(), result)
   );
 }
@@ -484,7 +484,7 @@ auto Log(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
     double value = values[i];
     result[i] = std::log(value);
   }
-  return Object::CreatePyMatrix(
+  return Object::PyMatrix::Create(
     Collections::Matrix(matrix->RowsIndex(), matrix->ColsIndex(), result)
   );
 }
@@ -503,7 +503,7 @@ auto SoftMax(const Object::PyObjPtr& args) noexcept -> Object::PyObjPtr {
   for (Index i = 0; i < values.Size(); i++) {
     result[i] /= sum;
   }
-  return Object::CreatePyMatrix(
+  return Object::PyMatrix::Create(
     Collections::Matrix(matrix->RowsIndex(), matrix->ColsIndex(), result)
   );
 }

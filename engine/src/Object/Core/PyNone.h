@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Object/Core/CoreHelper.h"
+#include "Object/Core/IObjectCreator.h"
 #include "Object/Object.h"
 #include "Object/String/PyString.h"
 
@@ -28,14 +29,12 @@ class NoneKlass : public KlassBase<NoneKlass> {
 };
 class PyNone;
 using PyNonePtr = std::shared_ptr<PyNone>;
-class PyNone : public PyObject {
+class PyNone : public PyObject, public IObjectCreator<PyNone> {
  public:
   explicit PyNone();
   static PyNonePtr Instance();
-};
 
-inline PyNonePtr CreatePyNone() {
-  return PyNone::Instance();
-}
+  static PyNonePtr Create() { return PyNone::Instance(); }
+};
 
 }  // namespace kaubo::Object

@@ -47,13 +47,13 @@ TEST_F(MROTest, Init) {
                  ->as<PyType>();
   auto typeC = CreatePyType(CreatePyKlass(
                               PyString::Create("C")->as<PyString>(),
-                              PyDictionary::Create()->as<PyDictionary>(),
+                              PyDictionary::Create(),
                               PyList::Create({typeO})->as<PyList>()
                             ))
                  ->as<PyType>();
   auto typeE = CreatePyType(CreatePyKlass(
-                              PyString::Create("E")->as<PyString>(),
-                              PyDictionary::Create()->as<PyDictionary>(),
+                              PyString::Create("E"),
+                              PyDictionary::Create(),
                               PyList::Create({typeA, typeB})->as<PyList>()
                             ))
                  ->as<PyType>();

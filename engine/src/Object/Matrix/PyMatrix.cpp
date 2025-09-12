@@ -290,19 +290,19 @@ PyObjPtr MatrixKlass::setitem(
     auto colStart = colSlice->GetStart()->as<PyInteger>()->ToU64();
     auto colStop = colSlice->GetStop()->as<PyInteger>()->ToU64();
     matrix->SetSlice(rowStart, colStart, rowStop, colStop, other);
-    return CreatePyNone();
+    return PyNone::Create();
   }
   // a[row,col] = float
   if (value->is(FloatKlass::Self())) {
     auto row = keyList->GetItem(0)->as<PyInteger>()->ToU64();
     auto col = keyList->GetItem(1)->as<PyInteger>()->ToU64();
     matrix->Set(row, col, value->as<PyFloat>()->Value());
-    return CreatePyNone();
+    return PyNone::Create();
   }
   throw std::runtime_error(
     "MatrixKlass::setitem(): value type is not supported"
   );
-  return CreatePyNone();
+  return PyNone::Create();
 }
 
 PyObjPtr MatrixKlass::pow(const PyObjPtr& lhs, const PyObjPtr& rhs) {
@@ -348,10 +348,11 @@ void MatrixKlass::Initialize() {
     PyString::Create("shape")->as<PyString>(), CreatePyIife(Shape)
   );
   instance->AddAttribute(
-    PyString::Create("reshape")->as<PyString>(), CreatePyNativeFunction(Reshape)
+    PyString::Create("reshape")->as<PyString>(),
+    PyNativeFunction::Create(Reshape)
   );
   instance->AddAttribute(
-    PyString::Create("ravel")->as<PyString>(), CreatePyNativeFunction(Ravel)
+    PyString::Create("ravel")->as<PyString>(), PyNativeFunction::Create(Ravel)
   );
   this->SetInitialized();
 }

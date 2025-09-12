@@ -16,7 +16,7 @@ Object::PyObjPtr FunctionCallKlass::emit(
   });
   auto code = GetCodeFromList(codeList, functionCall);
   code->CallFunction(args->Length());
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr FunctionCallKlass::visit(
@@ -30,7 +30,7 @@ Object::PyObjPtr FunctionCallKlass::visit(
   Object::ForEach(args, [&codeList](const Object::PyObjPtr& arg) {
     arg->as<INode>()->visit(codeList);
   });
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr FunctionCallKlass::print(const Object::PyObjPtr& obj) {
@@ -44,7 +44,7 @@ Object::PyObjPtr FunctionCallKlass::print(const Object::PyObjPtr& obj) {
     arg->as<INode>()->print();
     PrintEdge(functionCall, arg, Object::PyString::Create("argument"));
   });
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 }  // namespace kaubo::IR

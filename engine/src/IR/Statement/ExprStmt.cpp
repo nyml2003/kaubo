@@ -10,7 +10,7 @@ Object::PyObjPtr ExprStmtKlass::visit(
   auto stmt = obj->as<ExprStmt>();
   auto content = stmt->Content();
   content->visit(codeList);
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr ExprStmtKlass::emit(
@@ -22,7 +22,7 @@ Object::PyObjPtr ExprStmtKlass::emit(
   content->emit(codeList);
   auto code = GetCodeFromList(codeList, stmt);
   code->PopTop();
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr ExprStmtKlass::print(const Object::PyObjPtr& obj) {
@@ -31,7 +31,7 @@ Object::PyObjPtr ExprStmtKlass::print(const Object::PyObjPtr& obj) {
   PrintNode(stmt, Object::PyString::Create("ExprStmt"));
   content->print();
   PrintEdge(stmt, content);
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 }  // namespace kaubo::IR

@@ -43,53 +43,59 @@ class EventLoopTest : public ::testing::Test {
 
 TEST_F(EventLoopTest, PromiseChaining) {
   std::thread taskThread([]() { EventLoop::Instance().Run(); });
-  auto executer = CreatePyNativeFunction([](const PyObjPtr& args) -> PyObjPtr {
-    auto argList = args->as<PyList>();
-    auto resolve = argList->GetItem(0)->as<PyNativeFunction>();
-    auto value = CreatePyInteger(TEST_VALUE_1);
-    resolve->Call(PyList::Create({value}));
-    kaubo::Function::DebugPrint(value);
-    return CreatePyNone();
-  });
+  auto executer =
+    PyNativeFunction::Create([](const PyObjPtr& args) -> PyObjPtr {
+      auto argList = args->as<PyList>();
+      auto resolve = argList->GetItem(0)->as<PyNativeFunction>();
+      auto value = CreatePyInteger(TEST_VALUE_1);
+      resolve->Call(PyList::Create({value}));
+      kaubo::Function::DebugPrint(value);
+      return PyNone::Create();
+    });
   auto promise = CreatePyPromise(executer);
-  auto promise2 =
-    promise->Then(CreatePyNativeFunction([](const PyObjPtr& args) -> PyObjPtr {
+  auto promise2 = promise->Then(
+    PyNativeFunction::Create([](const PyObjPtr& args) -> PyObjPtr {
       auto argList = args->as<PyList>();
       auto value = argList->GetItem(0);
       value = value->mul(CreatePyInteger(TEST_VALUE_2));
       kaubo::Function::DebugPrint(value);
       return value;
-    }));
-  auto promise3 =
-    promise2->Then(CreatePyNativeFunction([](const PyObjPtr& args) -> PyObjPtr {
+    })
+  );
+  auto promise3 = promise2->Then(
+    PyNativeFunction::Create([](const PyObjPtr& args) -> PyObjPtr {
       auto argList = args->as<PyList>();
       auto value = argList->GetItem(0);
       value = value->add(CreatePyInteger(TEST_VALUE_3));
       kaubo::Function::DebugPrint(value);
       return value;
-    }));
-  auto promise4 =
-    promise3->Then(CreatePyNativeFunction([](const PyObjPtr& args) -> PyObjPtr {
+    })
+  );
+  auto promise4 = promise3->Then(
+    PyNativeFunction::Create([](const PyObjPtr& args) -> PyObjPtr {
       auto argList = args->as<PyList>();
       auto value = argList->GetItem(0);
       throw std::runtime_error("Test error");
-      return CreatePyNone();
-    }));
+      return PyNone::Create();
+    })
+  );
   auto promise5 = promise4->Catch(
-    CreatePyNativeFunction([](const PyObjPtr& args) -> PyObjPtr {
+    PyNativeFunction::Create([](const PyObjPtr& args) -> PyObjPtr {
       auto argList = args->as<PyList>();
       auto error = argList->GetItem(0)->as<PyString>();
       kaubo::Function::DebugPrint(error);
-      return CreatePyNone();
+      return PyNone::Create();
     })
   );
   kaubo::Function::DebugPrint(CreatePyInteger(114ULL));
-  EventLoop::Instance().EnqueueTask(CreatePyNativeFunction([](const PyObjPtr&) {
-    if (EventLoop::Instance().Idle()) {
-      EventLoop::Instance().Stop();
-    }
-    return CreatePyNone();
-  }));
+  EventLoop::Instance().EnqueueTask(
+    PyNativeFunction::Create([](const PyObjPtr&) {
+      if (EventLoop::Instance().Idle()) {
+        EventLoop::Instance().Stop();
+      }
+      return PyNone::Create();
+    })
+  );
   taskThread.join();
 }
 

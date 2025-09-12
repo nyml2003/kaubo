@@ -13,7 +13,7 @@ Object::PyObjPtr SliceKlass::emit(
   });
   auto code = GetCodeFromList(codeList, list);
   code->BuildSlice();
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr SliceKlass::visit(
@@ -25,7 +25,7 @@ Object::PyObjPtr SliceKlass::visit(
   Object::ForEach(elements, [&codeList](const Object::PyObjPtr& element) {
     element->as<INode>()->visit(codeList);
   });
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr SliceKlass::print(const Object::PyObjPtr& obj) {
@@ -36,7 +36,7 @@ Object::PyObjPtr SliceKlass::print(const Object::PyObjPtr& obj) {
     element->as<INode>()->print();
     PrintEdge(list, element);
   });
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 }  // namespace kaubo::IR

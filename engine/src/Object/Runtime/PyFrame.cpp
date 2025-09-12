@@ -672,7 +672,7 @@ PyObjPtr PyFrame::Eval() {  // NOLINT(readability-function-cognitive-complexity)
         auto index = std::get<Index>(oprt);
         auto key = Code()->Names()->GetItem(index);
         bool found = false;
-        PyObjPtr value = CreatePyNone();
+        PyObjPtr value = PyNone::Create();
         if (globals->Contains(key)) {
           found = true;
           value = globals->getitem(key);
@@ -711,7 +711,7 @@ PyObjPtr PyFrame::Eval() {  // NOLINT(readability-function-cognitive-complexity)
         // LEGB rule
         // local -> enclosing -> global -> built-in
         bool found = false;
-        PyObjPtr value = CreatePyNone();
+        PyObjPtr value = PyNone::Create();
         if (IsTrue(locals->contains(key))) {
           found = true;
           value = locals->getitem(key);
@@ -867,7 +867,7 @@ PyObjPtr PyFrame::Eval() {  // NOLINT(readability-function-cognitive-complexity)
       }
     }
   }
-  return CreatePyNone();
+  return PyNone::Create();
 }
 
 PyObjPtr PyFrame::EvalAndDestroy() {

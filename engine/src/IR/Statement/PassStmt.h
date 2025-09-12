@@ -22,7 +22,7 @@ class PassStmtKlass : public INodeTrait,
     const Object::PyObjPtr& /*obj*/,
     const Object::PyObjPtr& /*codeList*/
   ) override {
-    return Object::CreatePyNone();
+    return Object::PyNone::Create();
   }
 
   Object::PyObjPtr

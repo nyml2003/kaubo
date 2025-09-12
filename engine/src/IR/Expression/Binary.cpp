@@ -14,7 +14,7 @@ Object::PyObjPtr BinaryKlass::visit(
   auto right = binary->Right();
   left->visit(codeList);
   right->visit(codeList);
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 Object::PyObjPtr BinaryKlass::emit(
   const Object::PyObjPtr& obj,
@@ -126,7 +126,7 @@ Object::PyObjPtr BinaryKlass::emit(
   }
   auto code = GetCodeFromList(codeList, binary);
   code->Instructions()->Append(inst);
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr BinaryKlass::print(const Object::PyObjPtr& obj) {
@@ -146,7 +146,7 @@ Object::PyObjPtr BinaryKlass::print(const Object::PyObjPtr& obj) {
   );
   PrintEdge(binary, left);
   PrintEdge(binary, right);
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 }  // namespace kaubo::IR

@@ -21,8 +21,8 @@ Object::PyObjPtr ModuleKlass::visit(
   Object::ForEach(module->Body(), [&codeList](const Object::PyObjPtr& stmt) {
     stmt->as<INode>()->visit(codeList);
   });
-  code->RegisterConst(Object::CreatePyNone());
-  return Object::CreatePyNone();
+  code->RegisterConst(Object::PyNone::Create());
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr ModuleKlass::emit(
@@ -34,9 +34,9 @@ Object::PyObjPtr ModuleKlass::emit(
     stmt->as<INode>()->emit(codeList);
   });
   auto selfCode = GetCodeFromList(codeList, module);
-  selfCode->LoadConst(Object::CreatePyNone());
+  selfCode->LoadConst(Object::PyNone::Create());
   selfCode->ReturnValue();
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr ModuleKlass::print(const Object::PyObjPtr& obj) {
@@ -53,7 +53,7 @@ Object::PyObjPtr ModuleKlass::print(const Object::PyObjPtr& obj) {
     stmt->as<INode>()->print();
     PrintEdge(module, stmt);
   });
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 }  // namespace kaubo::IR

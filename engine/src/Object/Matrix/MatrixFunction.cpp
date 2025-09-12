@@ -27,17 +27,17 @@ PyObjPtr Array(const PyObjPtr& args) {
         data.Push(element->Value());
       }
     }
-    return CreatePyMatrix(Collections::Matrix(rows, cols, data));
+    return PyMatrix::Create(Collections::Matrix(rows, cols, data));
   }
   if (arg->is(FloatKlass::Self())) {
     auto value = arg->as<PyFloat>()->Value();
     Collections::List<double> data(1, value);
-    return CreatePyMatrix(Collections::Matrix(1, 1, data));
+    return PyMatrix::Create(Collections::Matrix(1, 1, data));
   }
   if (arg->is(IntegerKlass::Self())) {
     auto value = arg->as<PyInteger>()->ToU64();
     Collections::List<double> data(1, static_cast<double>(value));
-    return CreatePyMatrix(Collections::Matrix(1, 1, data));
+    return PyMatrix::Create(Collections::Matrix(1, 1, data));
   }
   if (arg->is(MatrixKlass::Self())) {
     return arg;
@@ -58,7 +58,7 @@ PyObjPtr Eye(const PyObjPtr& args) {
     throw std::runtime_error("Eye(): args length is not 1");
   }
   auto dim = argList->GetItem(0)->as<PyInteger>()->ToU64();
-  return CreatePyMatrix(Collections::Matrix::Eye(dim));
+  return PyMatrix::Create(Collections::Matrix::Eye(dim));
 }
 
 PyObjPtr Zeros(const PyObjPtr& args) {
@@ -77,7 +77,7 @@ PyObjPtr Zeros(const PyObjPtr& args) {
   auto rows = shape->GetItem(0)->as<PyInteger>()->ToU64();
   auto cols = shape->GetItem(1)->as<PyInteger>()->ToU64();
   Collections::List<double> data(rows * cols, 0.0);
-  return CreatePyMatrix(Collections::Matrix(rows, cols, data));
+  return PyMatrix::Create(Collections::Matrix(rows, cols, data));
 }
 
 PyObjPtr Ones(const PyObjPtr& args) {
@@ -96,7 +96,7 @@ PyObjPtr Ones(const PyObjPtr& args) {
   auto rows = shape->GetItem(0)->as<PyInteger>()->ToU64();
   auto cols = shape->GetItem(1)->as<PyInteger>()->ToU64();
   Collections::List<double> data(rows * cols, 1.0);
-  return CreatePyMatrix(Collections::Matrix(rows, cols, data));
+  return PyMatrix::Create(Collections::Matrix(rows, cols, data));
 }
 
 PyObjPtr Diagnostic(const PyObjPtr& args) {
@@ -122,7 +122,7 @@ PyObjPtr Diagnostic(const PyObjPtr& args) {
     }
     data[(i * dim) + i] = element->as<PyFloat>()->Value();
   }
-  return CreatePyMatrix(Collections::Matrix(dim, dim, data));
+  return PyMatrix::Create(Collections::Matrix(dim, dim, data));
 }
 
 PyObjPtr Shape(const PyObjPtr& args) {
@@ -189,7 +189,7 @@ PyObjPtr Concatenate(const PyObjPtr& args) {
     data.Concat(matrix->Ravel());
   }
   auto rows = data.Size() / cols;
-  return CreatePyMatrix(Collections::Matrix(rows, cols, data));
+  return PyMatrix::Create(Collections::Matrix(rows, cols, data));
 }
 
 PyObjPtr Transpose(const PyObjPtr& args) {

@@ -61,7 +61,7 @@ class PyGenerator : public PyObject {
     return func(shared_from_this()->as<PyGenerator>());
   }
 
-  PyObjPtr Next() { return Send(CreatePyNone()); }
+  PyObjPtr Next() { return Send(PyNone::Create()); }
 };
 
 inline PyObjPtr CreatePyGenerator(const PyFramePtr& frame) {

@@ -44,46 +44,46 @@ Object::PyObjPtr IdentifierKlass::visit(
       registry == IdentifierRegistry::UNREGISTERED) {
     if (scope == Object::Scope::GLOBAL) {
       code->RegisterName(name);
-      return Object::CreatePyNone();
+      return Object::PyNone::Create();
     }
     if (scope == Object::Scope::LOCAL) {
       code->RegisterVarName(name);
-      return Object::CreatePyNone();
+      return Object::PyNone::Create();
     }
   }
 
   if (mode == STOREORLOAD::STORE &&
       registry == IdentifierRegistry::GLOBAL_NAME) {
     code->RegisterName(name);
-    return Object::CreatePyNone();
+    return Object::PyNone::Create();
   }
   if (mode == STOREORLOAD::STORE &&
       registry == IdentifierRegistry::LOCAL_VARNAME) {
     code->RegisterVarName(name);
-    return Object::CreatePyNone();
+    return Object::PyNone::Create();
   }
   if (mode == STOREORLOAD::STORE &&
       registry == IdentifierRegistry::LOCAL_NAME) {
     code->RegisterVarName(name);
-    return Object::CreatePyNone();
+    return Object::PyNone::Create();
   }
   if (mode == STOREORLOAD::LOAD && registry == IdentifierRegistry::BUILTIN) {
     code->RegisterName(name);
-    return Object::CreatePyNone();
+    return Object::PyNone::Create();
   }
   if (mode == STOREORLOAD::LOAD &&
       registry == IdentifierRegistry::GLOBAL_NAME) {
     code->RegisterName(name);
-    return Object::CreatePyNone();
+    return Object::PyNone::Create();
   }
   if (mode == STOREORLOAD::LOAD && registry == IdentifierRegistry::LOCAL_NAME) {
     code->RegisterName(name);
-    return Object::CreatePyNone();
+    return Object::PyNone::Create();
   }
   if (mode == STOREORLOAD::LOAD &&
       registry == IdentifierRegistry::LOCAL_VARNAME) {
     code->RegisterVarName(name);
-    return Object::CreatePyNone();
+    return Object::PyNone::Create();
   }
   if (mode == STOREORLOAD::STORE && registry == IdentifierRegistry::BUILTIN) {
     throw std::runtime_error(
@@ -99,7 +99,7 @@ Object::PyObjPtr IdentifierKlass::visit(
   throw std::runtime_error(
     "NameError: name '" + name->ToCppString() + "' is not defined"
   );
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr IdentifierKlass::emit(
@@ -119,7 +119,7 @@ Object::PyObjPtr IdentifierKlass::emit(
     if (mode == STOREORLOAD::LOAD) {
       code->LoadName(name);
     }
-    return Object::CreatePyNone();
+    return Object::PyNone::Create();
   }
 
   if (scope == Object::Scope::LOCAL) {
@@ -139,44 +139,44 @@ Object::PyObjPtr IdentifierKlass::emit(
     if (registry == IdentifierRegistry::LOCAL_VARNAME &&
         mode == STOREORLOAD::STORE) {
       code->StoreFast(name);
-      return Object::CreatePyNone();
+      return Object::PyNone::Create();
     }
     if (registry == IdentifierRegistry::LOCAL_NAME &&
         mode == STOREORLOAD::STORE) {
       code->StoreName(name);
-      return Object::CreatePyNone();
+      return Object::PyNone::Create();
     }
     if (registry == IdentifierRegistry::GLOBAL_NAME &&
         mode == STOREORLOAD::STORE) {
       code->StoreName(name);
-      return Object::CreatePyNone();
+      return Object::PyNone::Create();
     }
 
     if (registry == IdentifierRegistry::BUILTIN && mode == STOREORLOAD::LOAD) {
       code->LoadName(name);
-      return Object::CreatePyNone();
+      return Object::PyNone::Create();
     }
     if (registry == IdentifierRegistry::LOCAL_VARNAME &&
         mode == STOREORLOAD::LOAD) {
       code->LoadFast(name);
-      return Object::CreatePyNone();
+      return Object::PyNone::Create();
     }
     if (registry == IdentifierRegistry::LOCAL_NAME &&
         mode == STOREORLOAD::LOAD) {
       code->LoadName(name);
-      return Object::CreatePyNone();
+      return Object::PyNone::Create();
     }
     if (registry == IdentifierRegistry::GLOBAL_NAME &&
         mode == STOREORLOAD::LOAD) {
       code->LoadName(name);
-      return Object::CreatePyNone();
+      return Object::PyNone::Create();
     }
 
     throw std::runtime_error(
       "NameError: name '" + name->ToCppString() + "' is not defined"
     );
   }
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 IdentifierRegistry GetIdentifierRegistry(
@@ -214,7 +214,7 @@ Object::PyObjPtr IdentifierKlass::print(const Object::PyObjPtr& obj) {
     )
       ->as<Object::PyString>()
   );
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 }  // namespace kaubo::IR

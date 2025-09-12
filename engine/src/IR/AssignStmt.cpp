@@ -24,9 +24,9 @@ Object::PyObjPtr AssignStmtKlass::emit(
   } else if (target->is(BinaryKlass::Self())) {
     auto binary = target->as<Binary>();
     binary->emit(codeList);
-    return Object::CreatePyNone();
+    return Object::PyNone::Create();
   }
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr AssignStmtKlass::visit(
@@ -55,9 +55,9 @@ Object::PyObjPtr AssignStmtKlass::visit(
     }
     binary->SetOprt(Binary::Operator::STORE_SUBSCR);
     binary->visit(codeList);
-    return Object::CreatePyNone();
+    return Object::PyNone::Create();
   }
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr AssignStmtKlass::print(const Object::PyObjPtr& obj) {
@@ -69,7 +69,7 @@ Object::PyObjPtr AssignStmtKlass::print(const Object::PyObjPtr& obj) {
   PrintEdge(assignStmt, source, Object::PyString::Create("source"));
   target->print();
   PrintEdge(assignStmt, target, Object::PyString::Create("target"));
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 }  // namespace kaubo::IR

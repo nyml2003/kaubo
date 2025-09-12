@@ -12,7 +12,7 @@ Object::PyObjPtr UnaryKlass::visit(
   auto unary = obj->as<Unary>();
   auto operand = unary->Operand();
   operand->visit(codeList);
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 Object::PyObjPtr UnaryKlass::emit(
   const Object::PyObjPtr& obj,
@@ -41,7 +41,7 @@ Object::PyObjPtr UnaryKlass::emit(
   }
   auto code = GetCodeFromList(codeList, unary);
   code->Instructions()->Append(inst);
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr UnaryKlass::print(const Object::PyObjPtr& obj) {
@@ -70,6 +70,6 @@ Object::PyObjPtr UnaryKlass::print(const Object::PyObjPtr& obj) {
       ->as<Object::PyString>();
   PrintNode(unary, textList);
   PrintEdge(unary, operand, textList);
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 }  // namespace kaubo::IR

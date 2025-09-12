@@ -35,7 +35,7 @@ Object::PyObjPtr IfStmtKlass::visit(
     stmt->as<INode>()->visit(codeList);
   });
 
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr IfStmtKlass::emit(
@@ -116,7 +116,7 @@ Object::PyObjPtr IfStmtKlass::emit(
     thenBlockEnd - 1,
     Object::MakeInst<Object::ByteCode::JUMP_FORWARD>(ifEnd - thenBlockEnd + 1)
   );
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr IfStmtKlass::print(const Object::PyObjPtr& obj) {
@@ -148,7 +148,7 @@ Object::PyObjPtr IfStmtKlass::print(const Object::PyObjPtr& obj) {
     stmt->as<INode>()->print();
     PrintEdge(ifStmt, stmt, Object::PyString::Create("else"));
   });
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 }  // namespace kaubo::IR

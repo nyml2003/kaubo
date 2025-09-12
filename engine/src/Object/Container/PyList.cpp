@@ -25,7 +25,7 @@ PyList::PyList(ExpandAndFill reserve) : PyObject(ListKlass::Self()) {
     return;
   }
   m_list.Expand(reserve.capacity);
-  m_list.Fill(CreatePyNone());
+  m_list.Fill(PyNone::Create());
 }
 
 PyList::PyList(ExpandOnly reserve) : PyObject(ListKlass::Self()) {
@@ -43,93 +43,96 @@ void ListKlass::Initialize() {
   InitKlass(PyString::Create("list")->as<PyString>(), instance);
   instance->AddAttribute(
     PyString::Create("append")->as<PyString>(),
-    CreatePyNativeFunction(ListAppend)
+    PyNativeFunction::Create(ListAppend)
   );
   instance->AddAttribute(
     PyString::Create("extend")->as<PyString>(),
-    CreatePyNativeFunction(ListExtend)
+    PyNativeFunction::Create(ListExtend)
   );
   instance->AddAttribute(
-    PyString::Create("index")->as<PyString>(), CreatePyNativeFunction(ListIndex)
+    PyString::Create("index")->as<PyString>(),
+    PyNativeFunction::Create(ListIndex)
   );
   instance->AddAttribute(
-    PyString::Create("pop")->as<PyString>(), CreatePyNativeFunction(ListPop)
+    PyString::Create("pop")->as<PyString>(), PyNativeFunction::Create(ListPop)
   );
   instance->AddAttribute(
     PyString::Create("remove")->as<PyString>(),
-    CreatePyNativeFunction(ListRemove)
+    PyNativeFunction::Create(ListRemove)
   );
   instance->AddAttribute(
     PyString::Create("reverse")->as<PyString>(),
-    CreatePyNativeFunction(ListReverse)
+    PyNativeFunction::Create(ListReverse)
   );
   instance->AddAttribute(
-    PyString::Create("clear")->as<PyString>(), CreatePyNativeFunction(ListClear)
+    PyString::Create("clear")->as<PyString>(),
+    PyNativeFunction::Create(ListClear)
   );
   instance->AddAttribute(
-    PyString::Create("copy")->as<PyString>(), CreatePyNativeFunction(ListCopy)
+    PyString::Create("copy")->as<PyString>(), PyNativeFunction::Create(ListCopy)
   );
   instance->AddAttribute(
-    PyString::Create("count")->as<PyString>(), CreatePyNativeFunction(ListCount)
+    PyString::Create("count")->as<PyString>(),
+    PyNativeFunction::Create(ListCount)
   );
   instance->AddAttribute(
     PyString::Create("insert")->as<PyString>(),
-    CreatePyNativeFunction(ListInsert)
+    PyNativeFunction::Create(ListInsert)
   );
   // 注册重载函数
   instance->AddAttribute(
     PyString::Create("__getitem__")->as<PyString>(),
-    CreatePyNativeFunction(
+    PyNativeFunction::Create(
       CreateForwardFunction<ListKlass>(&ListKlass::getitem)
     )
   );
   instance->AddAttribute(
     PyString::Create("__setitem__")->as<PyString>(),
-    CreatePyNativeFunction(
+    PyNativeFunction::Create(
       CreateForwardFunction<ListKlass>(&ListKlass::setitem)
     )
   );
   instance->AddAttribute(
     PyString::Create("__len__")->as<PyString>(),
-    CreatePyNativeFunction(CreateForwardFunction<ListKlass>(&ListKlass::len))
+    PyNativeFunction::Create(CreateForwardFunction<ListKlass>(&ListKlass::len))
   );
   instance->AddAttribute(
     PyString::Create("__contains__")->as<PyString>(),
-    CreatePyNativeFunction(
+    PyNativeFunction::Create(
       CreateForwardFunction<ListKlass>(&ListKlass ::contains)
     )
   );
   instance->AddAttribute(
     PyString::Create("__iter__")->as<PyString>(),
-    CreatePyNativeFunction(CreateForwardFunction<ListKlass>(&ListKlass::iter))
+    PyNativeFunction::Create(CreateForwardFunction<ListKlass>(&ListKlass::iter))
   );
   instance->AddAttribute(
     PyString::Create("__add__")->as<PyString>(),
-    CreatePyNativeFunction(CreateForwardFunction<ListKlass>(&ListKlass::add))
+    PyNativeFunction::Create(CreateForwardFunction<ListKlass>(&ListKlass::add))
   );
   instance->AddAttribute(
     PyString::Create("__mul__")->as<PyString>(),
-    CreatePyNativeFunction(CreateForwardFunction<ListKlass>(&ListKlass::mul))
+    PyNativeFunction::Create(CreateForwardFunction<ListKlass>(&ListKlass::mul))
   );
   instance->AddAttribute(
     PyString::Create("__str__")->as<PyString>(),
-    CreatePyNativeFunction(CreateForwardFunction<ListKlass>(&ListKlass::str))
+    PyNativeFunction::Create(CreateForwardFunction<ListKlass>(&ListKlass::str))
   );
   instance->AddAttribute(
     PyString::Create("__repr__")->as<PyString>(),
-    CreatePyNativeFunction(CreateForwardFunction<ListKlass>(&ListKlass::repr))
+    PyNativeFunction::Create(CreateForwardFunction<ListKlass>(&ListKlass::repr))
   );
   instance->AddAttribute(
     PyString::Create("__eq__")->as<PyString>(),
-    CreatePyNativeFunction(CreateForwardFunction<ListKlass>(&ListKlass::eq))
+    PyNativeFunction::Create(CreateForwardFunction<ListKlass>(&ListKlass::eq))
   );
   instance->AddAttribute(
     PyString::Create("__init__")->as<PyString>(),
-    CreatePyNativeFunction(CreateForwardFunction<ListKlass>(&ListKlass::init))
+    PyNativeFunction::Create(CreateForwardFunction<ListKlass>(&ListKlass::init))
   );
   instance->AddAttribute(
     PyString::Create("__serialize__")->as<PyString>(),
-    CreatePyNativeFunction(
+    PyNativeFunction::Create(
       CreateForwardFunction<ListKlass>(&ListKlass::_serialize_)
     )
   );
@@ -294,7 +297,7 @@ PyObjPtr ListKlass::setitem(
   if (key->is(IntegerKlass::Self())) {
     auto index = key->as<PyInteger>()->ToU64();
     list->SetItem(index, value);
-    return CreatePyNone();
+    return PyNone::Create();
   }
   // list[start:stop] = iterable
   if (key->is(SliceKlass::Self())) {
@@ -309,7 +312,7 @@ PyObjPtr ListKlass::setitem(
     auto start = slice->GetStart()->as<PyInteger>()->ToU64();
     auto valueList = PyList::Create(value);
     list->InsertAndReplace(start, stop, valueList);
-    return CreatePyNone();
+    return PyNone::Create();
   }
   if (key->is(ListKlass::Self())) {
     auto indexList = key->as<PyList>();
@@ -318,7 +321,7 @@ PyObjPtr ListKlass::setitem(
       result = result->getitem(indexList->GetItem(i));
     }
     result->setitem(indexList->GetItem(indexList->Length() - 1), value);
-    return CreatePyNone();
+    return PyNone::Create();
   }
   auto errorMessage = StringConcat(
     PyList::Create<Object::PyObjPtr>(
@@ -393,7 +396,7 @@ PyObjPtr ListAppend(const PyObjPtr& args) {
   auto obj = argList->GetItem(1);
   auto list = argList->GetItem(0)->as<PyList>();
   list->Append(obj);
-  return CreatePyNone();
+  return PyNone::Create();
 }
 
 PyObjPtr ListExtend(const PyObjPtr& args) {
@@ -402,7 +405,7 @@ PyObjPtr ListExtend(const PyObjPtr& args) {
   auto obj = argList->GetItem(1);
   auto list = argList->GetItem(0)->as<PyList>();
   ForEach(obj, [&list](const PyObjPtr& value) { list->Append(value); });
-  return CreatePyNone();
+  return PyNone::Create();
 }
 
 PyObjPtr ListIndex(const PyObjPtr& args) {
@@ -437,7 +440,7 @@ PyObjPtr ListClear(const PyObjPtr& args) {
   CheckNativeFunctionArguments(args);
   auto list = args->as<PyList>()->GetItem(0)->as<PyList>();
   list->Clear();
-  return CreatePyNone();
+  return PyNone::Create();
 }
 
 PyObjPtr ListRemove(const PyObjPtr& args) {
@@ -449,7 +452,7 @@ PyObjPtr ListRemove(const PyObjPtr& args) {
     throw std::runtime_error("List does not contain the object");
   }
   list->RemoveAt(list->IndexOf(obj));
-  return CreatePyNone();
+  return PyNone::Create();
 }
 
 PyObjPtr ListCount(const PyObjPtr& args) {
@@ -470,7 +473,7 @@ PyObjPtr ListReverse(const PyObjPtr& args) {
   CheckNativeFunctionArguments(args);
   auto list = args->as<PyList>()->GetItem(0)->as<PyList>();
   list->Reverse();
-  return CreatePyNone();
+  return PyNone::Create();
 }
 
 PyObjPtr ListCopy(const PyObjPtr& args) {
@@ -494,7 +497,7 @@ PyObjPtr ListInsert(const PyObjPtr& args) {
   }
   auto obj = argList->GetItem(2);
   list->Insert(actualIndex, obj);
-  return CreatePyNone();
+  return PyNone::Create();
 }
 
 PyObjPtr PyList::GetSlice(const PySlicePtr& slice) const {

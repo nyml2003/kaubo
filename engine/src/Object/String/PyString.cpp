@@ -21,58 +21,60 @@ namespace kaubo::Object {
 void StringKlass::Initialize() {
   InitKlass(PyString::Create("str"), Self());
   Self()->AddAttribute(
-    PyString::Create("join"), CreatePyNativeFunction(StringJoin)
+    PyString::Create("join"), PyNativeFunction::Create(StringJoin)
   );
   //  Self()->AddAttribute(
   //    PyString::Create("split")->as<PyString>(),
-  //    CreatePyNativeFunction(StringSplit)
+  //    PyNativeFunction::Create(StringSplit)
   //  );
   Self()->AddAttribute(
-    PyString::Create("upper"), CreatePyNativeFunction(StringUpper)
+    PyString::Create("upper"), PyNativeFunction::Create(StringUpper)
   );
   Self()->AddAttribute(
     PyString::Create("__add__"),
-    CreatePyNativeFunction(
+    PyNativeFunction::Create(
       CreateForwardFunction<StringKlass>(&StringKlass::add)
     )
   );
   Self()->AddAttribute(
     PyString::Create("__eq__"),
-    CreatePyNativeFunction(CreateForwardFunction<StringKlass>(&StringKlass::eq))
+    PyNativeFunction::Create(
+      CreateForwardFunction<StringKlass>(&StringKlass::eq)
+    )
   );
   Self()->AddAttribute(
     PyString::Create("__len__"),
-    CreatePyNativeFunction(
+    PyNativeFunction::Create(
       CreateForwardFunction<StringKlass>(&StringKlass::len)
     )
   );
   Self()->AddAttribute(
     PyString::Create("__str__"),
-    CreatePyNativeFunction(
+    PyNativeFunction::Create(
       CreateForwardFunction<StringKlass>(&StringKlass::str)
     )
   );
   Self()->AddAttribute(
     PyString::Create("__repr__"),
-    CreatePyNativeFunction(
+    PyNativeFunction::Create(
       CreateForwardFunction<StringKlass>(&StringKlass::repr)
     )
   );
   Self()->AddAttribute(
     PyString::Create("__iter__"),
-    CreatePyNativeFunction(
+    PyNativeFunction::Create(
       CreateForwardFunction<StringKlass>(&StringKlass::iter)
     )
   );
   Self()->AddAttribute(
     PyString::Create("__serialize__"),
-    CreatePyNativeFunction(
+    PyNativeFunction::Create(
       CreateForwardFunction<StringKlass>(&StringKlass::_serialize_)
     )
   );
   Self()->AddAttribute(
     PyString::Create("__init__"),
-    CreatePyNativeFunction(
+    PyNativeFunction::Create(
       CreateForwardFunction<StringKlass>(&StringKlass::init)
     )
   );

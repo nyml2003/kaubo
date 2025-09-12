@@ -50,7 +50,7 @@ Object::PyObjPtr FuncDefKlass::visit(
     funcDef->Parameters(),
     [&code](const Object::PyObjPtr& param) { code->RegisterVarName(param); }
   );
-  code->RegisterConst(Object::CreatePyNone());
+  code->RegisterConst(Object::PyNone::Create());
   codeList->as<Object::PyList>()->Append(code);
   auto parent = GetCodeFromList(codeList, funcDef->Parent());
   parent->RegisterName(funcDef->Name());
@@ -59,7 +59,7 @@ Object::PyObjPtr FuncDefKlass::visit(
   });
   parent->RegisterConst(code);
   parent->RegisterConst(funcDef->Name());
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr FuncDefKlass::emit(
@@ -76,7 +76,7 @@ Object::PyObjPtr FuncDefKlass::emit(
   } else {
     selfCode->SetNLocals(funcDef->Parameters()->Length());
   }
-  selfCode->LoadConst(Object::CreatePyNone());
+  selfCode->LoadConst(Object::PyNone::Create());
   selfCode->ReturnValue();
   auto parent = GetCodeFromList(codeList, funcDef->Parent());
   parent->LoadConst(selfCode);
@@ -89,7 +89,7 @@ Object::PyObjPtr FuncDefKlass::emit(
     );
     Object::PrintCode(selfCode);
   }
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr FuncDefKlass::print(const Object::PyObjPtr& obj) {
@@ -106,6 +106,6 @@ Object::PyObjPtr FuncDefKlass::print(const Object::PyObjPtr& obj) {
     stmt->as<INode>()->print();
     PrintEdge(funcDef, stmt);
   });
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 }  // namespace kaubo::IR

@@ -40,7 +40,7 @@ Object::PyObjPtr ForStmtKlass::emit(
   code->Instructions()->SetItem(
     start - 1, Object::MakeInst<Object::ByteCode::FOR_ITER>(end - start + 1)
   );
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr ForStmtKlass::visit(
@@ -69,7 +69,7 @@ Object::PyObjPtr ForStmtKlass::visit(
   Object::ForEach(body, [codeList](const Object::PyObjPtr& stmt) {
     stmt->as<INode>()->visit(codeList);
   });
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr ForStmtKlass::print(const Object::PyObjPtr& obj) {
@@ -86,7 +86,7 @@ Object::PyObjPtr ForStmtKlass::print(const Object::PyObjPtr& obj) {
     stmt->as<INode>()->print();
     PrintEdge(forStmt, stmt, Object::PyString::Create("stmt"));
   });
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 }  // namespace kaubo::IR

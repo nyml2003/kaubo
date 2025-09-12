@@ -14,7 +14,7 @@ MapKlass::emit(const Object::PyObjPtr& obj, const Object::PyObjPtr& codeList) {
     values->GetItem(i)->as<INode>()->emit(codeList);
   }
   code->BuildMap(size);
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr
@@ -28,7 +28,7 @@ MapKlass::visit(const Object::PyObjPtr& obj, const Object::PyObjPtr& codeList) {
   Object::ForEach(values, [&codeList](const Object::PyObjPtr& element) {
     element->as<INode>()->visit(codeList);
   });
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 Object::PyObjPtr MapKlass::print(const Object::PyObjPtr& obj) {
@@ -44,7 +44,7 @@ Object::PyObjPtr MapKlass::print(const Object::PyObjPtr& obj) {
     element->as<INode>()->print();
     PrintEdge(map, element, Object::PyString::Create("value"));
   });
-  return Object::CreatePyNone();
+  return Object::PyNone::Create();
 }
 
 }  // namespace kaubo::IR
