@@ -1,0 +1,331 @@
+#include "Parser/Parser.h"
+#include "Parser/Expr.h"
+#include "Parser/Stmt.h"
+#include "Parser/Utils.h"
+
+namespace kaubo::Parser {
+
+auto Parser::parse() -> Result<ModulePtr, Error> {
+  return parse_module();
+}
+
+auto Parser::parse_module() -> Result<ModulePtr, Error> {
+  auto module = Utils::create<Module>();
+
+  // 解析所有语句直到文件结束
+  while (current_token.has_value()) {
+    // 跳过分号（空语句）
+    if (match(TokenType::Semicolon)) {
+      continue;
+    }
+
+    auto stmt_result = parse_statement();
+    if (stmt_result.is_err()) {
+      return Err(stmt_result.unwrap_err());
+    }
+
+    module->statements.push_back(stmt_result.unwrap());
+
+    // 消费分号（如果存在）
+    match(TokenType::Semicolon);
+  }
+
+  return Ok(module);
+}
+
+auto Parser::parse_statement()  // NOLINT(misc-no-recursion)
+  -> Result<StmtPtr, Error> {
+  enter_statement();
+  // 检查是否是block
+  if (check(TokenType::LeftBrace)) {
+    auto block_result = parse_block();
+    if (block_result.is_err()) {
+      return Err(block_result.unwrap_err());
+    }
+    auto block = block_result.unwrap();
+    exit_statement(block);
+    return Ok(block);
+  }
+
+  // 检查是否是变量声明
+  if (check(TokenType::Var)) {
+    auto expr_result = parse_var_declaration();
+    if (expr_result.is_err()) {
+      return Err(expr_result.unwrap_err());
+    }
+    auto var_decl = expr_result.unwrap();
+    exit_statement(var_decl);
+    return Ok(var_decl);
+  }
+
+  // 检查是否是空语句（只有分号）
+  if (check(TokenType::Semicolon)) {
+    consume();  // 消费分号
+    return Ok(Utils::create<Stmt::Stmt>(Utils::create<Stmt::Empty>()));
+  }
+
+  // 否则是表达式语句
+  auto expr_result = parse_expression();
+  if (expr_result.is_err()) {
+    return Err(expr_result.unwrap_err());
+  }
+  auto expr_stmt =
+    Utils::create<Stmt::Stmt>(Utils::create<Stmt::Expr>(expr_result.unwrap()));
+  return Ok(expr_stmt);
+}
+
+auto Parser::parse_block()  // NOLINT(misc-no-recursion)
+  -> Result<StmtPtr, Error> {
+  // 期望左大括号
+  auto err = expect(TokenType::LeftBrace);
+  if (err.is_err()) {
+    return Err(Error::UnexpectedToken);
+  }
+
+  std::vector<StmtPtr> statements;
+
+  // 解析block内的所有语句直到遇到右大括号
+  while (current_token.has_value() && !check(TokenType::RightBrace)) {
+    // 跳过分号（空语句）
+    if (match(TokenType::Semicolon)) {
+      continue;
+    }
+
+    auto stmt_result = parse_statement();
+    if (stmt_result.is_err()) {
+      return Err(stmt_result.unwrap_err());
+    }
+
+    statements.push_back(stmt_result.unwrap());
+
+    // 消费分号（如果存在）
+    match(TokenType::Semicolon);
+  }
+
+  // 期望右大括号
+  auto right_brace_result = expect(TokenType::RightBrace);
+  if (right_brace_result.is_err()) {
+    return Err(Error::UnexpectedToken);
+  }
+
+  return Ok(
+    Utils::create<Stmt::Stmt>(
+      Utils::create(Stmt::Block{.statements = statements})
+    )
+  );
+}
+
+auto Parser::parse_expression(int32_t precedence)  // NOLINT(misc-no-recursion)
+  -> Result<ExprPtr, Error> {
+  // 解析左操作数（一元表达式或基本表达式）
+
+  auto left_result = parse_unary();
+  if (left_result.is_err()) {
+    return Err(left_result.unwrap_err());
+  }
+  auto left = left_result.unwrap();
+
+  // 解析二元运算符和右操作数
+  while (true) {
+    if (!current_token.has_value()) {
+      break;
+    }
+
+    TokenType op = current_token->type;
+    auto op_precedence = Utils::get_precedence(op);
+
+    // 如果当前运算符优先级低于要求的最小优先级，停止解析
+    if (op_precedence <= precedence) {
+      break;
+    }
+
+    // 消费运算符
+    consume();
+
+    // 解析右操作数，考虑结合性
+    auto next_precedence =
+      Utils::get_associativity(op) ? op_precedence : op_precedence - 1;
+    auto right_result = parse_expression(next_precedence);
+    if (right_result.is_err()) {
+      return Err(right_result.unwrap_err());
+    }
+    const auto& right = right_result.unwrap();
+    enter_expr();
+    left = Utils::create<Expr::Expr>(Utils::create(
+      Expr::Binary{
+        .left = left,
+        .op = op,
+        .right = right,
+      }
+    ));
+    exit_expr(left);
+  }
+  return Ok(left);
+}
+
+auto Parser::parse_unary()     // NOLINT(misc-no-recursion)
+  -> Result<ExprPtr, Error> {  // 检查一元运算符
+  if (check(TokenType::Plus) || check(TokenType::Minus)) {
+    TokenType op = current_token->type;
+    consume();
+
+    auto operand_result = parse_unary();  // 右结合
+    if (operand_result.is_err()) {
+      return Err(operand_result.unwrap_err());
+    }
+    const auto& operand = operand_result.unwrap();
+    enter_expr();
+    auto expr = Utils::create<Expr::Expr>(Utils::create(
+      Expr::Unary{
+        .op = op,
+        .operand = operand,
+      }
+    ));
+    exit_expr(expr);
+    return Ok(expr);
+  }
+
+  return parse_primary();
+}
+
+auto Parser::parse_primary()  // NOLINT(misc-no-recursion)
+  -> Result<ExprPtr, Error> {
+  if (!current_token.has_value()) {
+    return Err(Error::UnexpectedEndOfInput);
+  }
+
+  switch (current_token->type) {
+    case TokenType::Integer: {
+      try {
+        int64_t value = std::stoll(current_token->value);
+        consume();
+        enter_expr();
+        auto expr = Utils::create<Expr::Expr>(value);
+        exit_expr(expr);
+        return Ok(expr);
+      } catch (const std::exception&) {
+        return Err(Error::InvalidNumberFormat);
+      }
+    }
+
+    case TokenType::LeftParen: {
+      consume();  // 消费左括号
+
+      auto expr_result = parse_expression();
+      if (expr_result.is_err()) {
+        return Err(expr_result.unwrap_err());
+      }
+
+      auto err = expect(TokenType::RightParen);
+      if (err.is_err()) {
+        return Err(Error::MissingRightParen);
+      }
+      enter_expr();
+      auto expr = Utils::create<Expr::Expr>(Utils::create(
+        Expr::Grouping{
+          .expression = expr_result.unwrap(),
+        }
+      ));
+      exit_expr(expr);
+      return Ok(expr);
+    }
+
+    case TokenType::Identifier: {
+      std::string identifier_name = current_token->value;
+      consume();
+
+      // 检查是否是函数调用
+      if (check(TokenType::LeftParen)) {
+        return parse_function_call(identifier_name);
+      }
+      enter_expr();
+      auto expr = Utils::create<Expr::Expr>(
+        Utils::create(Expr::VarRef{.name = identifier_name})
+      );
+      exit_expr(expr);
+      return Ok(expr);
+    }
+
+    default:
+      return Err(Error::UnexpectedToken);
+  }
+}
+
+auto Parser::parse_function_call  // NOLINT(misc-no-recursion)
+  (const std::string& function_name) -> Result<ExprPtr, Error> {
+  // 消费左括号
+  consume();
+
+  std::vector<ExprPtr> arguments;
+
+  // 解析参数列表（如果有）
+  if (!check(TokenType::RightParen)) {
+    while (true) {
+      // 解析参数表达式
+      auto arg_result = parse_expression();
+      if (arg_result.is_err()) {
+        return Err(arg_result.unwrap_err());
+      }
+      arguments.push_back(arg_result.unwrap());
+
+      // 检查是否有逗号继续解析更多参数
+      if (match(TokenType::Comma)) {
+        continue;
+      }
+      break;
+    }
+  }
+
+  // 期望右括号
+  auto err = expect(TokenType::RightParen);
+  if (err.is_err()) {
+    return Err(Error::MissingRightParen);
+  }
+  enter_expr();
+  auto expr = Utils::create<Expr::Expr>(Utils::create(
+    Expr::FunctionCall{
+      .function_name = function_name,
+      .arguments = arguments,
+    }
+  ));
+  exit_expr(expr);
+  return Ok(expr);
+}
+
+auto Parser::parse_var_declaration() -> Result<StmtPtr, Error> {
+  // 消费 'var' 关键字
+  consume();
+
+  // 期望标识符
+  if (!check(TokenType::Identifier)) {
+    return Err(Error::UnexpectedToken);
+  }
+  std::string var_name = current_token->value;
+  consume();
+
+  // 期望等号
+  auto equals_result = expect(TokenType::Equals);
+  if (equals_result.is_err()) {
+    return Err(Error::UnexpectedToken);
+  }
+
+  // 解析表达式
+  auto expr_result = parse_expression();
+  if (expr_result.is_err()) {
+    return Err(expr_result.unwrap_err());
+  }
+
+  // 消费分号
+  auto semicolon_result = expect(TokenType::Semicolon);
+  if (semicolon_result.is_err()) {
+    return Err(semicolon_result.unwrap_err());
+  }
+
+  return Ok(
+    Utils::create<Stmt::Stmt>(Utils::create(
+      Stmt::VarDecl{.name = var_name, .initializer = expr_result.unwrap()}
+    ))
+  );
+}
+
+}  // namespace kaubo::Parser

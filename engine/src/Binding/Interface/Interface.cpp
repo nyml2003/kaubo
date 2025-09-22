@@ -3,15 +3,19 @@
 #include "Collections/String/BytesHelper.h"
 #include "Generation/Generator.h"
 #include "IR/IRHelper.h"
+#include "Lexer/Builder.h"
 #include "Object/Core/CoreHelper.h"
-#include "Python3Lexer.h"
-#include "Python3Parser.h"
+#include "Parser/Parser.h"
 #include "Runtime/BinaryFileParser.h"
 #include "Runtime/VirtualMachine.h"
 #include "Tools/Config/Config.h"
 #include "Tools/Terminal/IntermediateRepresentationTerminal.h"
 #include "Tools/Terminal/Terminal.h"
 #include "Tools/Terminal/VerboseTerminal.h"
+
+
+#include <sstream>
+#include <string>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -30,7 +34,7 @@ void force_utf8() {
 }
 
 void handle_mode_compile() {
-  auto code = compile(CreateANTLRInputStream());
+  auto code = compile(CreateInput());
   if (Config::has("file")) {
     auto data = code->_serialize_()->as<kaubo::Object::PyBytes>();
     const auto& bytes = data->Value();
@@ -41,7 +45,7 @@ void handle_mode_compile() {
 }
 
 void handle_mode_interpret() {
-  auto code = compile(CreateANTLRInputStream());
+  auto code = compile(CreateInput());
   interpret(code);
 }
 
@@ -52,36 +56,32 @@ void handle_mode_interpret_bytecode() {
   interpret(code);
 }
 
-InputStreamPtr CreateANTLRInputStream() {
+auto CreateInput() -> std::string {
   if (Config::has("file")) {
     ConsoleTerminal::get_instance().debug("文件名: " + Config::get("file"));
     std::ifstream file(Config::get("file"));
-    return std::make_unique<antlr4::ANTLRInputStream>(file);
+    if (file.is_open()) {
+      std::stringstream buffer;
+      buffer << file.rdbuf();
+      return buffer.str();
+    }
   }
   if (Config::has("source")) {
-    return std::make_unique<antlr4::ANTLRInputStream>(Config::get("source"));
+    return Config::get("source");
   }
   throw std::runtime_error("未指定文件或源码");
 }
 
-Object::PyCodePtr compile(InputStreamPtr input_stream) {
-  Python3Lexer lexer(input_stream.get());
-  antlr4::CommonTokenStream tokens(&lexer);
-  Python3Parser parser(&tokens);
-
-  antlr4::tree::ParseTree* tree = parser.file_input();
-
-  //  // 打印词法
-  if (Config::has("show_tokens")) {
-    for (const auto& token : tokens.getTokens()) {
-      LexicalAnalysisTerminal::get_instance().info(token->toString());
-    }
-    ConsoleTerminal::get_instance().info("词法单元流生成完毕");
+auto compile(std::string source) -> Object::PyCodePtr {
+  auto lexer = Lexer::Builder::get_instance();
+  lexer->feed(source);
+  lexer->terminate();
+  Parser::Parser parser(std::move(lexer));
+  auto ast = parser.parse();
+  if (ast.is_err()) {
+    throw std::runtime_error(std::to_string(ast.unwrap_err()));
   }
-  if (Config::has("show_ast")) {
-    SyntaxAnalysisTerminal::get_instance().info(tree->toStringTree(&parser));
-    ConsoleTerminal::get_instance().info("抽象语法树生成完毕");
-  }
+
   const std::string moduleName = []() {
     if (Config::has("file")) {
       return Config::get("file");
@@ -93,7 +93,7 @@ Object::PyCodePtr compile(InputStreamPtr input_stream) {
   }();
   Generation::Generator visitor(kaubo::Object::PyString::Create(moduleName));
 
-  visitor.visit(tree);
+  visitor.visit(ast.unwrap());
   visitor.Visit();
   visitor.Emit();
   if (Config::has("show_ir")) {

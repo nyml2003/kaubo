@@ -1,0 +1,34 @@
+{
+    "configurations": [
+        {
+            "name": "demo",
+            "type": "lldb",
+            "request": "launch",
+            "program": "${workspaceFolder}/engine/build/Debug/Demo",
+        },
+        {
+            "name": "Run tools.run",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "tools.run", // 指定要运行的模块
+            "args": [
+                "-d"
+            ], // 传递命令行参数
+            "justMyCode": true,
+            "python": "${command:python.interpreterPath}" // 使用当前选择的Python解释器
+        },
+        // python -m tools.test.test_runner -r -a
+        {
+            "name": "Run tools.test.test_runner",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "tools.test.test_runner", // 指定要运行的模块
+            "args": [
+                "-r",
+                "-a"
+            ], // 传递命令行参数
+            "justMyCode": true,
+            "python": "${command:python.interpreterPath}" // 使用当前选择的Python解释器
+        }
+    ]
+}

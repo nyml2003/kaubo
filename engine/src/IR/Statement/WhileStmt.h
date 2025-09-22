@@ -1,4 +1,4 @@
-
+#pragma once
 
 #include "IR/INode.h"
 
