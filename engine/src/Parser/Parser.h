@@ -117,6 +117,9 @@ inline auto print_ast(const ExprPtr& expr, size_t indent) -> void {
       [&](Expr::IntValue int_value_expr) {
         std::cout << indent_str << int_value_expr << '\n';
       },
+      [&](const std::shared_ptr<Expr::String>& string_value_expr) {
+        std::cout << indent_str << string_value_expr->value << '\n';
+      },
       [&](const std::shared_ptr<Expr::Binary>& binary_expr) {
         std::cout << indent_str << "BinaryExpr" << '\n';
         std::cout << indent_str << "  " << Lexer::to_string(binary_expr->op)

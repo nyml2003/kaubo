@@ -123,14 +123,10 @@ inline auto create_integer_machine()
 
   // 转移规则：
   // S0 → S1：输入是数字
-  machine->add_transition(s0, s1, [](char c) {
-    return c >= '0' && c <= '9';
-  });
+  machine->add_transition(s0, s1, [](char c) { return c >= '0' && c <= '9'; });
 
   // S1 → S1：输入是数字（保持接受状态）
-  machine->add_transition(s1, s1, [](char c) {
-    return c >= '0' && c <= '9';
-  });
+  machine->add_transition(s1, s1, [](char c) { return c >= '0' && c <= '9'; });
 
   return machine;
 }
@@ -241,6 +237,49 @@ inline auto create_identifier_machine()
   // 后续字符可以是字母、数字或下划线
   machine->add_transition(s1, s1, [](char c) {
     return Utils::Utf8::is_identifier_part(static_cast<char32_t>(c));
+  });
+
+  return machine;
+}
+
+inline auto create_string_machine()
+  -> std::unique_ptr<StateMachine::Proto<TokenType>> {
+  auto machine =
+    std::make_unique<StateMachine::Proto<TokenType>>(TokenType::String);
+
+  // 状态定义
+  StateMachine::Proto<TokenType>::StateId s0 =
+    machine->get_current_state();  // 初始状态：等待起始引号
+  StateMachine::Proto<TokenType>::StateId s1 =
+    machine->add_state(false);  // 双引号内容状态（已遇"）
+  StateMachine::Proto<TokenType>::StateId s2 =
+    machine->add_state(true);  // 双引号结束状态（接受状态）
+  StateMachine::Proto<TokenType>::StateId s3 =
+    machine->add_state(false);  // 单引号内容状态（已遇'）
+  StateMachine::Proto<TokenType>::StateId s4 =
+    machine->add_state(true);  // 单引号结束状态（接受状态）
+
+  // 转移规则：严格保证引号匹配
+  // 1. 初始状态 -> 双引号内容状态：遇到双引号"
+  machine->add_transition(s0, s1, [](char c) { return c == '"'; });
+
+  // 2. 双引号内容状态 -> 双引号结束状态：遇到双引号"（匹配结束）
+  machine->add_transition(s1, s2, [](char c) { return c == '"'; });
+
+  // 3. 双引号内容状态保持：接受除"之外的字符
+  machine->add_transition(s1, s1, [](char c) {
+    return c != '"';  // 不允许未结束的双引号内出现新的双引号
+  });
+
+  // 4. 初始状态 -> 单引号内容状态：遇到单引号'
+  machine->add_transition(s0, s3, [](char c) { return c == '\''; });
+
+  // 5. 单引号内容状态 -> 单引号结束状态：遇到单引号'（匹配结束）
+  machine->add_transition(s3, s4, [](char c) { return c == '\''; });
+
+  // 6. 单引号内容状态保持：接受除'之外的字符
+  machine->add_transition(s3, s3, [](char c) {
+    return c != '\'';  // 不允许未结束的单引号内出现新的单引号
   });
 
   return machine;

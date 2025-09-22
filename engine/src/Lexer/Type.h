@@ -29,7 +29,8 @@ enum TokenType : uint8_t {
   /*--- 中优先级：字面量和标识符 ---*/
   // 整数字面量（支持64位有符号整数）
   Integer = 20,
-  Identifier = 21,  // 标识符
+  String = 21,
+  Identifier = 22,  // 标识符
 
   /*--- 标点符号 ---*/
   Colon = 25,      // 冒号 :
@@ -81,6 +82,8 @@ inline auto to_string(TokenType type) -> std::string {
       return "LessEqual";
     case Integer:
       return "Integer";
+    case String:
+      return "String";
     case Identifier:
       return "Identifier";
     case Colon:

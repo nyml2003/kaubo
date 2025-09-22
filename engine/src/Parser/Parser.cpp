@@ -208,6 +208,22 @@ auto Parser::parse_primary()  // NOLINT(misc-no-recursion)
       }
     }
 
+    case TokenType::String: {
+      try {
+        auto value =
+          current_token->value.substr(1, current_token->value.size() - 2);
+        consume();
+        enter_expr();
+        auto expr =
+          Utils::create<Expr::Expr>(Utils::create(Expr::String{.value = value})
+          );
+        exit_expr(expr);
+        return Ok(expr);
+      } catch (const std::exception&) {
+        return Err(Error::InvalidNumberFormat);
+      }
+    }
+
     case TokenType::LeftParen: {
       consume();  // 消费左括号
 

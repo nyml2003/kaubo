@@ -75,6 +75,12 @@ IR::INodePtr Generator::visit_expr(const Parser::ExprPtr& expr) {
           Object::PyInteger::Create(int_value_expr), context
         );
       },
+      [&](const std::shared_ptr<Parser::Expr::String>& str_value_expr)
+        -> IR::INodePtr {
+        return IR::CreateAtom(
+          Object::PyString::Create(str_value_expr->value), context
+        );
+      },
       [&](const std::shared_ptr<Parser::Expr::Binary>& binary_expr)
         -> IR::INodePtr {
         auto left = this->visit_expr(binary_expr->left);

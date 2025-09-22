@@ -19,6 +19,10 @@ using Lexer::TokenType;
 // 整数字面量表达式
 using IntValue = int64_t;
 
+struct String {
+  std::string value;
+};
+
 // 二元运算符表达式
 struct Binary {
   ExprPtr left;
@@ -57,6 +61,7 @@ class Expr {
  public:
   using ValueType = std::variant<
     IntValue,
+    std::shared_ptr<String>,
     std::shared_ptr<Binary>,
     std::shared_ptr<Unary>,
     std::shared_ptr<Grouping>,
