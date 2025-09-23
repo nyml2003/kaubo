@@ -30,7 +30,7 @@ int main() {
     // 配置初始化
     json config;
     config["file"] = R"(C:\Users\nyml\code\kaubo\engine\test\dev\dev.kaubo)";
-    config["interpret"] = true;
+    config["compile"] = true;
 
     // 初始化配置并检查结果
     init_config(config.dump().c_str());
@@ -46,16 +46,17 @@ int main() {
     std::atomic<bool> stop_flag(false);
 
     // 启动输入转发线程
-    std::thread input_thread(forward_stdin_to_eventbus, std::ref(stop_flag));
+    //  std::thread input_thread(forward_stdin_to_eventbus,
+    //  std::ref(stop_flag));
 
     // 执行解释器
-    interpret();
+    compile();
 
     // 通知线程停止并等待其结束
     stop_flag = true;
-    if (input_thread.joinable()) {
-      input_thread.join();
-    }
+    // if (input_thread.joinable()) {
+    //   input_thread.join();
+    // }
 
     // 清理资源（如果有对应的API）
     // cleanup_config();

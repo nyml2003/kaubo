@@ -3,7 +3,6 @@
 #include "Tools/EventBus/EventBus.h"
 
 #include <fstream>
-#include <iostream>
 #include <string>
 
 namespace kaubo {

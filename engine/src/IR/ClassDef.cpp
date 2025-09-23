@@ -1,6 +1,7 @@
 #include "IR/ClassDef.h"
 #include "IR/FuncDef.h"
 #include "IR/INode.h"
+#include "IR/Lambda.h"
 #include "IR/Module.h"
 #include "Object/Core/PyNone.h"
 #include "Object/Core/PyObject.h"
@@ -24,6 +25,10 @@ ClassDef::ClassDef(
     codeIndex(0) {
   if (parent->is(ModuleKlass::Self())) {
     parents = Object::PyList::Create<Object::PyObjPtr>({parent});
+  }
+  if (parent->is(LambdaKlass::Self())) {
+    parents = parent->as<Lambda>()->Parents();
+    parents->Append(parent);
   }
   if (parent->is(FuncDefKlass::Self())) {
     parents = parent->as<FuncDef>()->Parents();

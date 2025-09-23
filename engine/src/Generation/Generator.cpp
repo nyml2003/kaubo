@@ -7,6 +7,7 @@
 #include "IR/Expression/FunctionCall.h"
 #include "IR/INode.h"
 #include "IR/Identifier.h"
+#include "IR/Lambda.h"
 #include "IR/Module.h"
 #include "IR/Statement/ExprStmt.h"
 #include "IR/Statement/PassStmt.h"
@@ -29,7 +30,10 @@ void Generator::visit(const Parser::ModulePtr& module) {
   );
   for (const auto& stmt : stmts) {
     auto ir_stmt = this->visit_stmt(stmt);
-    statements.Push(ir_stmt);
+    if (ir_stmt->is(Object::ListKlass::Self())) {
+      throw std::runtime_error("Unexpected list");
+    }
+    statements.Push(ir_stmt->as<IR::INode>());
   }
   if (context->is(IR::ModuleKlass::Self())) {
     context->as<IR::Module>()->SetBody(Object::PyList::Create(statements));
@@ -39,23 +43,33 @@ void Generator::visit(const Parser::ModulePtr& module) {
     context->as<IR::FuncDef>()->SetBody(Object::PyList::Create(statements));
     return;
   }
+  if (context->is(IR::LambdaKlass::Self())) {
+    context->as<IR::Lambda>()->SetBody(Object::PyList::Create(statements));
+    return;
+  }
 }
 
-IR::INodePtr Generator::visit_stmt(const Parser::StmtPtr& stmt) {
+auto Generator::visit_stmt(const Parser::StmtPtr& stmt) -> Object::PyObjPtr {
   return std::visit(
     overloaded{
       [&](const std::shared_ptr<Parser::Stmt::Expr>& expr_stmt)
-        -> IR::INodePtr {
+        -> Object::PyObjPtr {
         auto expr = this->visit_expr(expr_stmt->expression);
         return IR::CreateExprStmt(expr, context);
       },
       [&](const std::shared_ptr<Parser::Stmt::Empty>& /*empty_stmt*/)
-        -> IR::INodePtr { return IR::CreatePassStmt(context); },
-      [&](const std::shared_ptr<Parser::Stmt::Block>&) -> IR::INodePtr {
-        return nullptr;
+        -> Object::PyObjPtr { return IR::CreatePassStmt(context); },
+      [&](const std::shared_ptr<Parser::Stmt::Block>& block_stmt)
+        -> Object::PyObjPtr {
+        auto stmts = Object::PyList::Create();
+        for (const auto& stmt : block_stmt->statements) {
+          auto ir_stmt = this->visit_stmt(stmt);
+          stmts->Append(ir_stmt);
+        }
+        return stmts;
       },
       [&](const std::shared_ptr<Parser::Stmt::VarDecl>& var_decl_stmt)
-        -> IR::INodePtr {
+        -> Object::PyObjPtr {
         auto var_name = IR::CreateIdentifier(
           Object::PyString::Create(var_decl_stmt->name), context
         );
@@ -67,19 +81,38 @@ IR::INodePtr Generator::visit_stmt(const Parser::StmtPtr& stmt) {
   );
 }
 
-IR::INodePtr Generator::visit_expr(const Parser::ExprPtr& expr) {
+auto Generator::visit_expr(const Parser::ExprPtr& expr) -> IR::INodePtr {
   return std::visit(
     overloaded{
-      [&](Parser::Expr::IntValue int_value_expr) -> IR::INodePtr {
+      [&](const std::shared_ptr<Parser::Expr::LiteralInt>& int_value_expr) {
         return IR::CreateAtom(
-          Object::PyInteger::Create(int_value_expr), context
+          Object::PyInteger::Create(int_value_expr->value), context
         );
       },
-      [&](const std::shared_ptr<Parser::Expr::String>& str_value_expr)
+      [&](const std::shared_ptr<Parser::Expr::LiteralString>& str_value_expr)
         -> IR::INodePtr {
         return IR::CreateAtom(
           Object::PyString::Create(str_value_expr->value), context
         );
+      },
+      [&](const std::shared_ptr<Parser::Expr::Lambda>& lambda_expr)
+        -> IR::INodePtr {
+        auto parameters = Object::PyList::Create();
+        for (const auto& param : lambda_expr->params) {
+          parameters->Append(Object::PyString::Create(param));
+        }
+        auto lambda =
+          IR::CreateLambda(parameters, Object::PyList::Create(), context)
+            ->as<IR::Lambda>();
+        auto oldContext = context;
+        context = lambda;
+        auto body = this->visit_stmt(lambda_expr->body)->as<Object::PyList>();
+        if (body == nullptr) {
+          throw std::runtime_error("Unexpected body");
+        }
+        lambda->SetBody(body);
+        context = oldContext;
+        return lambda;
       },
       [&](const std::shared_ptr<Parser::Expr::Binary>& binary_expr)
         -> IR::INodePtr {
@@ -134,7 +167,8 @@ IR::INodePtr Generator::visit_expr(const Parser::ExprPtr& expr) {
         auto var_value = this->visit_expr(var_assign_expr->value);
         return IR::CreateAssignStmt(var_name, var_value, context);
       }
-    },
+    }  // namespace kaubo::Generation
+    ,
     expr->get_value()
   );
 }

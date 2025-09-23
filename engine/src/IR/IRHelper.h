@@ -12,6 +12,7 @@
 #include "IR/Expression/YieldExpr.h"
 #include "IR/FuncDef.h"
 #include "IR/Identifier.h"
+#include "IR/Lambda.h"
 #include "IR/MemberAccess.h"
 #include "IR/Module.h"
 #include "IR/Statement/ExprStmt.h"
@@ -41,6 +42,7 @@ inline void RegisterIRClasses() {
   AssignStmtKlass::Self()->Initialize();
   ClassDefKlass::Self()->Initialize();
   FuncDefKlass::Self()->Initialize();
+  LambdaKlass::Self()->Initialize();
   IdentifierKlass::Self()->Initialize();
   MemberAccessKlass::Self()->Initialize();
   ModuleKlass::Self()->Initialize();

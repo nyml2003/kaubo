@@ -3,6 +3,7 @@
 #include "Function/BuiltinFunction.h"
 #include "IR/ClassDef.h"
 #include "IR/FuncDef.h"
+#include "IR/Lambda.h"
 #include "IR/Module.h"
 #include "Tools/Terminal/IntermediateRepresentationTerminal.h"
 
@@ -17,6 +18,11 @@ GetCodeFromList(const Object::PyObjPtr& codeList, const INodePtr& node) {
   if (node->is(FuncDefKlass::Self())) {
     return codeList->as<Object::PyList>()
       ->GetItem(node->as<FuncDef>()->CodeIndex())
+      ->as<Object::PyCode>();
+  }
+  if (node->is(LambdaKlass::Self())) {
+    return codeList->as<Object::PyList>()
+      ->GetItem(node->as<Lambda>()->CodeIndex())
       ->as<Object::PyCode>();
   }
   if (node->is(ClassDefKlass::Self())) {

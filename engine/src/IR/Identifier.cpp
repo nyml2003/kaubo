@@ -3,6 +3,7 @@
 #include "IR/ClassDef.h"
 #include "IR/FuncDef.h"
 #include "IR/INode.h"
+#include "IR/Lambda.h"
 #include "Object/Core/PyNone.h"
 #include "Object/Runtime/PyCode.h"
 
@@ -35,6 +36,9 @@ Object::PyObjPtr IdentifierKlass::visit(
     }
     if (context->is(FuncDefKlass::Self())) {
       module = context->as<FuncDef>()->Parents()->GetItem(0)->as<INode>();
+    }
+    if (context->is(LambdaKlass::Self())) {
+      module = context->as<Lambda>()->Parents()->GetItem(0)->as<INode>();
     }
     auto moduleCode = GetCodeFromList(codeList, module);
     registry =
@@ -130,6 +134,9 @@ Object::PyObjPtr IdentifierKlass::emit(
     }
     if (context->is(FuncDefKlass::Self())) {
       module = context->as<FuncDef>()->Parents()->GetItem(0)->as<INode>();
+    }
+    if (context->is(LambdaKlass::Self())) {
+      module = context->as<Lambda>()->Parents()->GetItem(0)->as<INode>();
     }
     auto moduleCode = GetCodeFromList(codeList, module);
     auto registry = GetIdentifierRegistry(

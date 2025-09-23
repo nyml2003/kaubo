@@ -11,8 +11,6 @@
 #include "Utils/Overloaded.h"
 #include "Utils/Result.h"
 
-#include <iostream>
-
 namespace kaubo::Parser {
 using Lexer::TokenType;
 using Utils::Err;
@@ -65,12 +63,17 @@ class Parser {
 
   auto parse_expression(int32_t precedence = 0) -> Result<ExprPtr, Error>;
   auto parse_primary() -> Result<ExprPtr, Error>;
+  auto parse_int() -> Result<ExprPtr, Error>;
+  auto parse_string() -> Result<ExprPtr, Error>;
+  auto parse_identifier_expression() -> Result<ExprPtr, Error>;
   auto parse_unary() -> Result<ExprPtr, Error>;
+  auto parse_parenthesized() -> Result<ExprPtr, Error>;
+  auto parse_function_call(const std::string& function_name)
+    -> Result<ExprPtr, Error>;
   auto parse_statement() -> Result<StmtPtr, Error>;
   auto parse_block() -> Result<StmtPtr, Error>;
   auto parse_module() -> Result<ModulePtr, Error>;
-  auto parse_function_call(const std::string& function_name)
-    -> Result<ExprPtr, Error>;
+
   auto parse_var_declaration() -> Result<StmtPtr, Error>;
 
   std::vector<ListenerPtr> listeners;
@@ -106,101 +109,5 @@ class Parser {
     }
   }
 };
-
-inline auto print_ast(const ExprPtr& expr, size_t indent) -> void {
-  // 缩进字符串
-  std::string indent_str(indent * 2, ' ');
-
-  // 使用访问者模式处理不同类型的表达式
-  std::visit(
-    overloaded{
-      [&](Expr::IntValue int_value_expr) {
-        std::cout << indent_str << int_value_expr << '\n';
-      },
-      [&](const std::shared_ptr<Expr::String>& string_value_expr) {
-        std::cout << indent_str << string_value_expr->value << '\n';
-      },
-      [&](const std::shared_ptr<Expr::Binary>& binary_expr) {
-        std::cout << indent_str << "BinaryExpr" << '\n';
-        std::cout << indent_str << "  " << Lexer::to_string(binary_expr->op)
-                  << '\n';
-        print_ast(binary_expr->left, indent + 1);
-        print_ast(binary_expr->right, indent + 1);
-      },
-      [&](const std::shared_ptr<Expr::Unary>& unary_expr) {
-        std::cout << indent_str << "UnaryExpr" << '\n';
-        std::cout << indent_str << "  " << Lexer::to_string(unary_expr->op)
-                  << '\n';
-        print_ast(unary_expr->operand, indent + 1);
-      },
-      [&](const std::shared_ptr<Expr::VarRef>& var_ref_expr) {
-        std::cout << indent_str << var_ref_expr->name << '\n';
-      },
-      [&](const std::shared_ptr<Expr::FunctionCall>& function_call_expr)
-        -> void {
-        std::cout << indent_str << "FunctionCall" << '\n';
-        std::cout << indent_str << "  " << function_call_expr->function_name
-                  << '\n';
-        for (const auto& arg : function_call_expr->arguments) {
-          print_ast(arg, indent + 1);
-        }
-      },
-      [&](const std::shared_ptr<Expr::Grouping>& grouping_expr) -> void {
-        std::cout << indent_str << "GroupingExpr" << '\n';
-        print_ast(grouping_expr->expression, indent + 1);
-      },
-      [&](const std::shared_ptr<Expr::Assign>& var_assign_expr) -> void {
-        std::cout << indent_str << "VarAssignExpr" << '\n';
-        std::cout << indent_str << "  " << var_assign_expr->name << '\n';
-        print_ast(var_assign_expr->value, indent + 1);
-      }
-    },
-    expr->get_value()
-  );
-}
-
-inline auto print_ast(const StmtPtr& stmt, size_t indent) -> void {
-  // 缩进字符串
-  std::string indent_str(indent * 2, ' ');
-
-  // 使用访问者模式处理不同类型的语句
-  std::visit(
-    overloaded{
-      [&](const std::shared_ptr<Stmt::Expr>& expr_stmt) {
-        std::cout << indent_str << "ExprStmt:" << '\n';
-        if (expr_stmt->expression) {
-          print_ast(expr_stmt->expression, indent + 1);
-        }
-      },
-      [&](const std::shared_ptr<Stmt::Empty>& /*empty_stmt*/) {
-        std::cout << indent_str << "EmptyStmt;" << '\n';
-      },
-      [&](const std::shared_ptr<Stmt::Block>& block_stmt) {
-        std::cout << indent_str << "BlockStmt" << '\n';
-        for (const auto& stmt : block_stmt->statements) {
-          print_ast(stmt, indent + 1);
-        }
-      },
-      [&](const std::shared_ptr<Stmt::VarDecl>& var_decl_stmt) -> void {
-        std::cout << indent_str << "VarDeclStmt" << var_decl_stmt->name << " = "
-                  << '\n';
-        if (var_decl_stmt->initializer) {
-          print_ast(var_decl_stmt->initializer, indent + 1);
-        }
-      }
-    },
-    stmt->get_value()
-  );
-}
-
-inline auto print_ast(const ModulePtr& module, size_t indent) -> void {
-  // 缩进字符串
-  std::string indent_str(indent * 2, ' ');
-
-  std::cout << indent_str << "Module:" << '\n';
-  for (const auto& stmt : module->statements) {
-    print_ast(stmt, indent + 1);
-  }
-}
 
 }  // namespace kaubo::Parser

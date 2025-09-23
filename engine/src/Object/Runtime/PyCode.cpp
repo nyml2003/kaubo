@@ -141,6 +141,7 @@ PyObjPtr CodeKlass::_serialize_(const PyObjPtr& self) {
 
 Index PyCode::IndexOfConst(const PyObjPtr& obj) {
   if (!consts->Contains(obj)) {
+    Function::DebugPrint(consts);
     Function::DebugPrint(obj);
     throw std::runtime_error("PyCode::IndexOfConst(): obj not found");
   }

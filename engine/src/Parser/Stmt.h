@@ -1,14 +1,10 @@
 #pragma once
 
-#include "Expr.h"
+#include "Common.h"
 
-namespace kaubo::Parser::Stmt {
-class Stmt;
-}  // namespace kaubo::Parser::Stmt
-
-namespace kaubo::Parser {
-using StmtPtr = std::shared_ptr<Stmt::Stmt>;
-}
+#include <string>
+#include <variant>
+#include <vector>
 
 namespace kaubo::Parser::Stmt {
 

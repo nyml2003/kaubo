@@ -43,14 +43,14 @@ class Generator {
   void Visit() { context->visit(codeList); }
   void Emit() { context->emit(codeList); }
   void Print() { context->print(); }
-  [[nodiscard]] Object::PyCodePtr Code() const {
+  [[nodiscard]] auto Code() const -> Object::PyCodePtr {
     return IR::GetCodeFromList(codeList, context);
   }
 
   void visit(const Parser::ModulePtr& module);
 
-  IR::INodePtr visit_stmt(const Parser::StmtPtr& stmt);
+  auto visit_stmt(const Parser::StmtPtr& stmt) -> Object::PyObjPtr;
 
-  IR::INodePtr visit_expr(const Parser::ExprPtr& expr);
+  auto visit_expr(const Parser::ExprPtr& expr) -> IR::INodePtr;
 };
 }  // namespace kaubo::Generation

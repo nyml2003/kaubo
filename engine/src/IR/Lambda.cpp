@@ -1,26 +1,25 @@
-#include "IR/FuncDef.h"
+#include "IR/Lambda.h"
 #include <memory>
 #include "IR/ClassDef.h"
+#include "IR/FuncDef.h"
 #include "IR/INode.h"
-#include "IR/Lambda.h"
 #include "IR/Module.h"
 #include "Object/Core/PyNone.h"
 #include "Object/Core/PyObject.h"
 #include "Object/Iterator/IteratorHelper.h"
 #include "Object/Runtime/PyCode.h"
+#include "Object/String/PyString.h"
 #include "Tools/Config/Config.h"
 
 #include "Tools/Terminal/VerboseTerminal.h"
 namespace kaubo::IR {
 
-FuncDef::FuncDef(
-  Object::PyStrPtr name,
+Lambda::Lambda(
   Object::PyListPtr parameters,
   Object::PyListPtr body,
   const INodePtr& parent
 )
-  : INode(FuncDefKlass::Self(), parent),
-    name(std::move(name)),
+  : INode(LambdaKlass::Self(), parent),
     body(std::move(body)),
     parameters(std::move(parameters)),
     parents(Object::PyList::Create()),
@@ -28,12 +27,12 @@ FuncDef::FuncDef(
   if (parent->is(ModuleKlass::Self())) {
     parents = Object::PyList::Create<Object::PyObjPtr>({parent});
   }
-  if (parent->is(FuncDefKlass::Self())) {
-    parents = parent->as<FuncDef>()->Parents();
-    parents->Append(parent);
-  }
   if (parent->is(LambdaKlass::Self())) {
     parents = parent->as<Lambda>()->Parents();
+    parents->Append(parent);
+  }
+  if (parent->is(FuncDefKlass::Self())) {
+    parents = parent->as<FuncDef>()->Parents();
     parents->Append(parent);
   }
   if (parent->is(ClassDefKlass::Self())) {
@@ -42,13 +41,14 @@ FuncDef::FuncDef(
   }
 }
 
-Object::PyObjPtr FuncDefKlass::visit(
+auto LambdaKlass::visit(
   const Object::PyObjPtr& obj,
   const Object::PyObjPtr& codeList
-) {
-  auto funcDef = obj->as<FuncDef>();
+) -> Object::PyObjPtr {
+  auto funcDef = obj->as<Lambda>();
   funcDef->SetCodeIndex(codeList->as<Object::PyList>()->Length());
-  auto code = Object::CreatePyCode(funcDef->Name());
+  auto name = Object::PyString::Create("<lambda>");
+  auto code = Object::CreatePyCode(name);
   code->SetScope(Object::Scope::LOCAL);
   code->SetInstructions(Object::PyList::Create());
   Object::ForEach(
@@ -58,20 +58,19 @@ Object::PyObjPtr FuncDefKlass::visit(
   code->RegisterConst(Object::PyNone::Create());
   codeList->as<Object::PyList>()->Append(code);
   auto parent = GetCodeFromList(codeList, funcDef->Parent());
-  parent->RegisterName(funcDef->Name());
   Object::ForEach(funcDef->Body(), [&codeList](const Object::PyObjPtr& stmt) {
     stmt->as<INode>()->visit(codeList);
   });
   parent->RegisterConst(code);
-  parent->RegisterConst(funcDef->Name());
+  parent->RegisterConst(name);
   return Object::PyNone::Create();
 }
 
-Object::PyObjPtr FuncDefKlass::emit(
+Object::PyObjPtr LambdaKlass::emit(
   const Object::PyObjPtr& obj,
   const Object::PyObjPtr& codeList
 ) {
-  auto funcDef = obj->as<FuncDef>();
+  auto funcDef = obj->as<Lambda>();
   auto selfCode = GetCodeFromList(codeList, funcDef);
   Object::ForEach(funcDef->Body(), [&codeList](const Object::PyObjPtr& stmt) {
     stmt->as<INode>()->emit(codeList);
@@ -85,9 +84,8 @@ Object::PyObjPtr FuncDefKlass::emit(
   selfCode->ReturnValue();
   auto parent = GetCodeFromList(codeList, funcDef->Parent());
   parent->LoadConst(selfCode);
-  parent->LoadConst(funcDef->Name());
+  parent->LoadConst(Object::PyString::Create("<lambda>"));
   parent->MakeFunction();
-  parent->StoreName(funcDef->Name());
   if (Config::has("show_bc")) {
     VerboseTerminal::get_instance().switch_strategy(
       std::make_unique<ProxyTerminalStrategy>(&BytecodeTerminal::get_instance())
@@ -97,12 +95,12 @@ Object::PyObjPtr FuncDefKlass::emit(
   return Object::PyNone::Create();
 }
 
-Object::PyObjPtr FuncDefKlass::print(const Object::PyObjPtr& obj) {
-  auto funcDef = obj->as<FuncDef>();
+Object::PyObjPtr LambdaKlass::print(const Object::PyObjPtr& obj) {
+  auto funcDef = obj->as<Lambda>();
   PrintNode(
     funcDef, Object::StringConcat(
                Object::PyList::Create<Object::PyObjPtr>(
-                 {Object::PyString::Create("FuncDef "), funcDef->Name()}
+                 {Object::PyString::Create("Lambda ")}
                )
              )
                ->as<Object::PyString>()
