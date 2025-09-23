@@ -32,6 +32,8 @@ auto Builder::build() -> Instance<TokenType> {
   lexer->register_machine(Machines::create_equals_machine());
   lexer->register_machine(Machines::create_semicolon_machine());
   lexer->register_machine(Machines::create_right_arrow_machine());
+  lexer->register_machine(Machines::create_dot_machine());
+  lexer->register_machine(Machines::create_pipe_machine());
 
   // 注册括号状态机
   lexer->register_machine(Machines::create_left_paren_machine());

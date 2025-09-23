@@ -8,6 +8,7 @@
 #include "IR/INode.h"
 #include "IR/Identifier.h"
 #include "IR/Lambda.h"
+#include "IR/MemberAccess.h"
 #include "IR/Module.h"
 #include "IR/Statement/ExprStmt.h"
 #include "IR/Statement/PassStmt.h"
@@ -95,6 +96,13 @@ auto Generator::visit_expr(const Parser::ExprPtr& expr) -> IR::INodePtr {
           Object::PyString::Create(str_value_expr->value), context
         );
       },
+      [&](
+        const std::shared_ptr<Parser::Expr::MemberAccess>& member_access_expr
+      ) {
+        auto object = visit_expr(member_access_expr->object);
+        auto member = Object::PyString::Create(member_access_expr->member);
+        return IR::CreateMemberAccess(object, member, context);
+      },
       [&](const std::shared_ptr<Parser::Expr::Lambda>& lambda_expr)
         -> IR::INodePtr {
         auto parameters = Object::PyList::Create();
@@ -148,14 +156,12 @@ auto Generator::visit_expr(const Parser::ExprPtr& expr) -> IR::INodePtr {
       },
       [&](const std::shared_ptr<Parser::Expr::FunctionCall>& function_call_expr)
         -> IR::INodePtr {
-        auto func_name = IR::CreateIdentifier(
-          Object::PyString::Create(function_call_expr->function_name), context
-        );
+        auto func = this->visit_expr(function_call_expr->function_expr);
         auto args = Object::PyList::Create();
         for (const auto& arg : function_call_expr->arguments) {
           args->Append(this->visit_expr(arg));
         }
-        return IR::CreateFunctionCall(func_name, args, context);
+        return IR::CreateFunctionCall(func, args, context);
       },
       [&](const std::shared_ptr<Parser::Expr::Grouping>& grouping_expr)
         -> IR::INodePtr { return this->visit_expr(grouping_expr->expression); },

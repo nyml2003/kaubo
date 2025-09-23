@@ -38,10 +38,9 @@ struct Grouping {
 struct VarRef {
   std::string name;
 };
-
 // 函数调用表达式
 struct FunctionCall {
-  std::string function_name;
+  ExprPtr function_expr;
   std::vector<ExprPtr> arguments;
 };
 
@@ -51,24 +50,31 @@ struct Assign {
   ExprPtr value;
 };
 
-// Lambda表达式
+// 匿名函数表达式
 struct Lambda {
   std::vector<std::string> params;
   Parser::StmtPtr body;
 };
 
+// 成员访问表达式
+struct MemberAccess {
+  ExprPtr object;      // 成员所属的对象（如 a，类型为 ExprPtr）
+  std::string member;  // 成员名（如 b，字符串）
+};
+
 class Expr {
  public:
   using ValueType = std::variant<
-    std::shared_ptr<LiteralString>,
     std::shared_ptr<LiteralInt>,
+    std::shared_ptr<LiteralString>,
     std::shared_ptr<Binary>,
     std::shared_ptr<Unary>,
     std::shared_ptr<Grouping>,
     std::shared_ptr<VarRef>,
     std::shared_ptr<FunctionCall>,
     std::shared_ptr<Assign>,
-    std::shared_ptr<Lambda>>;
+    std::shared_ptr<Lambda>,
+    std::shared_ptr<MemberAccess>>;
 
   explicit Expr() = delete;
 

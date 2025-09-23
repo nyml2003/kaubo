@@ -1,14 +1,11 @@
 #pragma once
 
-#include "Expr.h"
+#include "Common.h"
 #include "Lexer/Core/Proto.h"
-#include "Lexer/Token/Constraint.h"
+#include "Lexer/Type.h"
 #include "Parser/Error.h"
-#include "Parser/Expr.h"
 #include "Parser/Listener.h"
 #include "Parser/Module.h"
-#include "Parser/Stmt.h"
-#include "Utils/Overloaded.h"
 #include "Utils/Result.h"
 
 namespace kaubo::Parser {
@@ -63,13 +60,15 @@ class Parser {
 
   auto parse_expression(int32_t precedence = 0) -> Result<ExprPtr, Error>;
   auto parse_primary() -> Result<ExprPtr, Error>;
+  auto parse_primary_base() -> Result<ExprPtr, Error>;
   auto parse_int() -> Result<ExprPtr, Error>;
   auto parse_string() -> Result<ExprPtr, Error>;
   auto parse_identifier_expression() -> Result<ExprPtr, Error>;
   auto parse_unary() -> Result<ExprPtr, Error>;
   auto parse_parenthesized() -> Result<ExprPtr, Error>;
-  auto parse_function_call(const std::string& function_name)
-    -> Result<ExprPtr, Error>;
+  auto parse_lambda() -> Result<ExprPtr, Error>;
+  auto parse_function_call(ExprPtr) -> Result<ExprPtr, Error>;
+  auto parse_postfix(ExprPtr expr) -> Result<ExprPtr, Error>;
   auto parse_statement() -> Result<StmtPtr, Error>;
   auto parse_block() -> Result<StmtPtr, Error>;
   auto parse_module() -> Result<ModulePtr, Error>;
