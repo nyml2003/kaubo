@@ -13,7 +13,7 @@ var fast_power = |base, exponent|{
         current_power = current_power * current_power;
     }
     return result;
-}
+};
 
 
 print(fast_power(2, 10));  // 输出 1024

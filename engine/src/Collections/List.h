@@ -7,7 +7,8 @@
 #include <random>
 #include <stdexcept>
 namespace kaubo::Collections {
-const Index INIT_CAPACITY = 10;
+constexpr Index INIT_CAPACITY = 10;
+
 template <typename T>
 class List {
  private:
@@ -49,8 +50,8 @@ class List {
   }
   List(const List<T>& other);
   List(List<T>&& other) noexcept;
-  List<T>& operator=(const List<T>& other);
-  List<T>& operator=(List<T>&& other) noexcept;
+  auto operator=(const List<T>& other) -> List<T>&;
+  auto operator=(List<T>&& other) noexcept -> List<T>&;
   /**
    * 析构函数
    */
@@ -59,24 +60,24 @@ class List {
    * 获取列表中元素的个数
    * @return 元素个数
    */
-  [[nodiscard]] Index Size() const;
+  [[nodiscard]] auto Size() const -> Index;
   /**
    * 获取列表的容量
    * @return 容量
    */
-  [[nodiscard]] Index Capacity() const;
-  T* Data();
-  const T* Data() const { return elements.get(); }
+  [[nodiscard]] auto Capacity() const -> Index;
+  auto Data() -> T*;
+  auto Data() const -> const T* { return elements.get(); }
   /**
    * @brief 返回列表末尾的元素
    * @return 第一个元素
    */
-  T First() const;
+  auto First() const -> T;
   /**
    * @brief 移除列表首元素
    * @return 被移除的元素
    */
-  T Shift();
+  auto Shift() -> T;
   /**
    * @brief 在列表前端添加元素
    * @param element 要添加的元素
@@ -86,7 +87,7 @@ class List {
    * @brief 返回列表末尾的元素
    * @return 最后一个元素
    */
-  T Last() const;
+  auto Last() const -> T;
   /**
    * @brief 在列表末端添加元素
    * @param element 要添加的元素
@@ -96,20 +97,20 @@ class List {
    * @brief 移除列表末尾的元素
    * @return 被移除的元素
    */
-  T Pop();
+  auto Pop() -> T;
   /**
    * @brief 移除列表末尾 k 个元素
    * @param k 要移除的元素个数
    * @return 被移除的元素组成的列表
    */
-  List<T> Pop(Index k);
+  auto Pop(Index k) -> List<T>;
   /**
    * @brief 合并列表
    * @details 本身列表不会改变，返回一个新的列表
    * @param list 要合并的列表
    * @return 合并后的新列表
    */
-  List<T> Add(const List<T>& list);
+  auto Add(const List<T>& list) -> List<T>;
   /**
    * @brief 将新的列表拷贝添加到列表末尾
    * @param list 要添加的列表
@@ -125,7 +126,7 @@ class List {
    * @param end 切片的结束索引（不包含）
    * @return 列表在 [start, end) 之间的元素组成的列表
    */
-  [[nodiscard]] List<T> Slice(Index start, Index end) const;
+  [[nodiscard]] auto Slice(Index start, Index end) const -> List<T>;
   /**
    * @brief 移除指定位置的元素
    * @param index 要移除的元素的索引
@@ -162,28 +163,28 @@ class List {
    * @brief 列表是否为空
    * @return 如果列表为空，则为 true; 否则为 false
    */
-  [[nodiscard]] bool Empty() const noexcept;
+  [[nodiscard]] auto Empty() const noexcept -> bool;
   /**
    * @brief 列表是否已满
    * @return 如果列表已满，则为 true; 否则为 false
    */
-  [[nodiscard]] bool Full() const noexcept;
+  [[nodiscard]] auto Full() const noexcept -> bool;
   /**
    * @brief 判断索引是否有效
    * @param index 要检查的索引
    * @return 如果索引有效，则为 true; 否则为 false
    */
-  [[nodiscard]] bool ValidIndex(Index index) const noexcept;
+  [[nodiscard]] auto ValidIndex(Index index) const noexcept -> bool;
   /**
    * @brief 获取指定位置的元素
    * @param index 要获取的元素的索引
    * @return 指定位置的元素
    */
-  [[nodiscard]] T Get(Index index) const;
-  [[nodiscard]] bool Contains(T element) const;
-  [[nodiscard]] Index IndexOf(T element) const;
-  T& operator[](Index index);
-  const T& operator[](Index index) const;
+  [[nodiscard]] auto Get(Index index) const -> T;
+  [[nodiscard]] auto Contains(T element) const -> bool;
+  [[nodiscard]] auto IndexOf(T element) const -> Index;
+  auto operator[](Index index) -> T&;
+  auto operator[](Index index) const -> const T&;
   /**
    * @brief 设置指定位置的元素
    * @param index 要设置的元素的索引
@@ -247,7 +248,7 @@ List<T>::List(List<T>&& other) noexcept
   other.capacity = 0;
 }
 template <typename T>
-List<T>& List<T>::operator=(List<T>&& other) noexcept {
+auto List<T>::operator=(List<T>&& other) noexcept -> List<T>& {
   if (this != &other) {
     size = other.size;
     capacity = other.capacity;
@@ -258,7 +259,7 @@ List<T>& List<T>::operator=(List<T>&& other) noexcept {
   return *this;
 }
 template <typename T>
-List<T>& List<T>::operator=(const List<T>& other) {
+auto List<T>::operator=(const List<T>& other) -> List<T>& {
   if (this != &other) {
     size = other.size;
     capacity = other.capacity;
@@ -270,22 +271,22 @@ List<T>& List<T>::operator=(const List<T>& other) {
   return *this;
 }
 template <typename T>
-Index List<T>::Size() const {
+auto List<T>::Size() const -> Index {
   return size;
 }
 template <typename T>
-Index List<T>::Capacity() const {
+auto List<T>::Capacity() const -> Index {
   return capacity;
 }
 template <typename T>
-T List<T>::First() const {
+auto List<T>::First() const -> T {
   if (Empty()) {
     throw std::runtime_error("List::First: List is empty");
   }
   return elements[0];
 }
 template <typename T>
-T List<T>::Shift() {
+auto List<T>::Shift() -> T {
   if (Empty()) {
     throw std::runtime_error("List::Shift: List is empty");
   }
@@ -304,7 +305,7 @@ void List<T>::Unshift(T element) {
   size++;
 }
 template <typename T>
-T List<T>::Last() const {
+auto List<T>::Last() const -> T {
   if (Empty()) {
     throw std::runtime_error("List::Last: List is empty");
   }
@@ -319,7 +320,7 @@ void List<T>::Push(T element) {
   size++;
 }
 template <typename T>
-T List<T>::Pop() {
+auto List<T>::Pop() -> T {
   if (Empty()) {
     throw std::runtime_error("List::Pop: List is empty");
   }
@@ -327,7 +328,7 @@ T List<T>::Pop() {
   return elements[size];
 }
 template <typename T>
-List<T> List<T>::Pop(Index k) {
+auto List<T>::Pop(Index k) -> List<T> {
   if (k > size) {
     throw std::runtime_error("List::Pop: k is greater than size");
   }
@@ -343,7 +344,7 @@ List<T> List<T>::Pop(Index k) {
   return list;
 }
 template <typename T>
-List<T> List<T>::Add(const List<T>& list) {
+auto List<T>::Add(const List<T>& list) -> List<T> {
   List<T> newList(size + list.size);
   std::copy(elements.get(), elements.get() + size, newList.elements.get());
   std::copy(
@@ -368,7 +369,7 @@ void List<T>::Clear() {
   size = 0;
 }
 template <typename T>
-List<T> List<T>::Slice(Index start, Index end) const {
+auto List<T>::Slice(Index start, Index end) const -> List<T> {
   if (start >= size || end > size || start >= end) {
     throw std::runtime_error("List::Slice::Index out of range");
   }
@@ -496,26 +497,26 @@ void List<T>::TrimExcess() {
   capacity = size;
 }
 template <typename T>
-bool List<T>::Empty() const noexcept {
+auto List<T>::Empty() const noexcept -> bool {
   return size == 0;
 }
 template <typename T>
-bool List<T>::ValidIndex(Index index) const noexcept {
+auto List<T>::ValidIndex(Index index) const noexcept -> bool {
   return size > 0 && index < size;
 }
 template <typename T>
-bool List<T>::Full() const noexcept {
+auto List<T>::Full() const noexcept -> bool {
   return size >= capacity;
 }
 template <typename T>
-T List<T>::Get(Index index) const {
+auto List<T>::Get(Index index) const -> T {
   if (!ValidIndex(index)) {
     throw std::out_of_range("List::Get: Index out of range");
   }
   return elements[index];
 }
 template <typename T>
-bool List<T>::Contains(T element) const {
+auto List<T>::Contains(T element) const -> bool {
   for (Index i = 0; i < size; i++) {
     if (elements[i] == element) {
       return true;
@@ -524,7 +525,7 @@ bool List<T>::Contains(T element) const {
   return false;
 }
 template <typename T>
-Index List<T>::IndexOf(T element) const {
+auto List<T>::IndexOf(T element) const -> Index {
   for (Index i = 0; i < size; i++) {
     if (elements[i] == element) {
       return i;
@@ -533,14 +534,14 @@ Index List<T>::IndexOf(T element) const {
   throw std::runtime_error("List::IndexOf: Element not found");
 }
 template <typename T>
-T& List<T>::operator[](Index index) {
+auto List<T>::operator[](Index index) -> T& {
   if (!ValidIndex(index)) {
     throw std::out_of_range("List::operator[]: Index out of range");
   }
   return elements[index];
 }
 template <typename T>
-const T& List<T>::operator[](Index index) const {
+auto List<T>::operator[](Index index) const -> const T& {
   if (!ValidIndex(index)) {
     throw std::out_of_range("List::const operator[]: Index out of range");
   }
@@ -586,14 +587,14 @@ void List<T>::Fill(T element) {
   size = capacity;
 }
 template <typename T>
-List<T> List<T>::Copy() const {
+auto List<T>::Copy() const -> List<T> {
   List<T> newList(size);
   std::copy(elements.get(), elements.get() + size, newList.elements.get());
   newList.size = size;
   return newList;
 }
 template <typename T>
-T* List<T>::Data() {
+auto List<T>::Data() -> T* {
   return elements.get();
 }
 

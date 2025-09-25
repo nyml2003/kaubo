@@ -4,7 +4,7 @@
 namespace kaubo {
 void interpret(const Object::PyCodePtr& code);
 
-auto compile(std::string input) -> Object::PyCodePtr;
+auto compile(const std::string& source) -> Object::PyCodePtr;
 auto CreateInput() -> std::string;
 
 }  // namespace kaubo

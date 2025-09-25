@@ -13,7 +13,6 @@
 #include "Tools/Terminal/Terminal.h"
 #include "Tools/Terminal/VerboseTerminal.h"
 
-
 #include <sstream>
 #include <string>
 
@@ -73,7 +72,7 @@ auto CreateInput() -> std::string {
   throw std::runtime_error("未指定文件或源码");
 }
 
-auto compile(std::string source) -> Object::PyCodePtr {
+auto compile(const std::string& source) -> Object::PyCodePtr {
   auto lexer = Lexer::Builder::get_instance();
   lexer->feed(source);
   lexer->terminate();
