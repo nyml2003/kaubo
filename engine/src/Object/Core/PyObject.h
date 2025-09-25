@@ -129,11 +129,11 @@ class PyObject : public std::enable_shared_from_this<PyObject> {
   PyObjPtr next() { return klass->next(shared_from_this()); }
   PyObjPtr reversed() { return klass->reversed(shared_from_this()); }
   PyObjPtr _serialize_() { return klass->_serialize_(shared_from_this()); }
-  bool is(const KlassPtr& _klass) { return klass == _klass; }
+  auto is(const KlassPtr& _klass) -> bool { return klass == _klass; }
 
   template <typename T>
-  std::shared_ptr<T> as() {
-    return std::dynamic_pointer_cast<T>(shared_from_this());
+  auto as() -> std::shared_ptr<T> {
+    return static_pointer_cast<T>(shared_from_this());
   }
 };
 
@@ -154,4 +154,3 @@ bool operator!=(const PyObjPtr& lhs, const PyObjPtr& rhs);
 PyObjPtr ObjectInit(const PyObjPtr& args);
 
 }  // namespace kaubo::Object
-

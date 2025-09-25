@@ -9,10 +9,7 @@ message(STATUS "kaubo_core_files: ${kaubo_core_files}")
 
 add_library(kaubo_common SHARED ${kaubo_common_files})
 add_dependencies(kaubo_common copy_compile_commands)
-target_compile_options(kaubo_common PRIVATE ${kaubo_cxx_flags})
-target_include_directories(kaubo_common PUBLIC
-    ${kaubo_include_directories}
-)
+kaubo_setup_dll_target(kaubo_common)
 
 # 可执行文件定义，并链接动态库
 add_executable(Demo ${kaubo_src_dir}/Demo/main.cpp)
