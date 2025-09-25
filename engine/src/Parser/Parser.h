@@ -63,17 +63,22 @@ class Parser {
   auto parse_primary_base() -> Result<ExprPtr, Error>;
   auto parse_int() -> Result<ExprPtr, Error>;
   auto parse_string() -> Result<ExprPtr, Error>;
+  auto parse_list() -> Result<ExprPtr, Error>;
   auto parse_identifier_expression() -> Result<ExprPtr, Error>;
   auto parse_unary() -> Result<ExprPtr, Error>;
   auto parse_parenthesized() -> Result<ExprPtr, Error>;
   auto parse_lambda() -> Result<ExprPtr, Error>;
   auto parse_function_call(ExprPtr) -> Result<ExprPtr, Error>;
   auto parse_postfix(ExprPtr expr) -> Result<ExprPtr, Error>;
+
   auto parse_statement() -> Result<StmtPtr, Error>;
   auto parse_block() -> Result<StmtPtr, Error>;
-  auto parse_module() -> Result<ModulePtr, Error>;
-
   auto parse_var_declaration() -> Result<StmtPtr, Error>;
+  auto parse_return_statement() -> Result<StmtPtr, Error>;
+  auto parse_for_loop() -> Result<StmtPtr, Error>;
+  auto parse_while_loop() -> Result<StmtPtr, Error>;
+  auto parse_if_statement() -> Result<StmtPtr, Error>;
+  auto parse_module() -> Result<ModulePtr, Error>;
 
   std::vector<ListenerPtr> listeners;
 

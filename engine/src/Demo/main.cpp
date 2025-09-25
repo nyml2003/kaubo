@@ -23,6 +23,8 @@ void forward_stdin_to_eventbus(std::atomic<bool>& stop_flag) {
     std::cerr << "Error in input forwarding thread: " << e.what() << '\n';
   }
 }
+
+
 }  // namespace
 
 int main() {
