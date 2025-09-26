@@ -79,6 +79,7 @@ class Builder:
                 stdout=subprocess.PIPE,
                 stderr=subprocess.PIPE,
                 text=True,
+                encoding="utf-8",
             )
         except (subprocess.CalledProcessError, FileNotFoundError) as e:
             print(f"[Builder ERROR] 配置失败: {str(e)}")

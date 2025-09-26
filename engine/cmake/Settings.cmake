@@ -18,6 +18,5 @@ include(cmake/BuildSystem.cmake)
 
 # include(Coverage.cmake)
 include(cmake/Optimizations.cmake)
-include(cmake/ThirdParty.cmake)
 include(cmake/Warnings.cmake)
 

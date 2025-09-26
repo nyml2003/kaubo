@@ -127,6 +127,9 @@ void ParseByteCode(const PyCodePtr& code) {
     return;
   }
   auto bytes = code->ByteCode()->Value().CopyCodeUnits();
+  if (bytes.Empty()) {
+    return;
+  }
   Index iter = 0;
   if (static_cast<Literal>(bytes[iter]) != Literal::LIST) {
     throw std::runtime_error("Invalid insts");

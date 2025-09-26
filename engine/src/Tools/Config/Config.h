@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Tools/DesignPattern/Singleton.h"
-#include "json.hpp"
+
+#include "Tools/Json/Parser/Value.h"
 
 namespace kaubo {
 class Config : public Singleton<Config> {
@@ -10,11 +11,11 @@ class Config : public Singleton<Config> {
  public:
   static void init(const std::string& config_json_str);
 
-  static bool has(const std::string& key);
+  static auto has(const std::string& key) -> bool;
 
-  static std::string get(const std::string& key);
+  static auto get(const std::string& key) -> std::string;
 
  private:
-  nlohmann::json config;
+  Json::Value::ValuePtr config;
 };
 }  // namespace kaubo

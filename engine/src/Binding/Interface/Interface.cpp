@@ -59,7 +59,8 @@ void handle_mode_interpret_bytecode() {
 auto CreateInput() -> std::string {
   if (Config::has("file")) {
     ConsoleTerminal::get_instance().debug("文件名: " + Config::get("file"));
-    std::ifstream file(Config::get("file"));
+    auto filePath = Config::get("file");
+    std::ifstream file(filePath);
     if (file.is_open()) {
       std::stringstream buffer;
       buffer << file.rdbuf();

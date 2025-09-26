@@ -1,12 +1,11 @@
 #pragma once
 
-#include <gsl/gsl>
 #include <memory>
 
 namespace kaubo::Object {
 
 class Klass;
-using KlassPtr = gsl::owner<Klass*>;
+using KlassPtr = Klass*;
 
 class PyObject;
 using PyObjPtr = std::shared_ptr<PyObject>;

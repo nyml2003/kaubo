@@ -2,10 +2,10 @@
 #include <string>
 #include <thread>
 #include "Binding/C_API/c_api.h"
-#include "json.hpp"
 
-// 使用命名空间简化代码
-using json = nlohmann::json;
+#include "Tools/Json/Parser/Utils.h"
+#include "Tools/Json/Parser/Value.h"
+
 namespace {
 /**
  * @brief 持续读取标准输入并发布到事件总线
@@ -24,18 +24,30 @@ void forward_stdin_to_eventbus(std::atomic<bool>& stop_flag) {
   }
 }
 
-
 }  // namespace
 
 int main() {
   try {
     // 配置初始化
-    json config;
-    config["file"] = R"(C:\Users\nyml\code\kaubo\engine\test\dev\dev.kaubo)";
-    config["compile"] = true;
-
+    kaubo::Json::Value::ValuePtr config =
+      kaubo::Json::Utils::create<kaubo::Json::Value::Value>(
+        kaubo::Json::Utils::create<kaubo::Json::Value::Object>({})
+      );
+    config->set(
+      std::string("file"),
+      kaubo::Json::Utils::create<kaubo::Json::Value::Value>(
+        kaubo::Json::Utils::create<kaubo::Json::Value::String>(
+          std::string(R"(C:\Users\nyml\code\kaubo\engine\test\dev\dev.kaubo)")
+        )
+      )
+    );
+    config->set(
+      "interpret", kaubo::Json::Utils::create<kaubo::Json::Value::Value>(
+                     kaubo::Json::Utils::create<kaubo::Json::Value::True>()
+                   )
+    );
     // 初始化配置并检查结果
-    init_config(config.dump().c_str());
+    init_config(config->to_string().c_str());
 
     // 订阅日志信息事件
     eventbus_subscribe(EVENT_TYPE_LOG_INFO, [](const char* msg) {
@@ -44,21 +56,14 @@ int main() {
       }
     });
 
-    // 线程控制标志
-    std::atomic<bool> stop_flag(false);
-
-    // 启动输入转发线程
-    //  std::thread input_thread(forward_stdin_to_eventbus,
-    //  std::ref(stop_flag));
+    eventbus_subscribe(EVENT_TYPE_LOG_DEBUG, [](const char* msg) {
+      if (msg) {
+        std::cout << msg << '\n';
+      }
+    });
 
     // 执行解释器
-    compile();
-
-    // 通知线程停止并等待其结束
-    stop_flag = true;
-    // if (input_thread.joinable()) {
-    //   input_thread.join();
-    // }
+    interpret();
 
     // 清理资源（如果有对应的API）
     // cleanup_config();

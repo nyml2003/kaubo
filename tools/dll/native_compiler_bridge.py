@@ -173,6 +173,7 @@ class NativeCompilerBridge:
         try:
             config_json = json.dumps(config, ensure_ascii=False)
             c_config = config_json.encode(encoding="utf-8")
+            print(f"配置转换成功：{config_json}")
         except Exception as e:
             raise ValueError(f"配置转换失败：{str(e)}（请检查配置字典格式）")
         self.init_config(c_config)

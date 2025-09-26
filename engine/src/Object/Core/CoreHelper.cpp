@@ -15,7 +15,6 @@
 #include "Object/Object.h"
 #include "Object/String/PyBytes.h"
 #include "Runtime/VirtualMachine.h"
-#include "gsl/pointers"
 
 namespace kaubo::Object {
 void LoadClass(const PyStrPtr& name, const KlassPtr& klass) {
@@ -341,8 +340,7 @@ KlassPtr CreatePyKlass(
   const PyDictPtr& attributes,
   const PyListPtr& super
 ) {
-  auto* klass =
-    gsl::owner<Klass*>{new Klass()};  // NOLINT(readability-redundant-casting)
+  auto* klass = new Klass();  // NOLINT(readability-redundant-casting)
   auto type = CreatePyType(klass)->as<PyType>();
   klass->SetName(name);
   klass->SetAttributes(attributes);
