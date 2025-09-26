@@ -12,7 +12,7 @@ add_dependencies(kaubo_common copy_compile_commands)
 kaubo_setup_dll_target(kaubo_common)
 
 # 可执行文件定义，并链接动态库
-add_executable(Demo ${kaubo_src_dir}/Demo/main.cpp ${kaubo_common_files})
+add_executable(Demo ${kaubo_src_dir}/Demo/main.cpp ${kaubo_src_dir}/Tools/Json/Parser/Value.cpp)
 
 # 链接kaubo_common动态库
 target_link_libraries(Demo PRIVATE kaubo_common)

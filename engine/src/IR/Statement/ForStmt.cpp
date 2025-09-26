@@ -52,8 +52,10 @@ Object::PyObjPtr ForStmtKlass::visit(
   auto iter = stmt->Iter();
   auto body = stmt->Body();
   iter->visit(codeList);
+
   if (target->is(IdentifierKlass::Self())) {
     auto identifier = target->as<Identifier>();
+    identifier->SetStoreMode();
     auto code = GetCodeFromList(codeList, stmt);
     auto name = identifier->Name();
     if (code->GetScope() == Object::Scope::GLOBAL) {

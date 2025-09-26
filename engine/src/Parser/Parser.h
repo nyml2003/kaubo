@@ -78,6 +78,9 @@ class Parser {
   auto parse_for_loop() -> Result<StmtPtr, Error>;
   auto parse_while_loop() -> Result<StmtPtr, Error>;
   auto parse_if_statement() -> Result<StmtPtr, Error>;
+  auto parse_yield_statement() -> Result<StmtPtr, Error>;
+
+
   auto parse_module() -> Result<ModulePtr, Error>;
 
   std::vector<ListenerPtr> listeners;

@@ -37,7 +37,6 @@ void handle_mode_compile() {
   if (Config::has("file")) {
     auto data = code->_serialize_()->as<kaubo::Object::PyBytes>();
     const auto& bytes = data->Value();
-    PrintCode(code);
     auto filePath = Config::get("file");
     auto writePath = std::filesystem::path(filePath).replace_extension(".code");
     Collections::Write(bytes, writePath.string());
@@ -107,7 +106,7 @@ auto compile(const std::string& source) -> Object::PyCodePtr {
     VerboseTerminal::get_instance().switch_strategy(
       std::make_unique<ProxyTerminalStrategy>(&BytecodeTerminal::get_instance())
     );
-    Object::PrintCode(code);
+    visitor.PrintCodeList();
   }
   return code;
 }

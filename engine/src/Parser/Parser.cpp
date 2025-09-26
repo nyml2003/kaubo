@@ -68,6 +68,10 @@ auto Parser::parse_statement()  // NOLINT(misc-no-recursion)
     return parse_return_statement();
   }
 
+  if (check(TokenType::Yield)) {
+    return parse_yield_statement();
+  }
+
   if (check(TokenType::If)) {
     return parse_if_statement();
   }
@@ -536,8 +540,34 @@ auto Parser::parse_return_statement()  // NOLINT(misc-no-recursion)
   );
 }
 
-auto Parser::parse_for_loop() -> Result<StmtPtr, Error> {
+auto Parser::parse_yield_statement() -> Result<StmtPtr, Error> {
+  if (!match(TokenType::Yield)) {
+    return Err(Error::UnexpectedToken);
+  }
+
+  auto expr_result = parse_expression();
+  if (expr_result.is_err()) {
+    return Err(expr_result.unwrap_err());
+  }
+
+  auto semicolon_result = expect(TokenType::Semicolon);
+  if (semicolon_result.is_err()) {
+    return Err(semicolon_result.unwrap_err());
+  }
+
+  return Ok(
+    Utils::create<Stmt::Stmt>(
+      Utils::create(Stmt::Yield{.value = expr_result.unwrap()})
+    )
+  );
+}
+
+auto Parser::parse_for_loop()  // NOLINT(misc-no-recursion)
+  -> Result<StmtPtr, Error> {
   if (!match(TokenType::For)) {
+    return Err(Error::UnexpectedToken);
+  }
+  if (!match(TokenType::Var)) {
     return Err(Error::UnexpectedToken);
   }
   auto iterator = parse_expression();
@@ -566,6 +596,8 @@ auto Parser::parse_for_loop() -> Result<StmtPtr, Error> {
     ))
   );
 }
+
+
 
 auto Parser::parse_while_loop() -> Result<StmtPtr, Error> {
   if (!match(TokenType::While)) {

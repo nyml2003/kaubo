@@ -1,16 +1,12 @@
 #pragma once
 
-#include "IR/FuncDef.h"
 #include "IR/INode.h"
-
 #include "IR/Module.h"
-#include "IR/Statement/WhileStmt.h"
 #include "Object/Container/PyList.h"
+#include "Object/Iterator/IteratorHelper.h"
 #include "Object/Object.h"
 #include "Object/String/PyString.h"
-#include "Parser/Expr.h"
 #include "Parser/Module.h"
-#include "Parser/Stmt.h"
 
 #include <fstream>
 #include <sstream>
@@ -45,6 +41,11 @@ class Generator {
   void Print() { context->print(); }
   [[nodiscard]] auto Code() const -> Object::PyCodePtr {
     return IR::GetCodeFromList(codeList, context);
+  }
+  void PrintCodeList() {
+    Object::ForEach(codeList, [](auto&& obj) {
+      Object::PrintCode(obj->template as<Object::PyCode>());
+    });
   }
 
   void visit(const Parser::ModulePtr& module);

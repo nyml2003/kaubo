@@ -1,7 +1,6 @@
 
 
 #include "Generation/Generator.h"
-#include <variant>
 #include "Function/BuiltinFunction.h"
 #include "IR/AssignStmt.h"
 #include "IR/Expression/Atom.h"
@@ -9,6 +8,8 @@
 #include "IR/Expression/FunctionCall.h"
 #include "IR/Expression/List.h"
 #include "IR/Expression/Unary.h"
+#include "IR/Expression/YieldExpr.h"
+#include "IR/FuncDef.h"
 #include "IR/INode.h"
 #include "IR/Identifier.h"
 #include "IR/Lambda.h"
@@ -19,6 +20,7 @@
 #include "IR/Statement/IfStmt.h"
 #include "IR/Statement/PassStmt.h"
 #include "IR/Statement/ReturnStmt.h"
+#include "IR/Statement/WhileStmt.h"
 #include "Lexer/Type.h"
 #include "Object/Container/PyList.h"
 #include "Object/Core/PyBoolean.h"
@@ -136,8 +138,8 @@ auto Generator::visit_stmt(const Parser::StmtPtr& stmt) -> Object::PyObjPtr {
           throw std::runtime_error("Unexpected body");
         }
         auto for_stmts = for_stmts_result->as<Object::PyList>();
-        auto target = this->visit_expr(for_stmt->iterable);
-        auto iter = this->visit_expr(for_stmt->iterator);
+        auto target = this->visit_expr(for_stmt->iterator);
+        auto iter = this->visit_expr(for_stmt->iterable);
         return IR::CreateForStmt(target, iter, for_stmts, context);
       },
       [&](const std::shared_ptr<Parser::Stmt::While>& while_stmt)
@@ -154,6 +156,11 @@ auto Generator::visit_stmt(const Parser::StmtPtr& stmt) -> Object::PyObjPtr {
         -> Object::PyObjPtr {
         auto value = this->visit_expr(return_stmt->value);
         return IR::CreateReturnStmt(value, context);
+      },
+      [&](const std::shared_ptr<Parser::Stmt::Yield>& yield_stmt)
+        -> Object::PyObjPtr {
+        auto value = this->visit_expr(yield_stmt->value);
+        return IR::CreateYieldExpr(value, context);
       }
     },
     stmt->get_value()

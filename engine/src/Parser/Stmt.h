@@ -53,6 +53,10 @@ struct Return {
   ExprPtr value;
 };
 
+struct Yield {
+  ExprPtr value;
+};
+
 class Stmt {
  public:
   using ValueType = std::variant<
@@ -63,7 +67,8 @@ class Stmt {
     std::shared_ptr<If>,
     std::shared_ptr<While>,
     std::shared_ptr<For>,
-    std::shared_ptr<Return>>;
+    std::shared_ptr<Return>,
+    std::shared_ptr<Yield>>;
 
   explicit Stmt() = delete;
 

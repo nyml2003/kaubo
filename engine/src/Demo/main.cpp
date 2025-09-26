@@ -46,6 +46,11 @@ int main() {
                      kaubo::Json::Utils::create<kaubo::Json::Value::True>()
                    )
     );
+    config->set(
+      "show_bc", kaubo::Json::Utils::create<kaubo::Json::Value::Value>(
+                     kaubo::Json::Utils::create<kaubo::Json::Value::True>()
+                   )
+    );
     // 初始化配置并检查结果
     init_config(config->to_string().c_str());
 
